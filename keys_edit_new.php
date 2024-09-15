@@ -123,10 +123,10 @@ foreach ($keys->mKeyFields as $keyField)
     {
         $arrListValues = $keys->getProperty($imfNameIntern, 'imf_value_list');
         $defaultValue  = $keys->getValue($imfNameIntern, 'database');
- 
+
         $form->addSelectBox(
             'imf-'. $keys->getProperty($imfNameIntern, 'imf_id'),
-            $keys->getProperty($imfNameIntern, 'imf_name'),
+            convlanguagePIM($keys->getProperty($imfNameIntern, 'imf_name')),
             $arrListValues,
             array(
                 'property'        => $fieldProperty,

@@ -24,7 +24,7 @@
  *
  * mode              : Output(html, print, csv-ms, csv-oo, pdf, pdfl, xlsx)
  * filter_string     : general filter string
- * filter_keyname    : filter for keyname
+ * filter_category    : filter for category
  * filter_receiver   : filter for receiver
  * show_all          : 0 - (Default) show active keys only
  *                     1 - show all keys (also made to the former)
@@ -53,9 +53,9 @@ if (!isset($_SESSION['pInventoryManager']['filter_string']))
 {
     $_SESSION['pInventoryManager']['filter_string'] = '';
 }
-if (!isset($_SESSION['pInventoryManager']['filter_keyname']))
+if (!isset($_SESSION['pInventoryManager']['filter_category']))
 {
-    $_SESSION['pInventoryManager']['filter_keyname'] = '';
+    $_SESSION['pInventoryManager']['filter_category'] = '';
 }
 if (!isset($_SESSION['pInventoryManager']['filter_receiver']))
 {
@@ -72,7 +72,7 @@ if (!isset($_SESSION['pInventoryManager']['export_and_filter']))
 
 $getMode            = admFuncVariableIsValid($_GET, 'mode',              'string', array('defaultValue' => 'html', 'validValues' => array('csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx')));
 $getFilterString    = admFuncVariableIsValid($_GET, 'filter_string',     'string');
-$getFilterKeyName   = admFuncVariableIsValid($_GET, 'filter_keyname',    'string');
+$getFilterCategory   = admFuncVariableIsValid($_GET, 'filter_category',    'string');
 $getFilterReceiver  = admFuncVariableIsValid($_GET, 'filter_receiver',   'int');
 $getShowAll         = admFuncVariableIsValid($_GET, 'show_all',          'bool', array('defaultValue' => false));
 $getExportAndFilter = admFuncVariableIsValid($_GET, 'export_and_filter', 'bool', array('defaultValue' => false));
@@ -81,7 +81,7 @@ $getSameSide        = admFuncVariableIsValid($_GET, 'same_side',         'bool',
 if ($getSameSide)
 {
     $_SESSION['pInventoryManager']['filter_string'] = $getFilterString;
-    $_SESSION['pInventoryManager']['filter_keyname'] = $getFilterKeyName;
+    $_SESSION['pInventoryManager']['filter_category'] = $getFilterCategory;
     $_SESSION['pInventoryManager']['filter_receiver'] = $getFilterReceiver;
     $_SESSION['pInventoryManager']['show_all'] = $getShowAll;
     $_SESSION['pInventoryManager']['export_and_filter'] = $getExportAndFilter;
@@ -89,7 +89,7 @@ if ($getSameSide)
 else
 {
     $getFilterString = $_SESSION['pInventoryManager']['filter_string'];
-    $getFilterKeyName = $_SESSION['pInventoryManager']['filter_keyname'];
+    $getFilterCategory = $_SESSION['pInventoryManager']['filter_category'];
     $getFilterReceiver = $_SESSION['pInventoryManager']['filter_receiver'];
     $getShowAll = $_SESSION['pInventoryManager']['show_all'];
     $getExportAndFilter = $_SESSION['pInventoryManager']['export_and_filter'];
@@ -243,7 +243,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
         $hoverRows = true;
 
         $inputFilterStringLabel = '<i class="fas fa-search" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_GENERAL').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_GENERAL').'"></i>';
-        $selectBoxKeyNameLabel ='<i class="fas fa-key" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEMNAME').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEMNAME').'"></i>';
+        $selectBoxCategoryLabel ='<i class="fas fa-list" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_CATEGORY').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_ICATEGORY').'"></i>';
         $selectBoxReceiverLabel = '<i class="fas fa-user" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_RECEIVER').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_RECEIVER').'"></i>';
         
         // create html page object
@@ -252,7 +252,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
         $page->setHeadline($headline);
 
         $page->addJavascript('
-            $("#filter_keyname").change(function () {
+            $("#filter_category").change(function () {
               
                     self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                         'mode'              => 'html',
@@ -261,7 +261,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
                         'export_and_filter' => $getExportAndFilter,
                         'same_side'         => true,
                         'show_all'          => $getShowAll
-                    )) . '&filter_keyname=" + $(this).val();
+                    )) . '&filter_category=" + $(this).val();
                 
             });
             $("#filter_receiver").change(function () {
@@ -269,7 +269,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
                     self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                         'mode'              => 'html',
                         'filter_string'     => $getFilterString,
-                        'filter_keyname'    => $getFilterKeyName,
+                        'filter_category'    => $getFilterCategory,
                         'export_and_filter' => $getExportAndFilter,
                         'same_side'         => true,
                         'show_all'          => $getShowAll
@@ -279,7 +279,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
             $("#menu_item_lists_print_view").click(function() {
                 window.open("'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString, 
-                    'filter_keyname'    => $getFilterKeyName, 
+                    'filter_category'    => $getFilterCategory, 
                     'filter_receiver'   => $getFilterReceiver,
                     'export_and_filter' => $getExportAndFilter,                   
                     'show_all'          => $getShowAll,  
@@ -309,7 +309,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
             $page->addPageFunctionsMenuItem('menu_item_lists_xlsx', $gL10n->get('SYS_MICROSOFT_EXCEL').' (XLSX)',
                 SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
-                    'filter_keyname'    => $getFilterKeyName,
+                    'filter_category'    => $getFilterCategory,
                     'filter_receiver'   => $getFilterReceiver,
                     'export_and_filter' => $getExportAndFilter,
                     'show_all'          => $getShowAll,
@@ -318,7 +318,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
             $page->addPageFunctionsMenuItem('menu_item_lists_csv_ms', $gL10n->get('SYS_MICROSOFT_EXCEL').' (CSV)',
                 SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
-                    'filter_keyname'    => $getFilterKeyName,
+                    'filter_category'    => $getFilterCategory,
                     'filter_receiver'   => $getFilterReceiver,
                     'export_and_filter' => $getExportAndFilter,
                     'show_all'          => $getShowAll,
@@ -327,7 +327,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
             $page->addPageFunctionsMenuItem('menu_item_lists_pdf', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_PORTRAIT').')',
                 SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
-                    'filter_keyname'    => $getFilterKeyName,
+                    'filter_category'    => $getFilterCategory,
                     'filter_receiver'   => $getFilterReceiver,
                     'export_and_filter' => $getExportAndFilter,
                     'show_all'          => $getShowAll,
@@ -336,7 +336,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
             $page->addPageFunctionsMenuItem('menu_item_lists_pdfl', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_LANDSCAPE').')',
                 SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
-                    'filter_keyname'    => $getFilterKeyName,
+                    'filter_category'    => $getFilterCategory,
                     'filter_receiver'   => $getFilterReceiver,
                     'export_and_filter' => $getExportAndFilter,
                     'show_all'          => $getShowAll,
@@ -345,7 +345,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
             $page->addPageFunctionsMenuItem('menu_item_lists_csv', $gL10n->get('SYS_CSV').' ('.$gL10n->get('SYS_UTF8').')',
                 SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
-                    'filter_keyname'    => $getFilterKeyName,
+                    'filter_category'    => $getFilterCategory,
                     'filter_receiver'   => $getFilterReceiver,
                     'export_and_filter' => $getExportAndFilter,
                     'show_all'          => $getShowAll,
@@ -367,16 +367,29 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
 		{  
             $form->addInput('filter_string', $inputFilterStringLabel, $getFilterString);
         
-            // read all keynames
-            $sql = 'SELECT DISTINCT imd_value, imd_value
-                               FROM '.TBL_INVENTORY_MANAGER_DATA.'
-                         INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
-                                 ON imf_id = imd_imf_id
-                              WHERE (  imf_org_id  = '. $gCurrentOrgId .'
-                                 OR imf_org_id IS NULL ) 
-                                AND imf_name_intern = \'ITEMNAME\' 
-                           ORDER BY imd_value ASC';
-            $form->addSelectBoxFromSql('filter_keyname', $selectBoxKeyNameLabel, $gDb, $sql, array('defaultValue' => $getFilterKeyName , 'showContextDependentFirstEntry' => true));
+            $getKeyId = admFuncVariableIsValid($_GET, 'key_id', 'int');
+            $keys2 = new Keys($gDb, $gCurrentOrgId);
+            $keys2->readKeyData($getKeyId, $gCurrentOrgId);
+            foreach ($keys2->mKeyFields as $keyField)
+            {  
+                $imfNameIntern = $keyField->getValue('imf_name_intern');
+          
+                if ($keys2->getProperty($imfNameIntern, 'imf_type') === 'DROPDOWN' )
+                {
+                    $arrListValues = $keys2->getProperty($imfNameIntern, 'imf_value_list');
+                    $defaultValue  = $keys2->getValue($imfNameIntern, 'database');
+            
+                    $form->addSelectBox(
+                        'filter_category',
+                        $selectBoxCategoryLabel,
+                        $arrListValues,
+                        array(
+                            'defaultValue'    => $getFilterCategory,
+                            'showContextDependentFirstEntry' => true
+                        )
+                    );
+                }
+            }
         
             // read all receiver
             $sql = 'SELECT DISTINCT imd_value, CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value)
@@ -398,7 +411,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
         else
         {
             $form->addInput('filter_string', '', $getFilterString, array('property' => HtmlForm::FIELD_HIDDEN));
-            $form->addInput('filter_keyname', '', $getFilterKeyName, array('property' => HtmlForm::FIELD_HIDDEN));
+            $form->addInput('filter_category', '', $getFilterCategory, array('property' => HtmlForm::FIELD_HIDDEN));
             $form->addInput('filter_receiver', '', $getFilterReceiver, array('property' => HtmlForm::FIELD_HIDDEN));          
         }
  
@@ -566,7 +579,7 @@ foreach ($keys->keys as $key)
         $imfNameIntern = $keyField->getValue('imf_name_intern');
         
         if ($getExportAndFilter 
-            && (($getFilterKeyName <> '' && $imfNameIntern == 'ITEMNAME' && $getFilterKeyName !=  $keys->getValue($imfNameIntern, 'database'))
+            && (($getFilterCategory <> '' && $imfNameIntern == 'CATEGORY' && $getFilterCategory !=  $keys->getValue($imfNameIntern, 'database'))
         	   || ($getFilterReceiver <> 0 && $imfNameIntern == 'RECEIVER' && $getFilterReceiver !=  $keys->getValue($imfNameIntern))))
         {
         	continue 2;

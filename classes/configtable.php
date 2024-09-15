@@ -269,6 +269,18 @@ class ConfigTablePIM
 			$keyField->setValue('imf_type', 'TEXT');
 			$keyField->setValue('imf_description', 'Der Name des Gegenstandes (z.B. Kerzen)');
 			$keyField->save();
+
+			$keyField = new TableAccess($GLOBALS['gDb'], TBL_INVENTORY_MANAGER_FIELDS, 'imf');
+			$keyField->setValue('imf_org_id', (int) $GLOBALS['gCurrentOrgId']);
+			$keyField->setValue('imf_sequence', 1);
+			$keyField->setValue('imf_system', 0);
+			$keyField->setValue('imf_mandatory', 1);
+			$keyField->setValue('imf_name', 'PIM_CATEGORY');
+			$keyField->setValue('imf_name_intern', 'CATEGORY');
+			$keyField->setValue('imf_type', 'DROPDOWN');
+			$keyField->setValue('imf_value_list', 'Allgemein');
+			$keyField->setValue('imf_description', 'Die Kategorie des Gegenstandes (z.B. Kerzen)');
+			$keyField->save();
 		
 			$keyField = new TableAccess($GLOBALS['gDb'], TBL_INVENTORY_MANAGER_FIELDS, 'imf');
 			$keyField->setValue('imf_org_id', (int) $GLOBALS['gCurrentOrgId']);
