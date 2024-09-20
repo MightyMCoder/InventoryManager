@@ -1,7 +1,7 @@
 <?php
 /**
  ***********************************************************************************************
- * Various functions for key fields
+ * Various functions for item fields
  *
  * @copyright The Admidio Team
  * @see https://www.admidio.org/
@@ -12,11 +12,11 @@
 /******************************************************************************
  * Parameters:
  *
- * imf_id   : key field id
- * mode     : 1 - create or edit key field
- *            2 - delete key field
- *            4 - change sequence of key field
- * sequence : mode if the key field move up or down, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN
+ * imf_id   : item field id
+ * mode     : 1 - create or edit item field
+ *            2 - delete item field
+ *            4 - change sequence of item field
+ * sequence : mode if the item field move up or down, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN
  *
  *****************************************************************************/
 
@@ -29,7 +29,7 @@ $getimfId    = admFuncVariableIsValid($_GET, 'imf_id',   'int');
 $getMode     = admFuncVariableIsValid($_GET, 'mode',     'int',    array('requireValue' => true));
 $getSequence = admFuncVariableIsValid($_GET, 'sequence', 'string', array('validValues' => array(TableUserField::MOVE_UP, TableUserField::MOVE_DOWN)));
 
-$pPreferences = new ConfigTablePIM();
+$pPreferences = new CConfigTablePIM();
 $pPreferences->read();
 
 // only authorized user are allowed to start this module
@@ -39,15 +39,15 @@ if (!isUserAuthorizedForPreferences())
     // => EXIT
 }
 
-$keyField = new TableAccess($gDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf');
+$itemField = new TableAccess($gDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf');
 
 if ($getimfId > 0)
 {
-	$keyField->readDataById($getimfId);
+	$itemField->readDataById($getimfId);
 
-    // check if key field belongs to actual organization
-    if ($keyField->getValue('imf_org_id') > 0
-    && (int) $keyField->getValue('imf_org_id') !== (int) $gCurrentOrgId)
+    // check if item field belongs to actual organization
+    if ($itemField->getValue('imf_org_id') > 0
+    && (int) $itemField->getValue('imf_org_id') !== (int) $gCurrentOrgId)
     {
         $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
         // => EXIT
@@ -62,13 +62,13 @@ if($getMode === 1)
     
     // pruefen, ob Pflichtfelder gefuellt sind
     // (bei Systemfeldern duerfen diese Felder nicht veraendert werden)
-    if ($keyField->getValue('imf_system') == 0 && $_POST['imf_name'] === '')
+    if ($itemField->getValue('imf_system') == 0 && $_POST['imf_name'] === '')
     {
         $gMessage->show($gL10n->get('SYS_FIELD_EMPTY', array($gL10n->get('SYS_NAME'))));
         // => EXIT
     }
     
-    if ($keyField->getValue('imf_system') == 0 && $_POST['imf_type'] === '')
+    if ($itemField->getValue('imf_system') == 0 && $_POST['imf_type'] === '')
     {
         $gMessage->show($gL10n->get('SYS_FIELD_EMPTY', array($gL10n->get('ORG_DATATYPE'))));
         // => EXIT
@@ -81,7 +81,7 @@ if($getMode === 1)
         // => EXIT
     }
     
-    if (isset($_POST['imf_name']) && $keyField->getValue('imf_name') !== $_POST['imf_name'])
+    if (isset($_POST['imf_name']) && $itemField->getValue('imf_name') !== $_POST['imf_name'])
     {
         // Schauen, ob das Feld bereits existiert
         $sql = 'SELECT COUNT(*) AS count
@@ -111,11 +111,11 @@ if($getMode === 1)
     try
     {
         // POST Variablen in das UserField-Objekt schreiben
-        foreach ($_POST as $key => $value)
+        foreach ($_POST as $item => $value)
         {
-            if(StringUtils::strStartsWith($key, 'imf_'))
+            if(StringUtils::strStartsWith($item, 'imf_'))
             {
-                $keyField->setValue($key, $value);
+                $itemField->setValue($item, $value);
             }
         }
     }
@@ -124,16 +124,16 @@ if($getMode === 1)
         $e->showHtml();
     }
     
-    $keyField->setValue('imf_org_id', (int) $gCurrentOrgId);
+    $itemField->setValue('imf_org_id', (int) $gCurrentOrgId);
     
-    if ($keyField->isNewRecord())
+    if ($itemField->isNewRecord())
     {
-        $keyField->setValue('imf_name_intern', getNewNameIntern($keyField->getValue('imf_name', 'database'), 1));
-        $keyField->setValue('imf_sequence', genNewSequence());
+        $itemField->setValue('imf_name_intern', getNewNameIntern($itemField->getValue('imf_name', 'database'), 1));
+        $itemField->setValue('imf_sequence', genNewSequence());
     }
     
     // Daten in Datenbank schreiben
-    $returnCode = $keyField->save();
+    $returnCode = $itemField->save();
     
     if ($returnCode < 0)
     {
@@ -150,7 +150,7 @@ if($getMode === 1)
 elseif ($getMode === 2)
 {
     // Feld loeschen
-    if ($keyField->delete())
+    if ($itemField->delete())
     {
         // Loeschen erfolgreich -> Rueckgabe fuer XMLHttpRequest
         echo 'done';
@@ -159,7 +159,7 @@ elseif ($getMode === 2)
 }
 elseif($getMode === 4)
 {
-    $imfSequence = (int) $keyField->getValue('imf_sequence');
+    $imfSequence = (int) $itemField->getValue('imf_sequence');
     
     $sql = 'UPDATE '.TBL_INVENTORY_MANAGER_FIELDS.'
                SET imf_sequence = ? -- $imf_sequence
@@ -181,8 +181,8 @@ elseif($getMode === 4)
     // update the existing entry with the sequence of the field that should get the new sequence
     $gDb->queryPrepared($sql, array($imfSequence, $newSequence, $gCurrentOrgId));
     
-    $keyField->setValue('imf_sequence', $newSequence);
-    $keyField->save();
+    $itemField->setValue('imf_sequence', $newSequence);
+    $itemField->save();
     
     exit();
 }

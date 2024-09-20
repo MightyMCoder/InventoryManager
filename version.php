@@ -9,5 +9,23 @@
  ***********************************************************************************************
  */
 
-$plugin_version = '2.3.0';
-$plugin_stand   = '18.01.2024';
+class CPluginInfoPIM {
+    protected const PLUGIN_VERSION = '1.0.0';
+    protected const PLUGIN_STAND = '15.09.2024';
+
+    /**
+     * Current version of plugin InventoryManager
+     * @return string
+     */    
+    public static function getPluginVersion() {
+        return self::PLUGIN_VERSION;
+    }
+
+    /**
+     * Current stand of plugin InventoryManager
+     * @return string
+     */
+    public static function getPluginStand() {
+        return self::PLUGIN_STAND;
+    }
+}

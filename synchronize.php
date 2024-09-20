@@ -1,7 +1,7 @@
 <?php
 /**
  ***********************************************************************************************
- * Makes a user to a former if he does not have a key.
+ * Makes a user to a former if he does not have a item.
  *
  * @copyright The Admidio Team
  * @see https://www.admidio.org/
@@ -26,7 +26,7 @@ require_once(__DIR__ . '/classes/configtable.php');
 // Initialize and check the parameters
 $getMode = admFuncVariableIsValid($_GET, 'mode', 'string', array('defaultValue' => 'preview', 'validValues' => array('preview', 'write', 'print')));
 
-$pPreferences = new ConfigTablePIM();
+$pPreferences = new CConfigTablePIM();
 $pPreferences->read();
 
 // only authorized user are allowed to start this module
@@ -136,7 +136,7 @@ if ($getMode == 'preview')     //Default
 		$table->setColumnAlignByArray(array('left', 'center', 'center'));
 		$columnValues = array();
 		$columnValues[] = $gL10n->get('SYS_NAME');
-        $columnValues[] = '<i class="fas fa-key" data-toggle="tooltip" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_NUMBER_OF_KEYS').'"></i>';
+        $columnValues[] = '<i class="fas fa-key" data-toggle="tooltip" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_NUMBER_OF_ITEMS').'"></i>';
 		$columnValues[] = '<i class="fas fa-info-circle" data-toggle="tooltip" title="'.$gL10n->get('SYS_INFORMATIONS').'"></i>';
 		$table->addRowHeadingByArray($columnValues);
 		

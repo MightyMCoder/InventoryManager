@@ -3,7 +3,7 @@
  ***********************************************************************************************
  * inventory_manager_profile_addin.php
  *
- * Shows issued keys in a member´s profile
+ * Shows issued items in a member´s profile
  * 
  * Usage:
  * 
@@ -22,20 +22,20 @@ $getUserUuid   = admFuncVariableIsValid($_GET, 'user_uuid', 'string', array('def
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');                    
 require_once(__DIR__ . '/common_function.php');
-require_once(__DIR__ . '/classes/keys.php');
+require_once(__DIR__ . '/classes/items.php');
 require_once(__DIR__ . '/classes/configtable.php');
 
-$pPreferences = new ConfigTablePIM();                  
+$pPreferences = new CConfigTablePIM();                  
 $pPreferences->read();
 
 $user = new User($gDb, $gProfileFields);
 $user->readDataByUuid($getUserUuid);
 
-$keys = new Keys($gDb, $gCurrentOrgId);
-$keys->readKeysByUser($gCurrentOrgId, $user->getValue('usr_id'));
+$items = new CItems($gDb, $gCurrentOrgId);
+$items->readItemsByUser($gCurrentOrgId, $user->getValue('usr_id'));
 
 //eine Anzeige nur, wenn dieses Mitglied auch einen Schlüssel besitzt
-if (sizeof($keys->keys) === 0)
+if (sizeof($items->items) === 0)
 {
     return;
 }
@@ -51,16 +51,16 @@ $page->addHtml('<a class="admidio-icon-link float-right" href="'. SecurityUtils:
     	        </a>');
 $page->addHtml('</div><div id="inventory_manager_box_body" class="card-body">');
 
-foreach ($keys->keys as $key)
+foreach ($items->items as $item)
 {
-    $keys->readKeyData($key['imk_id'], $gCurrentOrgId);
+    $items->readItemData($item['imi_id'], $gCurrentOrgId);
     
 	$page->addHtml('<li class= "list-group-item">');
 	$page->addHtml('<div style="text-align: left;float:left;">');
 
-	$content = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL. FOLDER_PLUGINS . PLUGIN_FOLDER .'/keys_edit_new.php', array('key_id' => $key['imk_id'])).'">'.$keys->getValue('KEYNAME').'</a>';
+	$content = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL. FOLDER_PLUGINS . PLUGIN_FOLDER .'/items_edit_new.php', array('item_id' => $item['imi_id'])).'">'.$items->getValue('ITEMNAME').'</a>';
 	
-	$contentAdd = $keys->getValue($pPreferences->config['Optionen']['profile_addin']);
+	$contentAdd = $items->getValue($pPreferences->config['Optionen']['profile_addin']);
 	if (!empty($contentAdd))
 	{
 	    if (strlen($contentAdd) > 50)
@@ -70,7 +70,7 @@ foreach ($keys->keys as $key)
 	    $content .= ' - '.$contentAdd;
 	}
 	
-	if ($key['imk_former'])
+	if ($item['imi_former'])
 	{
 	    $content = '<s>'.$content.'</s>';
 	}
@@ -78,10 +78,10 @@ foreach ($keys->keys as $key)
 
 	$page->addHtml('</div><div style="text-align: right;float:right;">');
 	
-	if (!empty($keys->getValue('RECEIVED_ON')))
+	if (!empty($items->getValue('RECEIVED_ON')))
 	{
-	    $content = $gL10n->get('PIM_RECEIVED_ON').' '.date('d.m.Y',strtotime($keys->getValue('RECEIVED_ON')));
-	    if ($key['imk_former'])
+	    $content = $gL10n->get('PIM_RECEIVED_ON').' '.date('d.m.Y',strtotime($items->getValue('RECEIVED_ON')));
+	    if ($item['imi_former'])
 	    {
 	        $content = '<s>'.$content.'</s>';
 	    }
@@ -90,14 +90,14 @@ foreach ($keys->keys as $key)
 	
 	if ($pPreferences->isPffInst())
 	{
-	    $page->addHtml('<a class="admidio-icon-link" href="'. SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS .'/'.PLUGIN_FOLDER.'/keys_export_to_pff.php', array('key_id' => $key['imk_id'])). '">
-    	                       <i class="fas fa-print" data-toggle="tooltip" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_KEY_PRINT').'"></i>
+	    $page->addHtml('<a class="admidio-icon-link" href="'. SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS .'/'.PLUGIN_FOLDER.'/items_export_to_pff.php', array('item_id' => $item['imi_id'])). '">
+    	                       <i class="fas fa-print" data-toggle="tooltip" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT').'"></i>
     	                </a>');
 	}
 	if (isUserAuthorizedForPreferences())
 	{
-	    $page->addHtml('<a class="admidio-icon-link" href="'. SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS .'/'.PLUGIN_FOLDER.'/keys_delete.php', array('key_id' => $key['imk_id'], 'key_former' => $key['imk_former'])). '">
-    	                       <i class="fas fa-minus-circle" data-toggle="tooltip" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_KEY_DELETE').'"></i>
+	    $page->addHtml('<a class="admidio-icon-link" href="'. SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS .'/'.PLUGIN_FOLDER.'/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])). '">
+    	                       <i class="fas fa-minus-circle" data-toggle="tooltip" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE').'"></i>
     	                </a>');
 	}
 	

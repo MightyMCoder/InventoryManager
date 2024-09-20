@@ -1,7 +1,7 @@
 <?php
 /**
  ***********************************************************************************************
- * Overview and maintenance of key fields
+ * Overview and maintenance of item fields
  *
  * @copyright The Admidio Team
  * @see https://www.admidio.org/
@@ -13,9 +13,9 @@
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/common_function.php');
 require_once(__DIR__ . '/classes/configtable.php');
-require_once(__DIR__ . '/classes/keys.php');
+require_once(__DIR__ . '/classes/items.php');
 
-$pPreferences = new ConfigTablePIM();
+$pPreferences = new CConfigTablePIM();
 $pPreferences->read();
 
 // only authorized user are allowed to start this module
@@ -26,13 +26,13 @@ if (!isUserAuthorizedForPreferences())
 }
 
 // set module headline
-$headline = $gL10n->get('PLG_INVENTORY_MANAGER_KEYFIELDS');
+$headline = $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDS');
 
 $gNavigation->addUrl(CURRENT_URL, $headline);
 
 unset($_SESSION['fields_request']);
 
-$keys = new Keys($gDb, $gCurrentOrgId);
+$items = new CItems($gDb, $gCurrentOrgId);
 
 // create html page object
 $page = new HtmlPage('plg-inventory-manager-fields', $headline);
@@ -90,7 +90,7 @@ $page->addJavascript('
     }
 ');
 
-$page->addPageFunctionsMenuItem('admMenuItemPreferencesLists', $gL10n->get('PLG_INVENTORY_MANAGER_KEYFIELD_CREATE'), ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/fields_edit_new.php',  'fa-plus-circle');
+$page->addPageFunctionsMenuItem('admMenuItemPreferencesLists', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE'), ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/fields_edit_new.php',  'fa-plus-circle');
     
 // Create table
 $table = new HtmlTable('tbl_profile_fields', $page, true);
@@ -112,18 +112,18 @@ $description = '';
 $mandatory   = '';
 $imfSystem   = '';     
 
-foreach ($keys->mKeyFields as $keyField)
+foreach ($items->mItemFields as $itemField)
 {	
-    $imfId = (int) $keyField->getValue('imf_id');
+    $imfId = (int) $itemField->getValue('imf_id');
  
     // cut long text strings and provide tooltip
-    if($keyField->getValue('imf_description') === '')
+    if($itemField->getValue('imf_description') === '')
     {
         $fieldDescription = '&nbsp;';
     }
     else
     {
-        $fieldDescription = $keyField->getValue('imf_description', 'database');
+        $fieldDescription = $itemField->getValue('imf_description', 'database');
 
         if(strlen($fieldDescription) > 60)
         {
@@ -136,7 +136,7 @@ foreach ($keys->mKeyFields as $keyField)
         }
     }
 
-    if ($keyField->getValue('imf_mandatory') == 1)
+    if ($itemField->getValue('imf_mandatory') == 1)
     {
         $mandatory = '<i class="fas fa-asterisk" data-toggle="tooltip" title="'.$gL10n->get('SYS_REQUIRED_INPUT').'"></i>';
     }
@@ -145,7 +145,7 @@ foreach ($keys->mKeyFields as $keyField)
         $mandatory = '<i class="fas fa-asterisk admidio-opacity-reduced" data-toggle="tooltip" title="'.$gL10n->get('ORG_FIELD_NOT_MANDATORY').'"></i>';
     }
 
-    $keyFieldText = array(
+    $itemFieldText = array(
     					'CHECKBOX'     => $gL10n->get('SYS_CHECKBOX'),
                         'DATE'         => $gL10n->get('SYS_DATE'),
                         'DROPDOWN'     => $gL10n->get('SYS_DROPDOWN_LISTBOX'),
@@ -157,7 +157,7 @@ foreach ($keys->mKeyFields as $keyField)
                         
     $imfSystem = '';  
            
-    if ($keyField->getValue('imf_system') == 1)
+    if ($itemField->getValue('imf_system') == 1)
     {
         $imfSystem .= '<i class="fas fa-trash invisible"></i>';
     }
@@ -169,14 +169,14 @@ foreach ($keys->mKeyFields as $keyField)
 
     // create array with all column values
     $columnValues = array(
-        '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL. FOLDER_PLUGINS . PLUGIN_FOLDER .'/fields_edit_new.php', array('imf_id' => $imfId)).'">'. convlanguagePIM($keyField->getValue('imf_name')).'</a> ',
+        '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL. FOLDER_PLUGINS . PLUGIN_FOLDER .'/fields_edit_new.php', array('imf_id' => $imfId)).'">'. convlanguagePIM($itemField->getValue('imf_name')).'</a> ',
         '<a class="admidio-icon-link" href="javascript:void(0)" onclick="moveCategory(\''.TableUserField::MOVE_UP.'\', '.$imfId.')">
             <i class="fas fa-chevron-circle-up" data-toggle="tooltip" title="' . $gL10n->get('SYS_MOVE_UP', array('SYS_PROFILE_FIELD')) . '"></i></a>
         <a class="admidio-icon-link" href="javascript:void(0)" onclick="moveCategory(\''.TableUserField::MOVE_DOWN.'\', '.$imfId.')">
             <i class="fas fa-chevron-circle-down" data-toggle="tooltip" title="' . $gL10n->get('SYS_MOVE_DOWN', array('SYS_PROFILE_FIELD')) . '"></i></a>',     
         $fieldDescription,
         $mandatory,
-    	$keyFieldText[$keyField->getValue('imf_type')],
+    	$itemFieldText[$itemField->getValue('imf_type')],
         $imfSystem
     );
     $table->addRowByArray($columnValues, 'row_imf_'.$imfId);

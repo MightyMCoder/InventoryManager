@@ -1,7 +1,7 @@
 <?php
 /**
  ***********************************************************************************************
- * Save key data
+ * Save item data
  *
  * @copyright The Admidio Team
  * @see https://www.admidio.org/
@@ -12,23 +12,23 @@
 /******************************************************************************
  * Parameters:
  *
- * key_id    : >0 -  ID of the key who should be saved
- * 			   0  -  a new key will be added 
- * copy_numer: number of new keys
+ * item_id    : >0 -  ID of the item who should be saved
+ * 			   0  -  a new item will be added 
+ * copy_numer: number of new items
  * copy_field: field for a current number
  *
  *****************************************************************************/
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/classes/keys.php');
+require_once(__DIR__ . '/classes/items.php');
 require_once(__DIR__ . '/common_function.php');
 
 // Initialize and check the parameters
-$getKeyId       = admFuncVariableIsValid($_GET, 'key_id',  'int');
+$getItemId       = admFuncVariableIsValid($_GET, 'item_id',  'int');
 $postCopyNumber = admFuncVariableIsValid($_POST, 'copy_number', 'numeric', array('defaultValue' => 1));
 $postCopyField  = admFuncVariableIsValid($_POST, 'copy_field',  'int');
 
-$keys = new Keys($gDb, $gCurrentOrgId);
+$items = new CItems($gDb, $gCurrentOrgId);
 
 $startIdx = 1;
 if ($postCopyField > 0)												// a field for a current number was selected	
@@ -44,28 +44,28 @@ for ($i = $startIdx; $i < $stopIdx; ++$i)
 {
 	$_POST['imf-'. $postCopyField] = $i;
 
-	$keys->readKeyData($getKeyId, $gCurrentOrgId);
+	$items->readItemData($getItemId, $gCurrentOrgId);
 	
-	if ($getKeyId == 0)
+	if ($getItemId == 0)
 	{
-		$keys->getNewKeyId();
+		$items->getNewItemId();
 	}
 
-	// check all key fields
-	foreach ($keys->mKeyFields as $keyField)
+	// check all item fields
+	foreach ($items->mItemFields as $itemField)
 	{
-    	$postId = 'imf-'. $keyField->getValue('imf_id');
+    	$postId = 'imf-'. $itemField->getValue('imf_id');
 
     	if (isset($_POST[$postId]))
    	 	{
-        	if ((strlen($_POST[$postId]) === 0 && $keyField->getValue('imf_mandatory') == 1))
+        	if ((strlen($_POST[$postId]) === 0 && $itemField->getValue('imf_mandatory') == 1))
         	{
-            	$gMessage->show($gL10n->get('SYS_FIELD_EMPTY', array(convlanguagePIM($keyField->getValue('imf_name')))));
+            	$gMessage->show($gL10n->get('SYS_FIELD_EMPTY', array(convlanguagePIM($itemField->getValue('imf_name')))));
             	// => EXIT
         	}
 
-        	// Wert aus Feld in das Key-Klassenobjekt schreiben
-        	$returnCode = $keys->setValue($keyField->getValue('imf_name_intern'), $_POST[$postId]);
+        	// Wert aus Feld in das Item-Klassenobjekt schreiben
+        	$returnCode = $items->setValue($itemField->getValue('imf_name_intern'), $_POST[$postId]);
 
         	// Fehlermeldung
         	if (!$returnCode)
@@ -77,21 +77,21 @@ for ($i = $startIdx; $i < $stopIdx; ++$i)
     	else
     	{
         	// Checkboxen uebergeben bei 0 keinen Wert, deshalb diesen hier setzen
-        	if ($keyField->getValue('imf_type') === 'CHECKBOX')
+        	if ($itemField->getValue('imf_type') === 'CHECKBOX')
         	{
-            	$keys->setValue($keyField->getValue('imf_name_intern'), '0');
+            	$items->setValue($itemField->getValue('imf_name_intern'), '0');
         	}
     	}
 	}
 
 	/*------------------------------------------------------------*/
-	// Save key data to database
+	// Save item data to database
 	/*------------------------------------------------------------*/
 	$gDb->startTransaction();
 
 	try
 	{
-		$keys->saveKeyData();
+		$items->saveItemData();
 	}
 	catch(AdmException $e)
 	{
@@ -105,8 +105,8 @@ for ($i = $startIdx; $i < $stopIdx; ++$i)
 
 $gNavigation->deleteLastUrl();
 
-// go back to key view
-if ($gNavigation->count() > 2)                               // only in key copy 
+// go back to item view
+if ($gNavigation->count() > 2)                               // only in item copy 
 {
 	$gNavigation->deleteLastUrl();
 }

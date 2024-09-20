@@ -11,10 +11,10 @@
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/common_function.php');
-require_once(__DIR__ . '/classes/keys.php');
+require_once(__DIR__ . '/classes/items.php');
 require_once(__DIR__ . '/classes/configtable.php');
 
-$pPreferences = new ConfigTablePIM();
+$pPreferences = new CConfigTablePIM();
 $pPreferences->read();
 
 // only authorized user are allowed to start this module
@@ -86,21 +86,21 @@ $page->addHtml('
         <div class="accordion" id="accordion_preferences">');
 
 /*
-// PANEL: KEYCREATE
+// PANEL: ITEMCREATE
 
-$formKeyCreate = new HtmlForm('keycreate_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/keys_edit_new.php', array('key_id' => 0)), $page);
-$formKeyCreate->addSubmitButton('btn_save_keycreate', $gL10n->get('PLG_INVENTORY_MANAGER_KEY_CREATE'), array('icon' => 'fa-plus-circle', 'class' => 'offset-sm-3'));
-$formKeyCreate->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_KEY_CREATE_DESC'));
+$formItemCreate = new HtmlForm('itemcreate_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/items_edit_new.php', array('item_id' => 0)), $page);
+$formItemCreate->addSubmitButton('btn_save_itemcreate', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE'), array('icon' => 'fa-plus-circle', 'class' => 'offset-sm-3'));
+$formItemCreate->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE_DESC'));
 
-$page->addHtml(getPreferencePanel('preferences', 'keycreate', $gL10n->get('PLG_INVENTORY_MANAGER_KEY_CREATE'), 'fas fa-plus-circle', $formKeyCreate->show()));
+$page->addHtml(getPreferencePanel('preferences', 'itemcreate', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE'), 'fas fa-plus-circle', $formItemCreate->show()));
 */
-// PANEL: KEYFIELDS
+// PANEL: ITEMFIELDS
 
-$formKeyFields = new HtmlForm('keyfields_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/fields.php'), $page);    
-$formKeyFields->addSubmitButton('btn_save_keyfields', $gL10n->get('PLG_INVENTORY_MANAGER_KEYFIELDSMANAGE'), array('icon' => 'fa-edit', 'class' => 'offset-sm-3'));
-$formKeyFields->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_KEYFIELDSMANAGE_DESC'));
+$formItemFields = new HtmlForm('itemfields_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/fields.php'), $page);    
+$formItemFields->addSubmitButton('btn_save_itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE'), array('icon' => 'fa-edit', 'class' => 'offset-sm-3'));
+$formItemFields->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE_DESC'));
                         
-$page->addHtml(getPreferencePanel('preferences', 'keyfields', $gL10n->get('PLG_INVENTORY_MANAGER_KEYFIELDSMANAGE'), 'fas fa-edit', $formKeyFields->show()));
+$page->addHtml(getPreferencePanel('preferences', 'itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE'), 'fas fa-edit', $formItemFields->show()));
 /*
 // PANEL: SYNCHRONIZE
 
@@ -118,7 +118,7 @@ $page->addHtml(getPreferencePanel('preferences', 'synchronize', $gL10n->get('PLG
 if ($pPreferences->isPffInst())
 {                      
     $formInterfacePFF = new HtmlForm('interface_pff_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences_function.php', array('form' => 'interface_pff')), $page, array('class' => 'form-preferences'));
-    $formInterfacePFF->addSelectBox('interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_CONFIGURATION'), $pPreferences->configpff['Formular']['desc'], array( 'defaultValue' => $pPreferences->config['Optionen']['interface_pff'], 'showContextDependentFirstEntry' => false));
+    $formInterfacePFF->addSelectBox('interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_CONFIGURATION'), $pPreferences->configPff['Formular']['desc'], array( 'defaultValue' => $pPreferences->config['Optionen']['interface_pff'], 'showContextDependentFirstEntry' => false));
     $formInterfacePFF->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_INTERFACE_PFF_DESC'));
     $formInterfacePFF->addSubmitButton('btn_save_interface_pff', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
  
@@ -129,17 +129,17 @@ if ($pPreferences->isPffInst())
 
 $formProfileAddin = new HtmlForm('profile_addin_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences_function.php', array('form' => 'profile_addin')), $page, array('class' => 'form-preferences'));
 
-$keys = new Keys($gDb, $gCurrentOrgId);
+$items = new CItems($gDb, $gCurrentOrgId);
 $valueList = array();
-foreach ($keys->mKeyFields as $keyField)
+foreach ($items->mItemFields as $itemField)
 {
-    if (!in_array($keyField->getValue('imf_name_intern'), array('ITEMNAME', 'RECEIVER', 'RECEIVED_ON'), true))
+    if (!in_array($itemField->getValue('imf_name_intern'), array('ITEMNAME', 'RECEIVER', 'RECEIVED_ON'), true))
     {
-        $valueList[$keyField->getValue('imf_name_intern')] = $keyField->getValue('imf_name');
+        $valueList[$itemField->getValue('imf_name_intern')] = $itemField->getValue('imf_name');
     }
 }
 
-$formProfileAddin->addSelectBox('profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_KEYFIELD'), $valueList, array('defaultValue' => $pPreferences->config['Optionen']['profile_addin'], 'showContextDependentFirstEntry' => true, 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC', 'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2'));
+$formProfileAddin->addSelectBox('profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD'), $valueList, array('defaultValue' => $pPreferences->config['Optionen']['profile_addin'], 'showContextDependentFirstEntry' => true, 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC', 'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2'));
 $formProfileAddin->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 
 $page->addHtml(getPreferencePanel('preferences', 'profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_PROFILE_ADDIN'), 'fas fa-users-cog', $formProfileAddin->show()));

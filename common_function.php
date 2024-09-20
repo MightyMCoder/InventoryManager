@@ -25,9 +25,9 @@ if (!defined('TBL_INVENTORY_MANAGER_DATA'))
 {
 	define('TBL_INVENTORY_MANAGER_DATA',    $g_tbl_praefix . '_inventory_manager_data');
 }
-if (!defined('TBL_INVENTORY_MANAGER_KEYS'))
+if (!defined('TBL_INVENTORY_MANAGER_ITEMS'))
 {
-	define('TBL_INVENTORY_MANAGER_KEYS',    $g_tbl_praefix . '_inventory_manager_keys');
+	define('TBL_INVENTORY_MANAGER_ITEMS',    $g_tbl_praefix . '_inventory_manager_items');
 }
 if (!defined('TBL_INVENTORY_MANAGER_LOG'))
 {

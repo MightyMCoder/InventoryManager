@@ -1,7 +1,7 @@
 <?php
 /**
  ***********************************************************************************************
- * Delete a key field
+ * Delete a item field
  *
  * @copyright The Admidio Team
  * @see https://www.admidio.org/
@@ -12,21 +12,21 @@
 /******************************************************************************
  * Parameters:
  *        
- * mode       : 1 - Menu and preview of the key field who should be deleted
- *              2 - Delete a key field
- * imf_id     : ID of the key field who should be deleted
+ * mode       : 1 - Menu and preview of the item field who should be deleted
+ *              2 - Delete a item field
+ * imf_id     : ID of the item field who should be deleted
  *
  *****************************************************************************/
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/common_function.php');
-require_once(__DIR__ . '/classes/keys.php');
+require_once(__DIR__ . '/classes/items.php');
 require_once(__DIR__ . '/classes/configtable.php');
 
 $getMode  = admFuncVariableIsValid($_GET, 'mode',   'numeric', array('defaultValue' => 1));
 $getimfId = admFuncVariableIsValid($_GET, 'imf_id', 'int');
 
-$pPreferences = new ConfigTablePIM();
+$pPreferences = new CConfigTablePIM();
 $pPreferences->read();
 
 // only authorized user are allowed to start this module
@@ -35,13 +35,13 @@ if (!isUserAuthorizedForPreferences())
 	$gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 
-$keyField = new TableAccess($gDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf', $getimfId );
+$itemField = new TableAccess($gDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf', $getimfId );
 
 switch ($getMode)
 {
     case 1:
     		
-    	$headline = $gL10n->get('PLG_INVENTORY_MANAGER_KEYFIELD_DELETE');
+    	$headline = $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_DELETE');
     		
     	// create html page object
     	$page = new HtmlPage('plg-inventory-manager-fields-delete', $headline);
@@ -65,19 +65,19 @@ switch ($getMode)
     	// add current url to navigation stack
     	$gNavigation->addUrl(CURRENT_URL, $headline);
     		
-    	$page->addHtml('<p class="lead">'.$gL10n->get('PLG_INVENTORY_MANAGER_KEYFIELD_DELETE_DESC').'</p>');
+    	$page->addHtml('<p class="lead">'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_DELETE_DESC').'</p>');
     		
     	// show form
-    	$form = new HtmlForm('keyfield_delete_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/fields_delete.php', array('imf_id' => $getimfId, 'mode' => 2)), $page);
+    	$form = new HtmlForm('itemfield_delete_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/fields_delete.php', array('imf_id' => $getimfId, 'mode' => 2)), $page);
     	
-    	$form->addInput('imf_name', $gL10n->get('SYS_NAME'), $keyField->getValue('imf_name', 'database'),
+    	$form->addInput('imf_name', $gL10n->get('SYS_NAME'), $itemField->getValue('imf_name', 'database'),
     			array('maxLength' => 100, 'property' => HtmlForm::FIELD_DISABLED));
     	
     	// show internal field name for information
-    	$form->addInput('imf_name_intern', $gL10n->get('SYS_INTERNAL_NAME'), $keyField->getValue('imf_name_intern'),
+    	$form->addInput('imf_name_intern', $gL10n->get('SYS_INTERNAL_NAME'), $itemField->getValue('imf_name_intern'),
     			array('maxLength' => 100, 'property' => HtmlForm::FIELD_DISABLED));
     	
-    	$keyFieldText = array(
+    	$itemFieldText = array(
     			'CHECKBOX'     => $gL10n->get('SYS_CHECKBOX'),
     			'DATE'         => $gL10n->get('SYS_DATE'),
     			'DECIMAL'      => $gL10n->get('SYS_DECIMAL_NUMBER'),
@@ -87,17 +87,17 @@ switch ($getMode)
     			'TEXT'         => $gL10n->get('SYS_TEXT').' (100 '.$gL10n->get('SYS_CHARACTERS').')',
     			'TEXT_BIG'     => $gL10n->get('SYS_TEXT').' (4000 '.$gL10n->get('SYS_CHARACTERS').')',
     	);
-    	asort($keyFieldText);
+    	asort($itemFieldText);
     
-    	$form->addInput('imf_type', $gL10n->get('ORG_DATATYPE'), $keyFieldText[$keyField->getValue('imf_type')],
+    	$form->addInput('imf_type', $gL10n->get('ORG_DATATYPE'), $itemFieldText[$itemField->getValue('imf_type')],
     				array('maxLength' => 30, 'property' => HtmlForm::FIELD_DISABLED));
     	
     	$form->addMultilineTextInput('imf_value_list', $gL10n->get('ORG_VALUE_LIST'),
-    			$keyField->getValue('imf_value_list', 'database'), 6,
+    			$itemField->getValue('imf_value_list', 'database'), 6,
     			array('property' => HtmlForm::FIELD_DISABLED));
     	
     	$form->addMultilineTextInput('imf_description', $gL10n->get('SYS_DESCRIPTION'),
-    			$keyField->getValue('imf_description'), 3,
+    			$itemField->getValue('imf_description'), 3,
     			array( 'property' => HtmlForm::FIELD_DISABLED));
     	
         $form->addSubmitButton('btn_delete', $gL10n->get('SYS_DELETE'), array('icon' => 'fa-trash-alt', 'class' => ' offset-sm-3'));
@@ -122,9 +122,9 @@ switch ($getMode)
                     OR imf_org_id IS NULL ) ';
     	$gDb->queryPrepared($sql, array($getimfId, $gCurrentOrgId));
     	
-    	// go back to key view
+    	// go back to item view
     	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
-    	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_KEYFIELD_DELETED'));
+    	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_DELETED'));
 
     	break;
     	// => EXIT

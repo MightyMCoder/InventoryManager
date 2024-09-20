@@ -12,34 +12,34 @@
 /******************************************************************************
  * Parameters:
  *
- * key_id     : ID of the key who should be printed
+ * item_id     : ID of the item who should be printed
  *
  *****************************************************************************/
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/classes/keys.php');
+require_once(__DIR__ . '/classes/items.php');
 require_once(__DIR__ . '/common_function.php');
 require_once(__DIR__ . '/classes/configtable.php');
 
 // Initialize and check the parameters
-$getKeyId = admFuncVariableIsValid($_GET, 'key_id',  'int');
+$getItemId = admFuncVariableIsValid($_GET, 'item_id',  'int');
 
 $pimArray = array();
 
-$pPreferences = new ConfigTablePIM();
+$pPreferences = new CConfigTablePIM();
 $pPreferences->read();
 $pPreferences->readPff();
 
-if (substr_count($gNavigation->getUrl(), 'keys_export_to_pff') === 1)
+if (substr_count($gNavigation->getUrl(), 'items_export_to_pff') === 1)
 {
 	admRedirect(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER. '/inventory_manager.php');
 	// => EXIT
 }
 
-$headline = $gL10n->get('PLG_INVENTORY_MANAGER_KEY_PRINT');
+$headline = $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT');
 $gNavigation->addUrl(CURRENT_URL, $headline);
 
-if (!array_key_exists($pPreferences->config['Optionen']['interface_pff'], $pPreferences->configpff['Formular']['desc']))
+if (!array_key_exists($pPreferences->config['Optionen']['interface_pff'], $pPreferences->configPff['Formular']['desc']))
 {
     $gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_PFF_CONFIG_NOT_FOUND'));
 }
@@ -48,26 +48,26 @@ else
     $pimArray['form_id'] = $pPreferences->config['Optionen']['interface_pff'];
 }
 
-$keys = new Keys($gDb, $gCurrentOrgId);
-$keys->readKeyData($getKeyId, $gCurrentOrgId);
+$items = new CItems($gDb, $gCurrentOrgId);
+$items->readItemData($getItemId, $gCurrentOrgId);
     	
-foreach($keys->mKeyFields as $keyField)
+foreach($items->mItemFields as $itemField)
 {    		
-	$imfNameIntern = $keyField->getValue('imf_name_intern');
+	$imfNameIntern = $itemField->getValue('imf_name_intern');
     	
-	$content = $keys->getValue($imfNameIntern, 'database');
+	$content = $items->getValue($imfNameIntern, 'database');
     	
-    if ($keys->getProperty($imfNameIntern, 'imf_type') === 'DATE')
+    if ($items->getProperty($imfNameIntern, 'imf_type') === 'DATE')
     {
-    	$content = $keys->getHtmlValue($imfNameIntern, $content);
+    	$content = $items->getHtmlValue($imfNameIntern, $content);
     }
-    elseif ( $keys->getProperty($imfNameIntern, 'imf_type') === 'DROPDOWN'
-    	  || $keys->getProperty($imfNameIntern, 'imf_type') === 'RADIO_BUTTON')
+    elseif ( $items->getProperty($imfNameIntern, 'imf_type') === 'DROPDOWN'
+    	  || $items->getProperty($imfNameIntern, 'imf_type') === 'RADIO_BUTTON')
     {
-    	$arrListValues = $keys->getProperty($imfNameIntern, 'imf_value_list', 'text');
+    	$arrListValues = $items->getProperty($imfNameIntern, 'imf_value_list', 'text');
     	$content = $arrListValues[$content];
     }
-    elseif ($keys->getProperty($imfNameIntern, 'imf_type') === 'CHECKBOX')
+    elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'CHECKBOX')
     {
     	if ($content == 1)
     	{

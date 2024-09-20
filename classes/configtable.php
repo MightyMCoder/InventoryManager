@@ -1,77 +1,47 @@
 <?php
 /**
  ***********************************************************************************************
- * Class manages the configuration table
+ * Class to manage the configuration table "[admidio-praefix]_plugin_preferences" of Plugin InventoryManager
  *
  * @copyright The Admidio Team
  * @see http://www.admidio.org/
  * @license https://www.gnu.org/licenses/gpl-2.0.html GNU General Public License v2.0 only
+ * 
+ * methods:
+ * 
+ * isPffInst()							: used to check if plugin FormFiller is installed; if yes returns true otherwise false
+ * pffDir()								: used to get the installation directory of the Plugin FormFiller; returns false if it doesn't exists or if it exists multiple times
+ * init()								: used to check if the configuration table exists, if not creates it and sets default values
+ * write()								: used to write the configuration data to database
+ * read()						        : used to read the configuration data from database
+ * checkForUpdate()						: used to compare version and stand of file "/../version.php" with data from database
+ * deleteConfigData($deinstOrgSelect)	: used to delete configuration data in database
+ * deleteItemData($deinstOrgSelect)		: used to delete item data in database
+ * 
  ***********************************************************************************************
  */
 
-/******************************************************************************
- * Klasse verwaltet die Konfigurationstabelle "adm_plugin_preferences"
- *
- * Folgende Methoden stehen zur Verfuegung:
- *
- * isPffInst()							  - gibt true zurueck, wenn das Plugin FormFiller installiert ist, ansonsten false
- * pffDir()                               - gibt das Directory des Plugins FormFiller zurueck,
- * 											gibt false zurueck, wenn es nicht oder mehr als einmal existiert
- * init()						          -	prueft, ob die Konfigurationstabelle existiert,
- * 									        legt sie ggf. an und befuellt sie mit Default-Werten
- * save() 						          - schreibt die Konfiguration in die Datenbank
- * read()						          -	liest die Konfigurationsdaten aus der Datenbank
- * checkForUpdate()				          -	vergleicht die Angaben in der Datei version.php
- * 									        mit den Daten in der DB
- * deleteConfigData($deinst_org_select)   -	loescht Konfigurationsdaten in der Datenbank
- * deleteKeyData($deinst_org_select)      - Loescht Nutzerdaten in der Datenbank
- *
- *****************************************************************************/
-     	
-class ConfigTablePIM
+class CConfigTablePIM
 {
-	public $config = array();        ///< Array mit allen Konfigurationsdaten
-	public $configpff = array();     ///< Array mit allen Konfigurationsdaten
+	public $config = array();        		// array with configuration-data
+	public $configPff = array();     		// array with configuration-data of (P)lugin (f)orm (f)iller
 
-	protected $table_name;
-	protected static $shortcut = 'PIM';
-	protected static $version;
-	protected static $stand;
-	protected static $dbtoken;
-	protected static $dbtoken2;
-	protected $isPffInst; 			// (is) (P)lugin (f)orm (f)iller (Inst)alled
-	protected $pffDir;				// (p)lugin (f)orm (f)iller (Dir)ectory 
-	
-	public $config_default = array();	
-	
+	protected $table_name;					// db table name *_plugin_preferences
+	protected $isPffInst; 					// (is) (P)lugin (f)orm (f)iller (Inst)alled
+	protected $pffDir;						// (p)lugin (f)orm (f)iller (Dir)ectory 
+
+	protected const SHORTCUT = 'PIM';		// praefix for (P)lugin(I)nventory(M)anager preferences
+
     /**
-     * ConfigTablePIM constructor
+     * CConfigTablePIM constructor
      */
 	public function __construct()
 	{
-		global $g_tbl_praefix;
-
 		require_once(__DIR__ . '/../version.php');
-		include(__DIR__ . '/../configdata.php');
+		require_once(__DIR__ . '/../configdata.php');
 		
-		$this->table_name = $g_tbl_praefix.'_plugin_preferences';
+		$this->table_name = TABLE_PREFIX .'_plugin_preferences';
 
-		if (isset($plugin_version))
-		{
-			self::$version = $plugin_version;
-		}
-		if (isset($plugin_stand))
-		{
-			self::$stand = $plugin_stand;
-		}
-		if (isset($dbtoken))
-		{
-			self::$dbtoken = $dbtoken;
-		}
-
-		self::$dbtoken2 = '#!#'; 
-
-		$this->config_default = $config_default;
 		$this->findPff();
 		$this->checkPffInst();
 	}
@@ -82,7 +52,7 @@ class ConfigTablePIM
 	 */
 	protected function checkPffInst()
 	{
-	    // pruefen, ob die Konfigurationstabelle vorhanden ist
+	    // check if configuration table for plugin FormFiller exists
 	    $sql = 'SHOW TABLES LIKE \''.$this->table_name.'\' ';
 	    $statement = $GLOBALS['gDb']->queryPrepared($sql);
 	    
@@ -166,18 +136,15 @@ class ConfigTablePIM
 	}
 	
     /**
-     * Prueft, ob die Konfigurationstabelle existiert, legt sie ggf an und befuellt sie mit Standardwerten
+     * checks if the configuration table exists, if necessarry creats it and fills it with default configuration data
      * @return void
      */
 	public function init()
 	{
-		global $gProfileFields;
-	
-		// pruefen, ob es die Tabelle bereits gibt
+		#region create fields-table if not exists
 		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_FIELDS.'\' ';
 		$statement = $GLOBALS['gDb']->query($sql);
 		
-		// Tabelle anlegen, wenn es sie noch nicht gibt
 		if (!$statement->rowCount())
 		{
 			$sql='CREATE TABLE '.TBL_INVENTORY_MANAGER_FIELDS.'
@@ -189,7 +156,7 @@ class ConfigTablePIM
 				imf_sequence int(10) unsigned NOT NULL,
 				imf_system boolean  NOT NULL DEFAULT \'0\',	
 				imf_mandatory boolean  NOT NULL DEFAULT \'0\',	
-	  			imf_description text,
+	  			imf_description text NOT NULL DEFAULT \'\',
 				imf_value_list text,
 	  			imf_usr_id_create int(10) unsigned DEFAULT NULL,
 	  			imf_timestamp_create timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -198,49 +165,52 @@ class ConfigTablePIM
 	  			PRIMARY KEY (imf_id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
 			    $GLOBALS['gDb']->query($sql);
 		}
-		
+		#endregion	
+
+		#region create data-table if not exists
 		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_DATA.'\' ';
 		$statement = $GLOBALS['gDb']->query($sql);
 		
-		// Tabelle anlegen, wenn es sie noch nicht gibt
 		if (!$statement->rowCount())
 		{
 			$sql='CREATE TABLE '.TBL_INVENTORY_MANAGER_DATA.'
 				(imd_id int(10) unsigned NOT NULL AUTO_INCREMENT,
 	  			 imd_imf_id int(10) unsigned  NOT NULL,
-				 imd_imk_id int(10) unsigned  NOT NULL,
+				 imd_imi_id int(10) unsigned  NOT NULL,
 	  			 imd_value varchar(4000),
 	  			 PRIMARY KEY (imd_id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
 			     $GLOBALS['gDb']->query($sql);
 		}
+		#endregion
 		
-		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_KEYS.'\' ';
+		#region create items-table if not exists		
+		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_ITEMS.'\' ';
 		$statement = $GLOBALS['gDb']->query($sql);
-		
-		// Tabelle anlegen, wenn es sie noch nicht gibt
+
 		if (!$statement->rowCount())
 		{
-			$sql='CREATE TABLE '.TBL_INVENTORY_MANAGER_KEYS.'
-				(imk_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  			imk_org_id int(10) unsigned NOT NULL,
-				imk_former boolean DEFAULT 0,	
-				imk_usr_id_create int(10) unsigned DEFAULT NULL,
-	  			imk_timestamp_create timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-	  			imk_usr_id_change int(10) unsigned DEFAULT NULL,
-	  			imk_timestamp_change timestamp NULL DEFAULT NULL,
-	  			PRIMARY KEY (imk_id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
+			$sql='CREATE TABLE '.TBL_INVENTORY_MANAGER_ITEMS.'
+				(imi_id int(10) unsigned NOT NULL AUTO_INCREMENT,
+	  			imi_org_id int(10) unsigned NOT NULL,
+				imi_former boolean DEFAULT 0,	
+				imi_usr_id_create int(10) unsigned DEFAULT NULL,
+	  			imi_timestamp_create timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+	  			imi_usr_id_change int(10) unsigned DEFAULT NULL,
+	  			imi_timestamp_change timestamp NULL DEFAULT NULL,
+	  			PRIMARY KEY (imi_id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
 			    $GLOBALS['gDb']->query($sql);
 		}
-		
+		#endregion
+
+		#region create log-table if not exists
 		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_LOG.'\' ';
 		$statement = $GLOBALS['gDb']->query($sql);
 		
-		// Tabelle anlegen, wenn es sie noch nicht gibt
 		if (!$statement->rowCount())
 		{
 			$sql='CREATE TABLE '.TBL_INVENTORY_MANAGER_LOG.'
 				(iml_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-				iml_imk_id int(10) unsigned NOT NULL,	
+				iml_imi_id int(10) unsigned NOT NULL,	
 				iml_imf_id int(10) unsigned NOT NULL,	
 				iml_value_old varchar(4000),	
 				iml_value_new varchar(4000),	
@@ -250,6 +220,7 @@ class ConfigTablePIM
 	  			PRIMARY KEY (iml_id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
 			    $GLOBALS['gDb']->query($sql);
 		}
+		#endregion
 		
 		$sql = 'SELECT *
             	  FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
@@ -259,62 +230,60 @@ class ConfigTablePIM
 		
 		if ($statement->rowCount() == 0)                 
 		{
-			$keyField = new TableAccess($GLOBALS['gDb'], TBL_INVENTORY_MANAGER_FIELDS, 'imf');
-			$keyField->setValue('imf_org_id', (int) $GLOBALS['gCurrentOrgId']);
-			$keyField->setValue('imf_sequence', 1);
-			$keyField->setValue('imf_system', 1);
-			$keyField->setValue('imf_mandatory', 1);
-			$keyField->setValue('imf_name', 'PIM_ITEMNAME');
-			$keyField->setValue('imf_name_intern', 'ITEMNAME');
-			$keyField->setValue('imf_type', 'TEXT');
-			$keyField->setValue('imf_description', 'Der Name des Gegenstandes (z.B. Kerzen)');
-			$keyField->save();
+			$itemField = new TableAccess($GLOBALS['gDb'], TBL_INVENTORY_MANAGER_FIELDS, 'imf');
+			$itemField->setValue('imf_org_id', (int) $GLOBALS['gCurrentOrgId']);
+			$itemField->setValue('imf_sequence', 1);
+			$itemField->setValue('imf_system', 1);
+			$itemField->setValue('imf_mandatory', 1);
+			$itemField->setValue('imf_name', 'PIM_ITEMNAME');
+			$itemField->setValue('imf_name_intern', 'ITEMNAME');
+			$itemField->setValue('imf_type', 'TEXT');
+			$itemField->setValue('imf_description', 'Der Name des Gegenstandes');
+			$itemField->save();
 
-			$keyField = new TableAccess($GLOBALS['gDb'], TBL_INVENTORY_MANAGER_FIELDS, 'imf');
-			$keyField->setValue('imf_org_id', (int) $GLOBALS['gCurrentOrgId']);
-			$keyField->setValue('imf_sequence', 1);
-			$keyField->setValue('imf_system', 0);
-			$keyField->setValue('imf_mandatory', 1);
-			$keyField->setValue('imf_name', 'PIM_CATEGORY');
-			$keyField->setValue('imf_name_intern', 'CATEGORY');
-			$keyField->setValue('imf_type', 'DROPDOWN');
-			$keyField->setValue('imf_value_list', 'Allgemein');
-			$keyField->setValue('imf_description', 'Die Kategorie des Gegenstandes (z.B. Kerzen)');
-			$keyField->save();
+			$itemField = new TableAccess($GLOBALS['gDb'], TBL_INVENTORY_MANAGER_FIELDS, 'imf');
+			$itemField->setValue('imf_org_id', (int) $GLOBALS['gCurrentOrgId']);
+			$itemField->setValue('imf_sequence', 1);
+			$itemField->setValue('imf_system', 0);
+			$itemField->setValue('imf_mandatory', 1);
+			$itemField->setValue('imf_name', 'PIM_CATEGORY');
+			$itemField->setValue('imf_name_intern', 'CATEGORY');
+			$itemField->setValue('imf_type', 'DROPDOWN');
+			$itemField->setValue('imf_value_list', 'Allgemein');
+			$itemField->setValue('imf_description', 'Die Kategorie des Gegenstandes');
+			$itemField->save();
 		
-			$keyField = new TableAccess($GLOBALS['gDb'], TBL_INVENTORY_MANAGER_FIELDS, 'imf');
-			$keyField->setValue('imf_org_id', (int) $GLOBALS['gCurrentOrgId']);
-			$keyField->setValue('imf_sequence', 2);
-			$keyField->setValue('imf_system', 1);
-			$keyField->setValue('imf_mandatory', 0);
-			$keyField->setValue('imf_name', 'PIM_RECEIVER');
-			$keyField->setValue('imf_name_intern', 'RECEIVER');
-			$keyField->setValue('imf_type', 'TEXT');
-			$keyField->setValue('imf_description', 'Der Empfänger des Gegenstandes');
-			$keyField->save();
+			$itemField = new TableAccess($GLOBALS['gDb'], TBL_INVENTORY_MANAGER_FIELDS, 'imf');
+			$itemField->setValue('imf_org_id', (int) $GLOBALS['gCurrentOrgId']);
+			$itemField->setValue('imf_sequence', 2);
+			$itemField->setValue('imf_system', 0);
+			$itemField->setValue('imf_mandatory', 0);
+			$itemField->setValue('imf_name', 'PIM_RECEIVER');
+			$itemField->setValue('imf_name_intern', 'RECEIVER');
+			$itemField->setValue('imf_type', 'TEXT');
+			$itemField->setValue('imf_description', 'Der Empfänger des Gegenstandes');
+			$itemField->save();
 		
-			$keyField = new TableAccess($GLOBALS['gDb'], TBL_INVENTORY_MANAGER_FIELDS, 'imf');
-			$keyField->setValue('imf_org_id', (int) $GLOBALS['gCurrentOrgId']);
-			$keyField->setValue('imf_sequence', 3);
-			$keyField->setValue('imf_system', 1);
-			$keyField->setValue('imf_mandatory', 0);
-			$keyField->setValue('imf_name', 'PIM_RECEIVED_ON');
-			$keyField->setValue('imf_name_intern', 'RECEIVED_ON');
-			$keyField->setValue('imf_type', 'DATE');
-			$keyField->setValue('imf_description', 'Das Empfangsdatum des Gegenstandes');
-			$keyField->save();
+			$itemField = new TableAccess($GLOBALS['gDb'], TBL_INVENTORY_MANAGER_FIELDS, 'imf');
+			$itemField->setValue('imf_org_id', (int) $GLOBALS['gCurrentOrgId']);
+			$itemField->setValue('imf_sequence', 3);
+			$itemField->setValue('imf_system', 0);
+			$itemField->setValue('imf_mandatory', 0);
+			$itemField->setValue('imf_name', 'PIM_RECEIVED_ON');
+			$itemField->setValue('imf_name_intern', 'RECEIVED_ON');
+			$itemField->setValue('imf_type', 'DATE');
+			$itemField->setValue('imf_description', 'Das Empfangsdatum des Gegenstandes');
+			$itemField->save();
 		}
 
 		$config_ist = array();
 		
-		// pruefen, ob es die Tabelle bereits gibt
+		#region create preferences-table if not exists
 		$sql = 'SHOW TABLES LIKE \''.$this->table_name.'\' ';
    	 	$statement = $GLOBALS['gDb']->queryPrepared($sql);
     
-    	// Tabelle anlegen, wenn es sie noch nicht gibt
     	if (!$statement->rowCount())
     	{
-    		// Tabelle ist nicht vorhanden --> anlegen
         	$sql = 'CREATE TABLE '.$this->table_name.' (
             	plp_id 		integer     unsigned not null AUTO_INCREMENT,
             	plp_org_id 	integer   	unsigned not null,
@@ -327,83 +296,83 @@ class ConfigTablePIM
          		collate = utf8_unicode_ci';
     		    $GLOBALS['gDb']->queryPrepared($sql);
     	} 
-    
+		#endregion
+		
+		#region fill preferences-table		
 		$this->read();
 		
-		$this->config['Plugininformationen']['version'] = self::$version;
-		$this->config['Plugininformationen']['stand'] = self::$stand;
+		$this->config['Plugininformationen']['version'] = CPluginInfoPIM::getPluginVersion();
+		$this->config['Plugininformationen']['stand'] = CPluginInfoPIM::getPluginStand();
 	
-		// die eingelesenen Konfigurationsdaten in ein Arbeitsarray kopieren
-		$config_ist = $this->config;
+		// create temporary current configuration array
+		$configCurrent = $this->config;
 
-		// die Default-config durchlaufen
-		foreach ($this->config_default as $section => $sectiondata)
+		// loop through default config sections
+		foreach (CConfigDataPIM::CONFIG_DEFAULT as $section => $sectiondata)
     	{
-        	foreach ($sectiondata as $key => $value)
+        	foreach ($sectiondata as $item => $value)
         	{
-        		// gibt es diese Sektion bereits in der config?
-        		if (isset($config_ist[$section][$key]))
+        		// section exists?
+        		if (isset($configCurrent[$section][$item]))
         		{
-        			// wenn ja, diese Sektion in der Ist-config loeschen
-        			unset($config_ist[$section][$key]);
+        			// yes, delete it
+        			unset($configCurrent[$section][$item]);
         		}
         		else
         		{
-        			// wenn nicht, diese Sektion in der config anlegen und mit den Standardwerten aus der Soll-config befuellen
-        			$this->config[$section][$key] = $value;
+        			// no, create it
+        			$this->config[$section][$item] = $value;
         		}
         	}
-        	// leere Abschnitte (=leere Arrays) loeschen
-        	if ((isset($config_ist[$section]) && count($config_ist[$section]) == 0))
+        	// cleanup empty sections
+        	if ((isset($configCurrent[$section]) && count($configCurrent[$section]) == 0))
         	{
-        		unset($config_ist[$section]);
+        		unset($configCurrent[$section]);
         	}
     	}
     
-    	// die Ist-config durchlaufen 
-    	// jetzt befinden sich hier nur noch die DB-Eintraege, die nicht verwendet werden und deshalb: 
-    	// 1. in der DB geloescht werden koennen
-    	// 2. in der normalen config geloescht werden koennen
-		foreach ($config_ist as $section => $sectiondata)
+		// loop through current config sections and delete unused sections
+		foreach ($configCurrent as $section => $sectiondata)
     	{
-    		foreach ($sectiondata as $key => $value)
+    		foreach ($sectiondata as $item => $value)
         	{
-        		$plp_name = self::$shortcut.'__'.$section.'__'.$key;
+        		$plp_name = self::SHORTCUT.'__'.$section.'__'.$item;
 				$sql = 'DELETE FROM '.$this->table_name.'
         				      WHERE plp_name = ? 
         				        AND plp_org_id = ? ';
 				$GLOBALS['gDb']->queryPrepared($sql, array($plp_name, $GLOBALS['gCurrentOrgId']));
                 
-				unset($this->config[$section][$key]);
+				unset($this->config[$section][$item]);
         	}
-			// leere Abschnitte (=leere Arrays) loeschen
-        	if (count($this->config[$section]) === 0)
+			// cleanup empty sections
+        	if (count($this->config[$section]) == 0)
         	{
         		unset($this->config[$section]);
         	}
     	}
 
-    	// die aktualisierten und bereinigten Konfigurationsdaten in die DB schreiben 
-  		$this->save();
+    	// write new configuration to table
+  		$this->write();
+		#endregion
 	}
 
     /**
-     * Schreibt die Konfigurationsdaten in die Datenbank
+     * write the configuration data of plugin InventoryManager to database
      * @return void
      */
-	public function save()
+	public function write()
 	{
     	foreach ($this->config as $section => $sectiondata)
     	{
-        	foreach ($sectiondata as $key => $value)
+        	foreach ($sectiondata as $item => $value)
         	{
             	if (is_array($value))
             	{
-                	// um diesen Datensatz in der Datenbank als Array zu kennzeichnen, wird er von Doppelklammern eingeschlossen 
-            		$value = '(('.implode(self::$dbtoken,$value).'))';
+                	// data is enclosed in double brackets to mark this record as an array in database
+            		$value = '(('.implode(CConfigDataPIM::DB_TOKEN, $value).'))';
             	} 
             
-  				$plp_name = self::$shortcut.'__'.$section.'__'.$key;
+  				$plp_name = self::SHORTCUT.'__'.$section.'__'.$item;
           
             	$sql = ' SELECT plp_id 
             			   FROM '.$this->table_name.' 
@@ -413,8 +382,8 @@ class ConfigTablePIM
             	$statement = $GLOBALS['gDb']->queryPrepared($sql, array($plp_name, $GLOBALS['gCurrentOrgId']));
             	$row = $statement->fetchObject();
 
-            	// Gibt es den Datensatz bereits?
-            	// wenn ja: UPDATE des bestehende Datensatzes  
+            	// check if record exists
+            	// yes, update ot
             	if (isset($row->plp_id) AND strlen($row->plp_id) > 0)
             	{
                 	$sql = 'UPDATE '.$this->table_name.' 
@@ -422,19 +391,19 @@ class ConfigTablePIM
                 			 WHERE plp_id = ? ';   
                     $GLOBALS['gDb']->queryPrepared($sql, array($value, $row->plp_id));           
             	}
-            	// wenn nicht: INSERT eines neuen Datensatzes 
+            	// no, insert it
             	else
             	{
   					$sql = 'INSERT INTO '.$this->table_name.' (plp_org_id, plp_name, plp_value) 
-  							VALUES (? , ? , ?)  -- $GLOBALS[\'gCurrentOrgId\'], self::$shortcut.\'__\'.$section.\'__\'.$key, $value '; 
-            		$GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId'], self::$shortcut.'__'.$section.'__'.$key, $value));
+  							VALUES (? , ? , ?)  -- $GLOBALS[\'gCurrentOrgId\'], self::SHORTCUT.\'__\'.$section.\'__\'.$item, $value '; 
+            		$GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId'], self::SHORTCUT.'__'.$section.'__'.$item, $value));
             	}   
         	} 
     	}
 	}
 
     /**
-     * Liest die Konfigurationsdaten aus der Datenbank
+     * read the configuration data of plugin InventoryManager from database
      * @return void
      */
 	public function read()
@@ -444,17 +413,17 @@ class ConfigTablePIM
              	 WHERE plp_name LIKE ?
              	   AND ( plp_org_id = ?
                     OR plp_org_id IS NULL ) ';
-		$statement = $GLOBALS['gDb']->queryPrepared($sql, array(self::$shortcut.'__%', $GLOBALS['gCurrentOrgId'])); 
+		$statement = $GLOBALS['gDb']->queryPrepared($sql, array(self::SHORTCUT.'__%', $GLOBALS['gCurrentOrgId'])); 
 	
 		while ($row = $statement->fetch())
 		{
 			$array = explode('__',$row['plp_name']);
 		
-			// wenn plp_value von ((  )) eingeschlossen ist, dann ist es als Array einzulesen
+			// if plp_value is enclosed in ((  )) -> array
 			if ((substr($row['plp_value'], 0, 2) == '((' ) && (substr($row['plp_value'], -2) == '))' ))
         	{                                                                          
         		$row['plp_value'] = substr($row['plp_value'], 2, -2);
-        		$this->config[$array[1]] [$array[2]] = explode(self::$dbtoken,$row['plp_value']); 
+        		$this->config[$array[1]] [$array[2]] = explode(CConfigDataPIM::DB_TOKEN, $row['plp_value']); 
         	}
         	else 
 			{
@@ -464,7 +433,7 @@ class ConfigTablePIM
 	}
 
 	/**
-	 * Liest die Konfigurationsdaten des Plugins FormFiller (PFF) aus der Datenbank
+	 * read the configuration data of plugin FormFiller (PFF) from database
 	 * @return void
 	 */
 	public function readPff()
@@ -480,45 +449,46 @@ class ConfigTablePIM
 		{
 			$array = explode('__',$row['plp_name']);
 	
-			// wenn plp_value von ((  )) eingeschlossen ist, dann ist es als Array einzulesen
+			// if plp_value is enclosed in ((  )) -> array
 			if ((substr($row['plp_value'],0,2) == '((' ) && (substr($row['plp_value'],-2) == '))' ))
 			{
 				$row['plp_value'] = substr($row['plp_value'], 2, -2);
-				$this->configpff[$array[1]] [$array[2]] = explode(self::$dbtoken,$row['plp_value']);
+				$this->configPff[$array[1]] [$array[2]] = explode(CConfigDataPIM::DB_TOKEN,$row['plp_value']);
 	
-				//das erzeugte Array durchlaufen, auf (( )) pruefen und ggf. nochmal zerlegen
-				for ($i = 0; $i < count($this->configpff[$array[1]] [$array[2]]); $i++)
+				// if array data is again enclosed in ((  )) -> split again
+				for ($i = 0; $i < count($this->configPff[$array[1]] [$array[2]]); $i++)
 				{
-					if ((substr($this->configpff[$array[1]] [$array[2]][$i],0,2) == '((' ) && (substr($this->configpff[$array[1]] [$array[2]][$i],-2) == '))' ))
+					if ((substr($this->configPff[$array[1]] [$array[2]][$i],0,2) == '((' ) && (substr($this->configPff[$array[1]] [$array[2]][$i],-2) == '))' ))
 					{
-						$temp = substr($this->configpff[$array[1]] [$array[2]][$i], 2, -2);
-						$this->configpff[$array[1]] [$array[2]][$i] = array();
-						$this->configpff[$array[1]] [$array[2]][$i] = explode(self::$dbtoken2,$temp);
+						$temp = substr($this->configPff[$array[1]] [$array[2]][$i], 2, -2);
+						$this->configPff[$array[1]] [$array[2]][$i] = array();
+						$this->configPff[$array[1]] [$array[2]][$i] = explode(CConfigDataPIM::DB_TOKEN_FORMFILLER, $temp);
 					}
 				}
 			}
 			else
 			{
-				$this->configpff[$array[1]] [$array[2]] = $row['plp_value'];
+				$this->configPff[$array[1]] [$array[2]] = $row['plp_value'];
 			}
 		}
 	}
 	
     /**
-     * Vergleicht die Daten in der version.php mit den Daten in der DB
+     * compare plugin version and stand with current version and stand from database
      * @return bool
      */
 	public function checkForUpdate()
 	{
-	 	$ret = false;
+	 	$needsUpdate = false;
  	
-	 	// pruefen, ob es die Tabelle ueberhaupt gibt
+	 	// check if table *_plugin_preferences exists
 		$sql = 'SHOW TABLES LIKE \''.$this->table_name.'\' ';
    	 	$tableExistStatement = $GLOBALS['gDb']->queryPrepared($sql);
     
     	if ($tableExistStatement->rowCount())
     	{
-			$plp_name = self::$shortcut.'__Plugininformationen__version';
+			#region compare version
+			$plp_name = self::SHORTCUT.'__Plugininformationen__version';
           
     		$sql = 'SELECT plp_value 
             		  FROM '.$this->table_name.' 
@@ -528,13 +498,15 @@ class ConfigTablePIM
     		$statement = $GLOBALS['gDb']->queryPrepared($sql, array($plp_name, $GLOBALS['gCurrentOrgId']));
     		$row = $statement->fetchObject();
 
-    		// Vergleich Version.php  ./. DB (hier: version)
-    		if (!isset($row->plp_value) || strlen($row->plp_value) === 0 || $row->plp_value<>self::$version)
+			// compare versions
+    		if (!isset($row->plp_value) || strlen($row->plp_value) === 0 || $row->plp_value<>CPluginInfoPIM::getPluginVersion())
     		{
-    			$ret = true;    
+    			$needsUpdate = true;    
     		}
-	
-    		$plp_name = self::$shortcut.'__Plugininformationen__stand';
+			#endregion
+
+			#region compare stand	
+    		$plp_name = self::SHORTCUT.'__Plugininformationen__stand';
           
     		$sql = 'SELECT plp_value 
             		  FROM '.$this->table_name.' 
@@ -544,32 +516,34 @@ class ConfigTablePIM
             $statement = $GLOBALS['gDb']->queryPrepared($sql, array($plp_name, $GLOBALS['gCurrentOrgId']));
     		$row = $statement->fetchObject();
 
-    		// Vergleich Version.php  ./. DB (hier: stand)
-    		if (!isset($row->plp_value) || strlen($row->plp_value) === 0 || $row->plp_value<>self::$stand)
+    		// compare stands
+    		if (!isset($row->plp_value) || strlen($row->plp_value) === 0 || $row->plp_value<>CPluginInfoPIM::getPluginStand())
     		{
-    			$ret = true;    
+    			$needsUpdate = true;    
     		}
+			#endregion
     	}
     	else 
     	{
-    		$ret = true; 
+			// also update needed because it is not installed yet
+    		$needsUpdate = true; 
     	}
-    	return $ret;
+    	return $needsUpdate;
 	}
 	
     /**
-     * Loescht die Konfigurationsdaten in der Datenbank
-     * @param   int     $deinst_org_select  0 = Daten nur in aktueller Org loeschen, 1 = Daten in allen Org loeschen
-     * @return  string  $result             Ergebnismeldung
+     * delete configuration data from database
+     * @param   int     $deinstOrgSelect  0 = only delete data from current org, 1 = delete data from every org
+     * @return  string  $result             result message
      */
-	public function deleteConfigData($deinst_org_select)
+	public function deleteConfigData($deinstOrgSelect)
 	{
     	$result      = '';		
     	$sqlWhereCondition = '';
 		$result_data = false;
 		$result_db   = false;
 		
-		if ($deinst_org_select == 0)                    //0 = Daten nur in aktueller Org loeschen 
+		if ($deinstOrgSelect == 0)
 		{
 			$sqlWhereCondition = 'AND plp_org_id =  \''.$GLOBALS['gCurrentOrgId'].'\' ';	
 		}
@@ -577,10 +551,10 @@ class ConfigTablePIM
 		$sql = 'DELETE FROM '.$this->table_name.'
         			  WHERE plp_name LIKE ?
                       '. $sqlWhereCondition ;
-		$result_data = $GLOBALS['gDb']->queryPrepared($sql, array(self::$shortcut.'__%'));	
+		$result_data = $GLOBALS['gDb']->queryPrepared($sql, array(self::SHORTCUT.'__%'));	
 		$result .= ($result_data ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array($this->table_name)) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array($this->table_name)));
 		
-		// wenn die Tabelle nur Eintraege dieses Plugins hatte, sollte sie jetzt leer sein und kann geloescht werden
+		// if there only was config data from current org the table should be empty and could be deleted
 		$sql = 'SELECT * FROM '.$this->table_name.' ';
 		$statement = $GLOBALS['gDb']->queryPrepared($sql);
 
@@ -599,71 +573,69 @@ class ConfigTablePIM
 	}
 	
 	/**
-	 * Loescht die Nutzerdaten in der Datenbank
-	 * @param   int     $deinst_org_select  0 = Daten nur in aktueller Org loeschen, 1 = Daten in allen Orgs loeschen
-	 * @return  string  $result             Ergebnismeldung
+	 * delete the item data from database
+     * @param   int     $deinstOrgSelect  0 = only delete data from current org, 1 = delete data from every org
+     * @return  string  $result             result message
 	 */
-	public function deleteKeyData($deinst_org_select)
+	public function deleteItemData($deinstOrgSelect)
 	{
-		global $g_tbl_praefix;
-	
 		$result = ''; 
 
-		if($deinst_org_select == 0)                   //0 = Daten nur in aktueller Org loeschen
+		if($deinstOrgSelect == 0)
 		{
 			/*$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_DATA.'
-                          WHERE imd_imk_id IN 
-              	        (SELECT imk_id 
+                          WHERE imd_imi_id IN 
+              	        (SELECT imi_id 
 					       FROM ?
-                	      WHERE imk_org_id = ? )';
+                	      WHERE imi_org_id = ? )';
 	
-			$result_data = $GLOBALS['gDb']->queryPrepared($sql, array(TBL_INVENTORY_MANAGER_KEYS, $GLOBALS['gCurrentOrgId']));	*/
+			$result_data = $GLOBALS['gDb']->queryPrepared($sql, array(TBL_INVENTORY_MANAGER_ITEMS, $GLOBALS['gCurrentOrgId']));	*/
 		    //queryPrepared doesn´t work Why? Since when?
 		    // This code works:
 		    $sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_DATA.'
-                          WHERE imd_imk_id IN
-              	        (SELECT imk_id
-					       FROM '.TBL_INVENTORY_MANAGER_KEYS.'
-                	      WHERE imk_org_id = \''.$GLOBALS['gCurrentOrgId'].'\' )';
+                          WHERE imd_imi_id IN
+              	        (SELECT imi_id
+					       FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
+                	      WHERE imi_org_id = \''.$GLOBALS['gCurrentOrgId'].'\' )';
 		    $result_data = $GLOBALS['gDb']->query($sql);
 		    
-			$result .= ($result_data ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array($g_tbl_praefix . '_inventory_manager_data' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array($g_tbl_praefix . '_inventory_manager_data' )));
+			$result .= ($result_data ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_data' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_data' )));
 		
 			/*$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_LOG.'
-                          WHERE iml_imk_id IN 
-				        (SELECT imk_id 
+                          WHERE iml_imi_id IN 
+				        (SELECT imi_id 
 					       FROM ?
-                          WHERE imk_org_id = ? )';
+                          WHERE imi_org_id = ? )';
 
-			$result_log = $GLOBALS['gDb']->queryPrepared($sql, array(TBL_INVENTORY_MANAGER_KEYS, $GLOBALS['gCurrentOrgId']));	*/
+			$result_log = $GLOBALS['gDb']->queryPrepared($sql, array(TBL_INVENTORY_MANAGER_ITEMS, $GLOBALS['gCurrentOrgId']));	*/
 			$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_LOG.'
-                          WHERE iml_imk_id IN
-				        (SELECT imk_id
-					       FROM '.TBL_INVENTORY_MANAGER_KEYS.'
-                          WHERE imk_org_id = \''.$GLOBALS['gCurrentOrgId'].'\' )';
+                          WHERE iml_imi_id IN
+				        (SELECT imi_id
+					       FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
+                          WHERE imi_org_id = \''.$GLOBALS['gCurrentOrgId'].'\' )';
 			
 			$result_log = $GLOBALS['gDb']->query($sql);
 			
-			$result .= ($result_log ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array($g_tbl_praefix . '_inventory_manager_log' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array($g_tbl_praefix . '_inventory_manager_log')));
+			$result .= ($result_log ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_log' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_log')));
 		
-			$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_KEYS.'
-	        	          WHERE imk_org_id = ? ';
+			$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
+	        	          WHERE imi_org_id = ? ';
 
-			$result_keys = $GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId']));
-			$result .= ($result_keys ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array($g_tbl_praefix . '_inventory_manager_keys' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array($g_tbl_praefix . '_inventory_manager_keys')));
+			$result_items = $GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId']));
+			$result .= ($result_items ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_items' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_items')));
 		
 			$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
                           WHERE imf_org_id = ? ';
 			
 			$result_fields = $GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId']));
-			$result .= ($result_fields ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array($g_tbl_praefix . '_inventory_manager_fields' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array($g_tbl_praefix . '_inventory_manager_fields')));
+			$result .= ($result_fields ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_fields' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_fields')));
 		}
 		
-		//drop tables keys, data, log and fields 
+		//drop tables items, data, log and fields 
 		$table_array = array(
 				TBL_INVENTORY_MANAGER_FIELDS,
 				TBL_INVENTORY_MANAGER_DATA,
-				TBL_INVENTORY_MANAGER_KEYS,
+				TBL_INVENTORY_MANAGER_ITEMS,
 				TBL_INVENTORY_MANAGER_LOG );
 	
 		foreach ($table_array as $table_name)
@@ -675,7 +647,7 @@ class ConfigTablePIM
 			$sql = 'SELECT * FROM '.$table_name.' ';
 			$statement = $GLOBALS['gDb']->queryPrepared($sql);
 				
-			if ($statement->rowCount() == 0 || $deinst_org_select == 1)
+			if ($statement->rowCount() == 0 || $deinstOrgSelect == 1)
 			{
 				$sql = 'DROP TABLE '.$table_name.' ';
 				$result_db = $GLOBALS['gDb']->queryPrepared($sql);

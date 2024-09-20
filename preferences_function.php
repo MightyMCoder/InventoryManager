@@ -12,7 +12,7 @@
  /******************************************************************************
  * Parameters:
  *
- * mode:  1 - Save preferences
+ * mode:  1 - write preferences to database
  *        2 - show dialog for deinstallation
  *        3 - deinstallation
  * form     - The name of the form preferences that were submitted.
@@ -23,7 +23,7 @@ require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/common_function.php');
 require_once(__DIR__ . '/classes/configtable.php');
 
-$pPreferences = new ConfigTablePIM();
+$pPreferences = new CConfigTablePIM();
 $pPreferences->read();
 
 // only authorized user are allowed to start this module
@@ -82,7 +82,7 @@ case 1:
 		$e->showText();
 	}    
     
-	$pPreferences->save();
+	$pPreferences->write();
 
 	echo 'success';
 	break;
@@ -116,7 +116,7 @@ case 3:
 	$gMessage->setForwardUrl($gHomepage);		
 
 	$resMes = $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_STARTMESSAGE');
-	$resMes .= $pPreferences->deleteKeyData($_POST['deinst_org_select']);
+	$resMes .= $pPreferences->deleteItemData($_POST['deinst_org_select']);
 	$resMes .= $pPreferences->deleteConfigData($_POST['deinst_org_select']);
 	$resMes .= $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ENDMESSAGE');
 	
