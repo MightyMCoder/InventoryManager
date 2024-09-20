@@ -56,6 +56,7 @@
     <string name="PLG_INVENTORY_MANAGER_KEYLIST">Key list</string>
     <string name="PLG_INVENTORY_MANAGER_INVENTORY_MANAGER">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_KEYNAME">Name of the key</string>
+<string name="PLG_INVENTORY_MANAGER_CATEGORY">Category</string>
     <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">The authorization check of the plugin failed. There is more than one menu item with the same URL defined.\n\n=> #VAR1_BOLD#</string>    
     <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_NEW">New</string>
