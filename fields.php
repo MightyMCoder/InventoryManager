@@ -142,7 +142,7 @@ foreach ($items->mItemFields as $itemField)
     }
     else
     {
-        $mandatory = '<i class="fas fa-asterisk admidio-opacity-reduced" data-toggle="tooltip" title="'.$gL10n->get('ORG_FIELD_NOT_MANDATORY').'"></i>';
+        $mandatory = '<i class="fas fa-asterisk admidio-opacity-reduced" data-toggle="tooltip" title="'.$gL10n->get('SYS_REQUIRED_INPUT').': '.$gL10n->get('SYS_NO').'"></i>';
     }
 
     $itemFieldText = array(

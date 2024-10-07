@@ -53,16 +53,16 @@ class CConfigTablePIM
 	protected function checkPffInst()
 	{
 	    // check if configuration table for plugin FormFiller exists
-	    $sql = 'SHOW TABLES LIKE \''.$this->table_name.'\' ';
+	    $sql = 'SHOW TABLES LIKE \''.$this->table_name.'\';';
 	    $statement = $GLOBALS['gDb']->queryPrepared($sql);
 	    
 	    if ($statement->rowCount() !== 0)  
 	    {
 	        $sql = 'SELECT COUNT(*) AS COUNT
-            		       FROM '.$this->table_name.'
-            		      WHERE plp_name = ?
-            		        AND ( plp_org_id = ?
-            	    	     OR plp_org_id IS NULL ) ';
+					FROM '.$this->table_name.'
+					WHERE plp_name = ?
+					AND (plp_org_id = ?
+						OR plp_org_id IS NULL);';
 	        $statement = $GLOBALS['gDb']->queryPrepared($sql, array('PFF__Plugininformationen__version', $GLOBALS['gCurrentOrgId']));
 	        
 	        if((int) $statement->fetchColumn() === 1  && $this->pffDir !== false)
@@ -142,90 +142,101 @@ class CConfigTablePIM
 	public function init()
 	{
 		#region create fields-table if not exists
-		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_FIELDS.'\' ';
+		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_FIELDS.'\';';
 		$statement = $GLOBALS['gDb']->query($sql);
 		
 		if (!$statement->rowCount())
 		{
-			$sql='CREATE TABLE '.TBL_INVENTORY_MANAGER_FIELDS.'
-				(imf_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  			imf_org_id int(10) unsigned NOT NULL,
-	  			imf_type varchar(30)  NOT NULL,
-	  			imf_name  varchar(100)   NOT NULL,
-				imf_name_intern  varchar(110)   NOT NULL,
-				imf_sequence int(10) unsigned NOT NULL,
-				imf_system boolean  NOT NULL DEFAULT \'0\',	
-				imf_mandatory boolean  NOT NULL DEFAULT \'0\',	
-	  			imf_description text NOT NULL DEFAULT \'\',
-				imf_value_list text,
-	  			imf_usr_id_create int(10) unsigned DEFAULT NULL,
-	  			imf_timestamp_create timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-	  			imf_usr_id_change int(10) unsigned DEFAULT NULL,
-	  			imf_timestamp_change timestamp NULL DEFAULT NULL,
-	  			PRIMARY KEY (imf_id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
-			    $GLOBALS['gDb']->query($sql);
+			$sql = 'CREATE TABLE '.TBL_INVENTORY_MANAGER_FIELDS.'
+					(
+					imf_id int(10) 			unsigned 			NOT NULL 	AUTO_INCREMENT,
+					imf_org_id int(10) 		unsigned 			NOT NULL,
+					imf_type 				varchar(30)			NOT NULL,
+					imf_name				varchar(100)		NOT NULL,
+					imf_name_intern			varchar(110) 		NOT NULL,
+					imf_sequence			int(10) unsigned	NOT NULL,
+					imf_system				boolean 			NOT NULL	DEFAULT \'0\',	
+					imf_mandatory			boolean 			NOT NULL	DEFAULT \'0\',	
+					imf_description			text 				NOT NULL	DEFAULT \'\',
+					imf_value_list			text,
+					imf_usr_id_create		int(10) unsigned 				DEFAULT NULL,
+					imf_timestamp_create	timestamp 			NULL		DEFAULT CURRENT_TIMESTAMP,
+					imf_usr_id_change		int(10) unsigned 				DEFAULT NULL,
+					imf_timestamp_change	timestamp 			NULL 		DEFAULT NULL,
+					PRIMARY KEY (imf_id)
+					)
+					ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+			$GLOBALS['gDb']->query($sql);
 		}
 		#endregion	
 
 		#region create data-table if not exists
-		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_DATA.'\' ';
+		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_DATA.'\';';
 		$statement = $GLOBALS['gDb']->query($sql);
 		
 		if (!$statement->rowCount())
 		{
-			$sql='CREATE TABLE '.TBL_INVENTORY_MANAGER_DATA.'
-				(imd_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  			 imd_imf_id int(10) unsigned  NOT NULL,
-				 imd_imi_id int(10) unsigned  NOT NULL,
-	  			 imd_value varchar(4000),
-	  			 PRIMARY KEY (imd_id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
-			     $GLOBALS['gDb']->query($sql);
+			$sql = 'CREATE TABLE '.TBL_INVENTORY_MANAGER_DATA.'
+					(
+					imd_id 					int(10) unsigned 	NOT NULL 	AUTO_INCREMENT,
+					imd_imf_id 				int(10) unsigned 	NOT NULL,
+					imd_imi_id 				int(10) unsigned 	NOT NULL,
+					imd_value 				varchar(4000),
+					PRIMARY KEY (imd_id)
+					)
+					ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+			$GLOBALS['gDb']->query($sql);
 		}
 		#endregion
 		
 		#region create items-table if not exists		
-		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_ITEMS.'\' ';
+		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_ITEMS.'\';';
 		$statement = $GLOBALS['gDb']->query($sql);
 
 		if (!$statement->rowCount())
 		{
-			$sql='CREATE TABLE '.TBL_INVENTORY_MANAGER_ITEMS.'
-				(imi_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-	  			imi_org_id int(10) unsigned NOT NULL,
-				imi_former boolean DEFAULT 0,	
-				imi_usr_id_create int(10) unsigned DEFAULT NULL,
-	  			imi_timestamp_create timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-	  			imi_usr_id_change int(10) unsigned DEFAULT NULL,
-	  			imi_timestamp_change timestamp NULL DEFAULT NULL,
-	  			PRIMARY KEY (imi_id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
-			    $GLOBALS['gDb']->query($sql);
+			$sql = 'CREATE TABLE '.TBL_INVENTORY_MANAGER_ITEMS.'
+					(
+					imi_id 					int(10) unsigned 	NOT NULL 	AUTO_INCREMENT,
+					imi_org_id 				int(10) unsigned 	NOT NULL,
+					imi_former 				boolean 						DEFAULT 0,	
+					imi_usr_id_create 		int(10) unsigned 				DEFAULT NULL,
+					imi_timestamp_create 	timestamp 			NULL 		DEFAULT CURRENT_TIMESTAMP,
+					imi_usr_id_change 		int(10) unsigned 				DEFAULT NULL,
+					imi_timestamp_change 	timestamp 			NULL 		DEFAULT NULL,
+					PRIMARY KEY (imi_id)
+					)
+					ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+			$GLOBALS['gDb']->query($sql);
 		}
 		#endregion
 
 		#region create log-table if not exists
-		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_LOG.'\' ';
+		$sql = 'SHOW TABLES LIKE \''.TBL_INVENTORY_MANAGER_LOG.'\';';
 		$statement = $GLOBALS['gDb']->query($sql);
 		
 		if (!$statement->rowCount())
 		{
-			$sql='CREATE TABLE '.TBL_INVENTORY_MANAGER_LOG.'
-				(iml_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-				iml_imi_id int(10) unsigned NOT NULL,	
-				iml_imf_id int(10) unsigned NOT NULL,	
-				iml_value_old varchar(4000),	
-				iml_value_new varchar(4000),	
-				iml_usr_id_create int(10) unsigned DEFAULT NULL,
-	  			iml_timestamp_create timestamp NULL DEFAULT CURRENT_TIMESTAMP,	
-	  			iml_comment varchar(255) NULL,	
-	  			PRIMARY KEY (iml_id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
-			    $GLOBALS['gDb']->query($sql);
+			$sql = 'CREATE TABLE '.TBL_INVENTORY_MANAGER_LOG.'
+					(
+					iml_id 					int(10) unsigned 	NOT NULL 	AUTO_INCREMENT,
+					iml_imi_id 				int(10) unsigned 	NOT NULL,	
+					iml_imf_id 				int(10) unsigned 	NOT NULL,	
+					iml_value_old 			varchar(4000),	
+					iml_value_new 			varchar(4000),	
+					iml_usr_id_create 		int(10) unsigned 				DEFAULT NULL,
+					iml_timestamp_create 	timestamp 			NULL 		DEFAULT CURRENT_TIMESTAMP,	
+					iml_comment 			varchar(255) 		NULL,	
+					PRIMARY KEY (iml_id)
+					)
+					ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+			$GLOBALS['gDb']->query($sql);
 		}
 		#endregion
 		
-		$sql = 'SELECT *
-            	  FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
-            	 WHERE imf_name_intern = \'ITEMNAME\'
-            	   AND imf_org_id = \''.$GLOBALS['gCurrentOrgId'].'\' ';
+		$sql = 'SELECT * FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
+				WHERE imf_name_intern = \'ITEMNAME\'
+				AND imf_org_id = \''.$GLOBALS['gCurrentOrgId'].'\';';
 		$statement = $GLOBALS['gDb']->query($sql);
 		
 		if ($statement->rowCount() == 0)                 
@@ -279,22 +290,21 @@ class CConfigTablePIM
 		$config_ist = array();
 		
 		#region create preferences-table if not exists
-		$sql = 'SHOW TABLES LIKE \''.$this->table_name.'\' ';
+		$sql = 'SHOW TABLES LIKE \''.$this->table_name.'\';';
    	 	$statement = $GLOBALS['gDb']->queryPrepared($sql);
     
     	if (!$statement->rowCount())
     	{
-        	$sql = 'CREATE TABLE '.$this->table_name.' (
-            	plp_id 		integer     unsigned not null AUTO_INCREMENT,
-            	plp_org_id 	integer   	unsigned not null,
-    			plp_name 	varchar(255) not null,
-            	plp_value  	text, 
-            	primary key (plp_id) )
-            	engine = InnoDB
-         		auto_increment = 1
-          		default character set = utf8
-         		collate = utf8_unicode_ci';
-    		    $GLOBALS['gDb']->queryPrepared($sql);
+        	$sql = 'CREATE TABLE '.$this->table_name.'
+					(
+            		plp_id 					integer unsigned	NOT NULL 	AUTO_INCREMENT,
+            		plp_org_id 				integer unsigned	NOT NULL,
+					plp_name 				varchar(255)		NOT NULL,
+					plp_value  				text, 
+					primary key (plp_id)
+					)
+					ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 COLLATE=utf8_unicode_ci;';
+			$GLOBALS['gDb']->queryPrepared($sql);
     	} 
 		#endregion
 		
@@ -338,8 +348,8 @@ class CConfigTablePIM
         	{
         		$plp_name = self::SHORTCUT.'__'.$section.'__'.$item;
 				$sql = 'DELETE FROM '.$this->table_name.'
-        				      WHERE plp_name = ? 
-        				        AND plp_org_id = ? ';
+						WHERE plp_name = ? 
+						AND plp_org_id = ?;';
 				$GLOBALS['gDb']->queryPrepared($sql, array($plp_name, $GLOBALS['gCurrentOrgId']));
                 
 				unset($this->config[$section][$item]);
@@ -374,28 +384,27 @@ class CConfigTablePIM
             
   				$plp_name = self::SHORTCUT.'__'.$section.'__'.$item;
           
-            	$sql = ' SELECT plp_id 
-            			   FROM '.$this->table_name.' 
-            			  WHERE plp_name = ? 
-            			    AND ( plp_org_id = ?
-                 		     OR plp_org_id IS NULL ) ';
+            	$sql = 'SELECT plp_id FROM '.$this->table_name.' 
+						WHERE plp_name = ? 
+						AND (plp_org_id = ?
+							OR plp_org_id IS NULL);';
             	$statement = $GLOBALS['gDb']->queryPrepared($sql, array($plp_name, $GLOBALS['gCurrentOrgId']));
             	$row = $statement->fetchObject();
 
             	// check if record exists
-            	// yes, update ot
+            	// yes, update it
             	if (isset($row->plp_id) AND strlen($row->plp_id) > 0)
             	{
                 	$sql = 'UPDATE '.$this->table_name.' 
-                			   SET plp_value = ?
-                			 WHERE plp_id = ? ';   
+							SET plp_value = ?
+							WHERE plp_id = ?;';   
                     $GLOBALS['gDb']->queryPrepared($sql, array($value, $row->plp_id));           
             	}
             	// no, insert it
             	else
             	{
   					$sql = 'INSERT INTO '.$this->table_name.' (plp_org_id, plp_name, plp_value) 
-  							VALUES (? , ? , ?)  -- $GLOBALS[\'gCurrentOrgId\'], self::SHORTCUT.\'__\'.$section.\'__\'.$item, $value '; 
+  							VALUES (? , ? , ?)  -- $GLOBALS[\'gCurrentOrgId\'], self::SHORTCUT.\'__\'.$section.\'__\'.$item, $value;'; 
             		$GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId'], self::SHORTCUT.'__'.$section.'__'.$item, $value));
             	}   
         	} 
@@ -408,11 +417,10 @@ class CConfigTablePIM
      */
 	public function read()
 	{
-		$sql = 'SELECT plp_id, plp_name, plp_value
-             	  FROM '.$this->table_name.'
-             	 WHERE plp_name LIKE ?
-             	   AND ( plp_org_id = ?
-                    OR plp_org_id IS NULL ) ';
+		$sql = 'SELECT plp_id, plp_name, plp_value FROM '.$this->table_name.'
+				WHERE plp_name LIKE ?
+				AND (plp_org_id = ?
+					OR plp_org_id IS NULL);';
 		$statement = $GLOBALS['gDb']->queryPrepared($sql, array(self::SHORTCUT.'__%', $GLOBALS['gCurrentOrgId'])); 
 	
 		while ($row = $statement->fetch())
@@ -438,11 +446,10 @@ class CConfigTablePIM
 	 */
 	public function readPff()
 	{
-		$sql = ' SELECT plp_id, plp_name, plp_value
-             	   FROM '.$this->table_name.'
-             	  WHERE plp_name LIKE ?
-             	    AND ( plp_org_id = ?
-                 	 OR plp_org_id IS NULL ) ';
+		$sql = 'SELECT plp_id, plp_name, plp_value FROM '.$this->table_name.'
+				WHERE plp_name LIKE ?
+				AND (plp_org_id = ?
+					OR plp_org_id IS NULL);';
 		$statement = $GLOBALS['gDb']->queryPrepared($sql, array('PFF__%', $GLOBALS['gCurrentOrgId'])); 
 	
 		while ($row = $statement->fetch())
@@ -490,11 +497,10 @@ class CConfigTablePIM
 			#region compare version
 			$plp_name = self::SHORTCUT.'__Plugininformationen__version';
           
-    		$sql = 'SELECT plp_value 
-            		  FROM '.$this->table_name.' 
-            		 WHERE plp_name = ? 
-            		   AND ( plp_org_id = ?
-            	    	OR plp_org_id IS NULL ) ';
+    		$sql = 'SELECT plp_value FROM '.$this->table_name.' 
+					WHERE plp_name = ? 
+					AND (plp_org_id = ?
+						OR plp_org_id IS NULL);';
     		$statement = $GLOBALS['gDb']->queryPrepared($sql, array($plp_name, $GLOBALS['gCurrentOrgId']));
     		$row = $statement->fetchObject();
 
@@ -508,11 +514,10 @@ class CConfigTablePIM
 			#region compare stand	
     		$plp_name = self::SHORTCUT.'__Plugininformationen__stand';
           
-    		$sql = 'SELECT plp_value 
-            		  FROM '.$this->table_name.' 
-            		 WHERE plp_name = ?
-            		   AND ( plp_org_id = ?
-                 		OR plp_org_id IS NULL ) ';
+    		$sql = 'SELECT plp_value FROM '.$this->table_name.' 
+					WHERE plp_name = ?
+					AND (plp_org_id = ?
+						OR plp_org_id IS NULL);';
             $statement = $GLOBALS['gDb']->queryPrepared($sql, array($plp_name, $GLOBALS['gCurrentOrgId']));
     		$row = $statement->fetchObject();
 
@@ -545,22 +550,22 @@ class CConfigTablePIM
 		
 		if ($deinstOrgSelect == 0)
 		{
-			$sqlWhereCondition = 'AND plp_org_id =  \''.$GLOBALS['gCurrentOrgId'].'\' ';	
+			$sqlWhereCondition = 'AND plp_org_id =  \''.$GLOBALS['gCurrentOrgId'].'\';';	
 		}
 
 		$sql = 'DELETE FROM '.$this->table_name.'
-        			  WHERE plp_name LIKE ?
-                      '. $sqlWhereCondition ;
+				WHERE plp_name LIKE ?
+				'. $sqlWhereCondition;
 		$result_data = $GLOBALS['gDb']->queryPrepared($sql, array(self::SHORTCUT.'__%'));	
 		$result .= ($result_data ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array($this->table_name)) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array($this->table_name)));
 		
 		// if there only was config data from current org the table should be empty and could be deleted
-		$sql = 'SELECT * FROM '.$this->table_name.' ';
+		$sql = 'SELECT * FROM '.$this->table_name.';';
 		$statement = $GLOBALS['gDb']->queryPrepared($sql);
 
     	if ($statement->rowCount() == 0)
     	{
-        	$sql = 'DROP TABLE '.$this->table_name.' ';
+        	$sql = 'DROP TABLE '.$this->table_name.';';
         	$result_db = $GLOBALS['gDb']->queryPrepared($sql);
         	$result .= ($result_db ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETED', array($this->table_name )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_ERROR', array($this->table_name)));
         }
@@ -583,49 +588,31 @@ class CConfigTablePIM
 
 		if($deinstOrgSelect == 0)
 		{
-			/*$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_DATA.'
-                          WHERE imd_imi_id IN 
-              	        (SELECT imi_id 
-					       FROM ?
-                	      WHERE imi_org_id = ? )';
-	
-			$result_data = $GLOBALS['gDb']->queryPrepared($sql, array(TBL_INVENTORY_MANAGER_ITEMS, $GLOBALS['gCurrentOrgId']));	*/
-		    //queryPrepared doesn´t work Why? Since when?
-		    // This code works:
 		    $sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_DATA.'
-                          WHERE imd_imi_id IN
-              	        (SELECT imi_id
-					       FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
-                	      WHERE imi_org_id = \''.$GLOBALS['gCurrentOrgId'].'\' )';
+					WHERE imd_imi_id IN
+					(SELECT imi_id FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
+						WHERE imi_org_id = \''.$GLOBALS['gCurrentOrgId'].'\');';
 		    $result_data = $GLOBALS['gDb']->query($sql);
 		    
 			$result .= ($result_data ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_data' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_data' )));
 		
-			/*$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_LOG.'
-                          WHERE iml_imi_id IN 
-				        (SELECT imi_id 
-					       FROM ?
-                          WHERE imi_org_id = ? )';
-
-			$result_log = $GLOBALS['gDb']->queryPrepared($sql, array(TBL_INVENTORY_MANAGER_ITEMS, $GLOBALS['gCurrentOrgId']));	*/
 			$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_LOG.'
-                          WHERE iml_imi_id IN
-				        (SELECT imi_id
-					       FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
-                          WHERE imi_org_id = \''.$GLOBALS['gCurrentOrgId'].'\' )';
+					WHERE iml_imi_id IN
+					(SELECT imi_id FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
+						WHERE imi_org_id = \''.$GLOBALS['gCurrentOrgId'].'\');';
 			
 			$result_log = $GLOBALS['gDb']->query($sql);
 			
 			$result .= ($result_log ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_log' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_log')));
 		
 			$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
-	        	          WHERE imi_org_id = ? ';
+					WHERE imi_org_id = ?;';
 
 			$result_items = $GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId']));
 			$result .= ($result_items ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_items' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_items')));
 		
 			$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
-                          WHERE imf_org_id = ? ';
+					WHERE imf_org_id = ?;';
 			
 			$result_fields = $GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId']));
 			$result .= ($result_fields ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_fields' )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_fields')));
@@ -644,12 +631,12 @@ class CConfigTablePIM
 			
 			// wenn in der Tabelle keine Eintraege mehr sind, dann kann sie geloescht werden
 			// oder wenn 'Daten in allen Orgs loeschen' gewaehlt wurde
-			$sql = 'SELECT * FROM '.$table_name.' ';
+			$sql = 'SELECT * FROM '.$table_name.';';
 			$statement = $GLOBALS['gDb']->queryPrepared($sql);
 				
 			if ($statement->rowCount() == 0 || $deinstOrgSelect == 1)
 			{
-				$sql = 'DROP TABLE '.$table_name.' ';
+				$sql = 'DROP TABLE '.$table_name.';';
 				$result_db = $GLOBALS['gDb']->queryPrepared($sql);
 				$result .= ($result_db ? $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETED', array($table_name )) : $GLOBALS['gL10n']->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_ERROR', array($table_name)));
 			}

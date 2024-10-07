@@ -84,12 +84,11 @@ if($getMode === 1)
     if (isset($_POST['imf_name']) && $itemField->getValue('imf_name') !== $_POST['imf_name'])
     {
         // Schauen, ob das Feld bereits existiert
-        $sql = 'SELECT COUNT(*) AS count
-                  FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
-                 WHERE imf_name   = ? -- $_POST[\'imf_name\']
-				   AND ( imf_org_id = ? -- $gCurrentOrgId
-                    OR imf_org_id IS NULL )
-                   AND imf_id    <> ? -- $getimfId ';
+        $sql = 'SELECT COUNT(*) AS count FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
+                WHERE imf_name = ? -- $_POST[\'imf_name\']
+				AND (imf_org_id = ? -- $gCurrentOrgId
+                    OR imf_org_id IS NULL)
+                AND imf_id <> ? -- $getimfId;';
         $statement = $gDb->queryPrepared($sql, array($_POST['imf_name'], $gCurrentOrgId, $getimfId));
         
         if ((int) $statement->fetchColumn() > 0)
@@ -162,10 +161,10 @@ elseif($getMode === 4)
     $imfSequence = (int) $itemField->getValue('imf_sequence');
     
     $sql = 'UPDATE '.TBL_INVENTORY_MANAGER_FIELDS.'
-               SET imf_sequence = ? -- $imf_sequence
-             WHERE imf_sequence = ? -- $imf_sequence -/+ 1
-               AND ( imf_org_id = ? -- $gCurrentOrgId
-                OR imf_org_id IS NULL ) ';
+            SET imf_sequence = ? -- $imf_sequence
+            WHERE imf_sequence = ? -- $imf_sequence -/+ 1
+            AND (imf_org_id = ? -- $gCurrentOrgId
+                OR imf_org_id IS NULL);';
     
     // field will get one number lower and therefore move a position up in the list
     if ($getSequence === TableUserField::MOVE_UP)

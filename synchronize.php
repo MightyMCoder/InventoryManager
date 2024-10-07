@@ -58,24 +58,22 @@ if ($getMode == 'preview')     //Default
 	$members = array();
 	
 	// read in all members
-	$sql = 'SELECT usr_id, last_name.usd_value AS last_name, first_name.usd_value AS first_name
-              FROM '.TBL_USERS.'
-         LEFT JOIN '.TBL_USER_DATA.' AS last_name
-                ON last_name.usd_usr_id = usr_id
-               AND last_name.usd_usf_id = ? -- $gProfileFields->getProperty(\'LAST_NAME\', \'usf_id\')
-         LEFT JOIN '.TBL_USER_DATA.' AS first_name
-                ON first_name.usd_usr_id = usr_id
-           	   AND first_name.usd_usf_id = ? -- $gProfileFields->getProperty(\'FIRST_NAME\', \'usf_id\')
-             WHERE usr_valid = 1
-        AND EXISTS (SELECT 1
-              FROM '. TBL_MEMBERS. ', '. TBL_ROLES. ', '. TBL_CATEGORIES.  ','. TBL_USER_DATA. '
-             WHERE mem_usr_id = usr_id
-               AND mem_rol_id = rol_id
-               AND mem_begin <= ? -- DATE_NOW
-               AND mem_end    > ? -- DATE_NOW
-               AND rol_valid  = 1
-               AND rol_cat_id = cat_id
-               AND cat_org_id = '.$gCurrentOrgId. ') ';
+	$sql = 'SELECT usr_id, last_name.usd_value AS last_name, first_name.usd_value AS first_name FROM '.TBL_USERS.'
+         	LEFT JOIN '.TBL_USER_DATA.' AS last_name
+				ON last_name.usd_usr_id = usr_id
+				AND last_name.usd_usf_id = ? -- $gProfileFields->getProperty(\'LAST_NAME\', \'usf_id\')
+         	LEFT JOIN '.TBL_USER_DATA.' AS first_name
+				ON first_name.usd_usr_id = usr_id
+           	   	AND first_name.usd_usf_id = ? -- $gProfileFields->getProperty(\'FIRST_NAME\', \'usf_id\')
+			WHERE usr_valid = 1
+        	AND EXISTS (SELECT 1 FROM '. TBL_MEMBERS. ', '. TBL_ROLES. ', '. TBL_CATEGORIES.  ','. TBL_USER_DATA. '
+				WHERE mem_usr_id = usr_id
+				AND mem_rol_id = rol_id
+				AND mem_begin <= ? -- DATE_NOW
+				AND mem_end    > ? -- DATE_NOW
+				AND rol_valid  = 1
+				AND rol_cat_id = cat_id
+				AND cat_org_id = '.$gCurrentOrgId.');';
 	
 	$userStatement = $gDb->queryPrepared($sql, array($gProfileFields->getProperty('LAST_NAME', 'usf_id'), $gProfileFields->getProperty('FIRST_NAME', 'usf_id'), DATE_NOW, DATE_NOW));
 	
@@ -98,20 +96,19 @@ if ($getMode == 'preview')     //Default
 	}
 	
 	// read in all receiver
-	$sql = 'SELECT imd_value, last_name.usd_value as last_name , first_name.usd_value as first_name
-              FROM '.TBL_INVENTORY_MANAGER_DATA.'
-        INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
-                ON imf_id = imd_imf_id
-         LEFT JOIN '. TBL_USER_DATA. ' as last_name
+	$sql = 'SELECT imd_value, last_name.usd_value as last_name , first_name.usd_value as first_name FROM '.TBL_INVENTORY_MANAGER_DATA.'
+        	INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
+				ON imf_id = imd_imf_id
+         	LEFT JOIN '. TBL_USER_DATA. ' as last_name
                 ON last_name.usd_usr_id = imd_value
-               AND last_name.usd_usf_id = ? -- $gProfileFields->getProperty(\'LAST_NAME\', \'usf_id\')
-         LEFT JOIN '. TBL_USER_DATA. ' as first_name
+               	AND last_name.usd_usf_id = ? -- $gProfileFields->getProperty(\'LAST_NAME\', \'usf_id\')
+         	LEFT JOIN '. TBL_USER_DATA. ' as first_name
                 ON first_name.usd_usr_id = imd_value
-               AND first_name.usd_usf_id = ? -- $gProfileFields->getProperty(\'FIRST_NAME\', \'usf_id\')
-             WHERE imf_name_intern = \'RECEIVER\'
-               AND ( imf_org_id = ? -- $gCurrentOrgId
-              	OR imf_org_id IS NULL )
-          ORDER BY last_name.usd_value, first_name.usd_value ASC';
+               	AND first_name.usd_usf_id = ? -- $gProfileFields->getProperty(\'FIRST_NAME\', \'usf_id\')
+			WHERE imf_name_intern = \'RECEIVER\'
+			AND (imf_org_id = ? -- $gCurrentOrgId
+				OR imf_org_id IS NULL)
+          	ORDER BY last_name.usd_value, first_name.usd_value ASC;';
 	
 	$receiverStatement =  $gDb->queryPrepared($sql, array($gProfileFields->getProperty('LAST_NAME', 'usf_id'), $gProfileFields->getProperty('FIRST_NAME', 'usf_id'), $gCurrentOrgId));
 	
@@ -206,18 +203,17 @@ elseif ($getMode == 'write')
 			$columnValues = array();
 			$columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$data['last_name'].', '.$data['first_name'].'</a>';
 
-			$sql = 'SELECT mem_id, mem_rol_id, mem_usr_id, mem_begin, mem_end, mem_leader
-              		  FROM '.TBL_MEMBERS.'
-       		    INNER JOIN '.TBL_ROLES.'
+			$sql = 'SELECT mem_id, mem_rol_id, mem_usr_id, mem_begin, mem_end, mem_leader FROM '.TBL_MEMBERS.'
+       		    	INNER JOIN '.TBL_ROLES.'
                         ON rol_id = mem_rol_id
-                INNER JOIN '.TBL_CATEGORIES.'
+                	INNER JOIN '.TBL_CATEGORIES.'
                         ON cat_id = rol_cat_id
-                     WHERE rol_valid  = 1
-                       AND ( cat_org_id = ? -- $gCurrentOrgId
-                        OR cat_org_id IS NULL )
-                       AND mem_begin <= ? -- DATE_NOW
-                       AND mem_end    > ? -- DATE_NOW
-                       AND mem_usr_id = ? -- $memberId ';
+					WHERE rol_valid  = 1
+					AND (cat_org_id = ? -- $gCurrentOrgId
+                        OR cat_org_id IS NULL)
+					AND mem_begin <= ? -- DATE_NOW
+					AND mem_end    > ? -- DATE_NOW
+					AND mem_usr_id = ? -- $memberId;';
 			
 			$membersStatement = $gDb->queryPrepared($sql, array($gCurrentOrgId, DATE_NOW, DATE_NOW, $memberId));
 			

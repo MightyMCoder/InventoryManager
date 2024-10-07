@@ -105,17 +105,17 @@ switch ($getMode)
     case 2:
     		
     	$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_LOG.'
-        	          WHERE iml_imi_id = ? ';
+				WHERE iml_imi_id = ?;';
     	$gDb->queryPrepared($sql, array($getItemId));
     	
     	$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_DATA.'
-        		      WHERE imd_imi_id = ? ';
+				WHERE imd_imi_id = ?;';
     	$gDb->queryPrepared($sql, array($getItemId));
     
     	$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
-        		      WHERE imi_id = ? -- $getItemId
-    			        AND ( imi_org_id = ? -- $gCurrentOrgId
-                         OR imi_org_id IS NULL ) ';
+				WHERE imi_id = ? -- $getItemId
+				AND (imi_org_id = ? -- $gCurrentOrgId
+					OR imi_org_id IS NULL);';
     	$gDb->queryPrepared($sql, array($getItemId, $gCurrentOrgId));
     	
     	// go back to item view
@@ -128,8 +128,8 @@ switch ($getMode)
     case 3:
     	
     	$sql = 'UPDATE '.TBL_INVENTORY_MANAGER_ITEMS.'
-                   SET imi_former = 1
-                 WHERE imi_id = ? ';
+				SET imi_former = 1
+				WHERE imi_id = ?;';
     	$gDb->queryPrepared($sql, array($getItemId));
     		
     	// go back to item view

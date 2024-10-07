@@ -165,12 +165,11 @@ $page->addHtml(getPreferencePanel('preferences', 'deinstallation', $gL10n->get('
                     
 $formAccessPreferences = new HtmlForm('access_preferences_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences_function.php', array('form' => 'access_preferences')), $page, array('class' => 'form-preferences'));
 
-$sql = 'SELECT rol.rol_id, rol.rol_name, cat.cat_name
-          FROM '.TBL_CATEGORIES.' AS cat, '.TBL_ROLES.' AS rol
-         WHERE cat.cat_id = rol.rol_cat_id
-           AND ( cat.cat_org_id = '.$gCurrentOrgId.'
-            OR cat.cat_org_id IS NULL )
-      ORDER BY cat_sequence, rol.rol_name ASC';
+$sql = 'SELECT rol.rol_id, rol.rol_name, cat.cat_name FROM '.TBL_CATEGORIES.' AS cat, '.TBL_ROLES.' AS rol
+        WHERE cat.cat_id = rol.rol_cat_id
+        AND (cat.cat_org_id = '.$gCurrentOrgId.'
+            OR cat.cat_org_id IS NULL)
+        ORDER BY cat_sequence, rol.rol_name ASC;';
 $formAccessPreferences->addSelectBoxFromSql('access_preferences', '', $gDb, $sql, array('defaultValue' => $pPreferences->config['access']['preferences'], 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC', 'multiselect' => true));
 $formAccessPreferences->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 

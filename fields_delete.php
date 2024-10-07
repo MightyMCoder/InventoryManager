@@ -90,11 +90,11 @@ switch ($getMode)
     	asort($itemFieldText);
     
     	$form->addInput('imf_type', $gL10n->get('ORG_DATATYPE'), $itemFieldText[$itemField->getValue('imf_type')],
-    				array('maxLength' => 30, 'property' => HtmlForm::FIELD_DISABLED));
+				array('maxLength' => 30, 'property' => HtmlForm::FIELD_DISABLED));
     	
-    	$form->addMultilineTextInput('imf_value_list', $gL10n->get('ORG_VALUE_LIST'),
-    			$itemField->getValue('imf_value_list', 'database'), 6,
-    			array('property' => HtmlForm::FIELD_DISABLED));
+		$form->addMultilineTextInput('imf_value_list', $gL10n->get('ORG_VALUE_LIST'),
+				(string) $itemField->getValue('imf_value_list', 'database'), 6,
+				array('property' => HtmlForm::FIELD_DISABLED));
     	
     	$form->addMultilineTextInput('imf_description', $gL10n->get('SYS_DESCRIPTION'),
     			$itemField->getValue('imf_description'), 3,
@@ -109,17 +109,17 @@ switch ($getMode)
     case 2:
     	
     	$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_LOG.'
-        		      WHERE iml_imf_id = ? ';
+				WHERE iml_imf_id = ?;';
     	$gDb->queryPrepared($sql, array($getimfId));
     	
     	$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_DATA.'
-        		      WHERE imd_imf_id = ? ';
+				WHERE imd_imf_id = ?;';
     	$gDb->queryPrepared($sql, array($getimfId));
     	
     	$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
-        		 WHERE imf_id = ?
-    			   AND ( imf_org_id = ?
-                    OR imf_org_id IS NULL ) ';
+				WHERE imf_id = ?
+				AND (imf_org_id = ?
+                    OR imf_org_id IS NULL);';
     	$gDb->queryPrepared($sql, array($getimfId, $gCurrentOrgId));
     	
     	// go back to item view
@@ -129,7 +129,3 @@ switch ($getMode)
     	break;
     	// => EXIT
 }
-    		
-    		
-    		
-    		

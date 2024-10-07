@@ -394,20 +394,19 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
             }
         
             // read all receiver
-            $sql = 'SELECT DISTINCT imd_value, CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value)
-                               FROM '.TBL_INVENTORY_MANAGER_DATA.'
-                         INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
-                                 ON imf_id = imd_imf_id
-                          LEFT JOIN '. TBL_USER_DATA. ' as last_name
-                                 ON last_name.usd_usr_id = imd_value
-                                AND last_name.usd_usf_id = '. $gProfileFields->getProperty('LAST_NAME', 'usf_id'). '
-                          LEFT JOIN '. TBL_USER_DATA. ' as first_name
-                                 ON first_name.usd_usr_id = imd_value
-                                AND first_name.usd_usf_id = '. $gProfileFields->getProperty('FIRST_NAME', 'usf_id'). '
-                              WHERE ( imf_org_id  = '. $gCurrentOrgId .'
-                                 OR imf_org_id IS NULL )
-                                AND imf_name_intern = \'RECEIVER\'
-                           ORDER BY CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value) ASC';
+            $sql = 'SELECT DISTINCT imd_value, CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value) FROM '.TBL_INVENTORY_MANAGER_DATA.'
+                    INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
+                        ON imf_id = imd_imf_id
+                    LEFT JOIN '. TBL_USER_DATA. ' as last_name
+                        ON last_name.usd_usr_id = imd_value
+                        AND last_name.usd_usf_id = '. $gProfileFields->getProperty('LAST_NAME', 'usf_id'). '
+                    LEFT JOIN '. TBL_USER_DATA. ' as first_name
+                        ON first_name.usd_usr_id = imd_value
+                        AND first_name.usd_usf_id = '. $gProfileFields->getProperty('FIRST_NAME', 'usf_id'). '
+                    WHERE (imf_org_id  = '. $gCurrentOrgId .'
+                        OR imf_org_id IS NULL)
+                    AND imf_name_intern = \'RECEIVER\'
+                    ORDER BY CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value) ASC;';
             $form->addSelectBoxFromSql('filter_receiver',$selectBoxReceiverLabel, $gDb, $sql, array('defaultValue' => $getFilterReceiver , 'showContextDependentFirstEntry' => true));
         }
         else
@@ -421,7 +420,7 @@ if ($getMode != 'csv' && $getMode != 'xlsx' )
         $form->addCheckbox('export_and_filter', $gL10n->get('PLG_INVENTORY_MANAGER_EXPORT_AND_FILTER'), $getExportAndFilter);
         $form->addInput('same_side', '', '1', array('property' => HtmlForm::FIELD_HIDDEN));
         $filterNavbar->addForm($form->show());
-       
+        
         $page->addHtml($filterNavbar->show());        
 
         $table = new HtmlTable('adm_inventory_table', $page, $hoverRows, $datatable, $classTable);

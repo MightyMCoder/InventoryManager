@@ -439,11 +439,10 @@ class CItems
     		$this->mItemId = $itemId;
     
     		// read all item data
-    		$sql = 'SELECT *
-                      FROM '.TBL_INVENTORY_MANAGER_DATA.'
-                INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
+    		$sql = 'SELECT * FROM '.TBL_INVENTORY_MANAGER_DATA.'
+                    INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
                         ON imf_id = imd_imf_id
-                     WHERE imd_imi_id = ? ';
+                    WHERE imd_imi_id = ?;';
     		$itemDataStatement = $this->mDb->queryPrepared($sql, array($itemId));
     
     		while ($row = $itemDataStatement->fetch())
@@ -513,10 +512,9 @@ class CItems
     	$this->mItemFields = array();
     	$this->clearItemData();
     
-    	$sql = 'SELECT *
-                  FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
-                 WHERE imf_org_id IS NULL
-                    OR imf_org_id = ? ';
+    	$sql = 'SELECT * FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
+                WHERE imf_org_id IS NULL
+                OR imf_org_id = ?;';
     	$statement = $this->mDb->queryPrepared($sql, array($organizationId));
 
     	while ($row = $statement->fetch())
@@ -549,13 +547,12 @@ class CItems
     		$sqlWhereCondition .= 'AND imi_former = 0';
     	}
     	
-    	$sql = 'SELECT DISTINCT imi_id, imi_former
-          	      		   FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
-          	         INNER JOIN '.TBL_INVENTORY_MANAGER_DATA.'
-                             ON imd_imi_id = imi_id
-                          WHERE imi_org_id IS NULL
-                             OR imi_org_id = ?
-                             '.$sqlWhereCondition.' ';
+    	$sql = 'SELECT DISTINCT imi_id, imi_former FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
+                INNER JOIN '.TBL_INVENTORY_MANAGER_DATA.'
+                    ON imd_imi_id = imi_id
+                WHERE imi_org_id IS NULL
+                OR imi_org_id = ?
+                '.$sqlWhereCondition.';';
     	$statement = $this->mDb->queryPrepared($sql, array($organizationId));
 
     	while ($row = $statement->fetch())
@@ -582,17 +579,16 @@ class CItems
             $sqlWhereCondition .= 'AND imi_former = 0';
         }
 
-        $sql = 'SELECT DISTINCT imi_id, imi_former
-          	      		   FROM '.TBL_INVENTORY_MANAGER_DATA.'
-          	         INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
-                             ON imf_id = imd_imf_id
-                            AND imf_id = ?
-                     INNER JOIN '.TBL_INVENTORY_MANAGER_ITEMS.'
-                             ON imi_id = imd_imi_id
-                          WHERE (imi_org_id IS NULL
-                             OR imi_org_id = ? )
-                            AND imd_value = ?
-                             '.$sqlWhereCondition.' ';
+        $sql = 'SELECT DISTINCT imi_id, imi_former FROM '.TBL_INVENTORY_MANAGER_DATA.'
+                INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
+                    ON imf_id = imd_imf_id
+                    AND imf_id = ?
+                INNER JOIN '.TBL_INVENTORY_MANAGER_ITEMS.'
+                    ON imi_id = imd_imi_id
+                WHERE (imi_org_id IS NULL
+                    OR imi_org_id = ?)
+                AND imd_value = ?
+                '.$sqlWhereCondition.';';
         $statement = $this->mDb->queryPrepared($sql, array($this->getProperty('RECEIVER', 'imf_id'), $organizationId, $userId));
         
         while ($row = $statement->fetch())
@@ -680,11 +676,10 @@ class CItems
     {
      	//If an error occured while generating a item, there is a ItemId but no data for that item.
     	//the following routine deletes these unused ItemIds
-  		$sql = 'SELECT *
-          	      FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
-             LEFT JOIN '.TBL_INVENTORY_MANAGER_DATA.'
+  		$sql = 'SELECT * FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
+                LEFT JOIN '.TBL_INVENTORY_MANAGER_DATA.'
                     ON imd_imi_id = imi_id
-                 WHERE imd_imi_id is NULL ';
+                WHERE imd_imi_id is NULL;';
     	$statement = $this->mDb->queryPrepared($sql);
    
     	while ($row = $statement->fetch())

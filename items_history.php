@@ -85,11 +85,10 @@ $dateToIntern   = $objDateTo->format('Y-m-d');
 $dateToHtml     = $objDateTo->format($gSettingsManager->getString('system_date'));
 
 // create select statement with all necessary data
-$sql = 'SELECT iml_imi_id, iml_imf_id,  iml_usr_id_create, iml_timestamp_create, iml_value_old, iml_value_new
-          FROM '.TBL_INVENTORY_MANAGER_LOG.'
-         WHERE iml_timestamp_create BETWEEN ? AND ? 
-           AND iml_imi_id = ?
-      ORDER BY iml_timestamp_create DESC';
+$sql = 'SELECT iml_imi_id, iml_imf_id,  iml_usr_id_create, iml_timestamp_create, iml_value_old, iml_value_new FROM '.TBL_INVENTORY_MANAGER_LOG.'
+        WHERE iml_timestamp_create BETWEEN ? AND ? 
+        AND iml_imi_id = ?
+        ORDER BY iml_timestamp_create DESC;';
       
 $fieldHistoryStatement = $gDb->queryPrepared($sql, array($dateFromIntern.' 00:00:00', $dateToIntern.' 23:59:59', $getItemId));
 

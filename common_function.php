@@ -49,9 +49,8 @@ function isUserAuthorized($scriptName)
 	$userIsAuthorized = false;
 	$menId = 0;
 	
-	$sql = 'SELECT men_id
-              FROM '.TBL_MENU.'
-             WHERE men_url = ? -- $scriptName ';
+	$sql = 'SELECT men_id FROM '.TBL_MENU.'
+			WHERE men_url = ? -- $scriptName;';
 	
 	$menuStatement = $GLOBALS['gDb']->queryPrepared($sql, array($scriptName));
 	
@@ -67,12 +66,11 @@ function isUserAuthorized($scriptName)
 		}
 	}
 	
-	$sql = 'SELECT men_id, men_com_id, com_name_intern
-              FROM '.TBL_MENU.'
-         LEFT JOIN '.TBL_COMPONENTS.'
-                ON com_id = men_com_id
-             WHERE men_id = ? -- $menId
-          ORDER BY men_men_id_parent DESC, men_order';
+	$sql = 'SELECT men_id, men_com_id, com_name_intern FROM '.TBL_MENU.'
+			LEFT JOIN '.TBL_COMPONENTS.'
+				ON com_id = men_com_id
+			WHERE men_id = ? -- $menId
+          	ORDER BY men_men_id_parent DESC, men_order;';
 	
 	$menuStatement = $GLOBALS['gDb']->queryPrepared($sql, array($menId));
 	while ($row = $menuStatement->fetch())
@@ -155,9 +153,8 @@ function getNewNameIntern($name, $index)
 		$newNameIntern = $newNameIntern . '_' . $index;
 	}
 
-	$sql = 'SELECT imf_id
-              FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
-             WHERE imf_name_intern = ? ';
+	$sql = 'SELECT imf_id FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
+			WHERE imf_name_intern = ?;';
 	$userFieldsStatement = $GLOBALS['gDb']->queryPrepared($sql, array($newNameIntern));
 
 	if ($userFieldsStatement->rowCount() > 0)
@@ -177,10 +174,9 @@ function getNewNameIntern($name, $index)
  */
 function genNewSequence()
 {
-	$sql =  'SELECT max(imf_sequence) as max_sequence
-                   FROM '.TBL_INVENTORY_MANAGER_FIELDS.' 
-                  WHERE ( imf_org_id = ?
-                     OR imf_org_id IS NULL ) ';
+	$sql = 'SELECT max(imf_sequence) as max_sequence FROM '.TBL_INVENTORY_MANAGER_FIELDS.' 
+			WHERE (imf_org_id = ?
+				OR imf_org_id IS NULL);';
 	$statement = $GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId']));
 	$row = $statement->fetch();
 
