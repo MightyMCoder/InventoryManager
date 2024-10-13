@@ -1,7 +1,7 @@
 <?php
 /**
  ***********************************************************************************************
- * Version file for the Admidio plugin KeyManager
+ * Version file for the Admidio plugin InventoryManager
  * 
  * @copyright The Admidio Team
  * @see https://www.admidio.org/
@@ -9,5 +9,23 @@
  ***********************************************************************************************
  */
 
-$plugin_version = '2.3.1';
-$plugin_stand   = '04.10.2024';
+class CPluginInfoPIM {
+    protected const PLUGIN_VERSION = '1.0.0';
+    protected const PLUGIN_STAND = '13.10.2024';
+
+    /**
+     * Current version of plugin InventoryManager
+     * @return string
+     */    
+    public static function getPluginVersion() {
+        return self::PLUGIN_VERSION;
+    }
+
+    /**
+     * Current stand of plugin InventoryManager
+     * @return string
+     */
+    public static function getPluginStand() {
+        return self::PLUGIN_STAND;
+    }
+}
