@@ -24,6 +24,7 @@
     <string name="PLG_INVENTORY_MANAGER_DOCUMENTATION_OPEN">Open documentation</string>
     <string name="PLG_INVENTORY_MANAGER_DOCUMENTATION_OPEN_DESC">Allows the documentation of the plugin can be opened (An existing Internet connection is required because the data is located on admidio.org).</string>
     <string name="PLG_INVENTORY_MANAGER_EXPORT">Export</string>
+    <string name="PLG_INVENTORY_MANAGER_IMPORT">Import</string>
     <string name="PLG_INVENTORY_MANAGER_EXPORT_AND_FILTER">Export and filter</string>
     <string name="PLG_INVENTORY_MANAGER_FIELD">Field of a running no.</string>
     <string name="PLG_INVENTORY_MANAGER_FIELD_DESC">Here a field of a consecutive number can be selected. In a selection, the current number is read out and increased according to the specified number.\n\nNOTE: InventoryManager can only tell if a data field is of type "number". Whether a serial number is stored in this data field can not be recognized.</string>
