@@ -62,10 +62,100 @@ if ($getItemId != 0) {
 $form = new HtmlForm('edit_item_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items_save.php', ['item_id' => $getItemId]), $page);
 
 foreach ($items->mItemFields as $itemField) {
+    $imfNameIntern = $itemField->getValue('imf_name_intern');
+    if($imfNameIntern === 'IN_INVENTORY') {
+        $pimInInventoryId = $items->getProperty($imfNameIntern, 'imf_id');
+    }
+    if($imfNameIntern === 'LAST_RECEIVER') {
+        $pimLastReceiverId = $items->getProperty($imfNameIntern, 'imf_id');
+    }
+    if ($imfNameIntern === 'RECEIVED_ON') {
+        $pimReceivedOnId = $items->getProperty($imfNameIntern, 'imf_id');
+    }
+    if ($imfNameIntern === 'RECEIVED_BACK_ON') {
+        $pimReceivedBackOnId = $items->getProperty($imfNameIntern, 'imf_id');
+    }
+}
+
+foreach ($items->mItemFields as $itemField) {
     $fieldProperty = isUserAuthorizedForPreferences() ? HtmlForm::FIELD_DEFAULT : HtmlForm::FIELD_DISABLED;
     $helpId = '';
     $imfNameIntern = $itemField->getValue('imf_name_intern');
+    
+    if (isset($pimInInventoryId, $pimLastReceiverId, $pimReceivedOnId, $pimReceivedBackOnId) && $imfNameIntern === 'IN_INVENTORY') {
+        // Add JavaScript to check the PIM_LAST_RECEIVER field and set the required attribute for pimReceivedOnId
+        $page->addJavascript('
+            document.addEventListener("DOMContentLoaded", function() {
+            var pimInInventoryField = document.querySelector("[id=\'imf-' . $pimInInventoryId . '\']");
+            var pimInInventoryGroup = document.getElementById("imf-' . $pimInInventoryId . '_group");
+            var pimLastReceiverField = document.querySelector("[id=\'imf-' . $pimLastReceiverId . '\']");
+            var pimLastReceiverGroup = document.getElementById("imf-' . $pimLastReceiverId . '_group");
+            var pimReceivedOnField = document.querySelector("[id=\'imf-' . $pimReceivedOnId . '\']");
+            var pimReceivedOnGroup = document.getElementById("imf-' . $pimReceivedOnId . '_group");
+            var pimReceivedBackOnField = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '\']");
+            var pimReceivedBackOnGroup = document.getElementById("imf-' . $pimReceivedBackOnId . '_group");
 
+            function setRequired(field, group, required) {
+                if (required) {
+                field.setAttribute("required", "required");
+                group.classList.add("admidio-form-group-required");
+                } else {
+                field.removeAttribute("required");
+                group.classList.remove("admidio-form-group-required");
+                }
+            }
+
+            function checkPimInInventory() {
+                var isInInventoryChecked = pimInInventoryField.checked;
+                var lastReceiverValue = pimLastReceiverField.value;
+                var receivedBackOnValue = pimReceivedBackOnField.value;
+
+                setRequired(pimReceivedOnField, pimReceivedOnGroup, isInInventoryChecked && lastReceiverValue !== "");
+                setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, isInInventoryChecked && lastReceiverValue !== "");
+
+                setRequired(pimLastReceiverField, pimLastReceiverGroup, !isInInventoryChecked);
+                setRequired(pimReceivedOnField, pimReceivedOnGroup, !isInInventoryChecked);
+
+                if (!isInInventoryChecked && lastReceiverValue === "") {
+                pimReceivedOnField.value = "";
+                }
+
+                if (receivedBackOnValue !== "") {
+                setRequired(pimLastReceiverField, pimLastReceiverGroup, true);
+                setRequired(pimReceivedOnField, pimReceivedOnGroup, true);
+                }
+
+                var previousPimInInventoryState = isInInventoryChecked;
+
+                pimInInventoryField.addEventListener("change", function() {
+                if (!pimInInventoryField.checked && previousPimInInventoryState) {
+                    pimReceivedBackOnField.value = "";
+                }
+                previousPimInInventoryState = pimInInventoryField.checked;
+                });
+            }
+
+            function validateReceivedOnAndBackOn() {
+                var receivedOnDate = new Date(pimReceivedOnField.value);
+                var receivedBackOnDate = new Date(pimReceivedBackOnField.value);
+
+                if (receivedOnDate > receivedBackOnDate) {
+                pimReceivedOnField.setCustomValidity("ReceivedOn date cannot be after ReceivedBack date.");
+                } else {
+                pimReceivedOnField.setCustomValidity("");
+                }
+            }
+
+            pimInInventoryField.addEventListener("change", checkPimInInventory);
+            pimLastReceiverField.addEventListener("input", checkPimInInventory);
+            pimReceivedBackOnField.addEventListener("input", checkPimInInventory);
+            pimReceivedOnField.addEventListener("input", validateReceivedOnAndBackOn);
+            pimReceivedBackOnField.addEventListener("input", validateReceivedOnAndBackOn);
+            checkPimInInventory();
+            });
+        ');
+    }
+    
     if ($itemField->getValue('imf_type') === 'DATE' && $itemField->getValue('imf_sequence') === '1') {
         $form->addInput('dummy', 'dummy', 'dummy', ['type' => 'date', 'property' => HtmlForm::FIELD_HIDDEN]);
     }
