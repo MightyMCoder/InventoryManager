@@ -18,6 +18,9 @@ require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/common_function.php');
 require_once(__DIR__ . '/classes/configtable.php');
 
+// Access only with valid login
+require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+
 // Initialize and check the parameters
 $getimfId = admFuncVariableIsValid($_GET, 'imf_id', 'int');
 

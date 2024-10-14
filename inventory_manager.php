@@ -3,7 +3,7 @@
  ***********************************************************************************************
  * InventoryManager
  *
- * Version 1.0.0
+ * Version 1.0.3
  *
  * InventoryManager is an Admidio plugin for managing the inventory of an organisation.
  * 
@@ -34,11 +34,13 @@
  ***********************************************************************************************
  */
 
-
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/common_function.php');
 require_once(__DIR__ . '/classes/items.php');
 require_once(__DIR__ . '/classes/configtable.php');
+
+// Access only with valid login
+require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
 
 //$scriptName ist der Name wie er im Menue eingetragen werden muss, also ohne evtl. vorgelagerte Ordner wie z.B. /playground/adm_plugins/inventory_manager...
 $scriptName = substr($_SERVER['SCRIPT_NAME'], strpos($_SERVER['SCRIPT_NAME'], FOLDER_PLUGINS));

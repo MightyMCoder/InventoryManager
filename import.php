@@ -8,8 +8,12 @@
  * @license https://www.gnu.org/licenses/gpl-2.0.html GNU General Public License v2.0 only
  ***********************************************************************************************
  */
+
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/common_function.php');
+
+// Access only with valid login
+require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
 
 // only authorized user are allowed to start this module
 if (!isUserAuthorizedForPreferences()) {

@@ -6,21 +6,22 @@
  * @copyright The Admidio Team
  * @see https://www.admidio.org/
  * @license https://www.gnu.org/licenses/gpl-2.0.html GNU General Public License v2.0 only
- ***********************************************************************************************
- */
-
-/******************************************************************************
+ * 
  * Parameters:
  *
  * item_id    : ID of the item who should be edited
  * copy      : true - The item of the item_id will be copied and the base for this new item
  *
- *****************************************************************************/
+ ***********************************************************************************************
+ */
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/classes/items.php');
 require_once(__DIR__ . '/classes/configtable.php');
 require_once(__DIR__ . '/common_function.php');
+
+// Access only with valid login
+require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
 $getItemId = admFuncVariableIsValid($_GET, 'item_id', 'int');
