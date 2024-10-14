@@ -14,10 +14,14 @@
  * sequence : direction to move the item field, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN
  ***********************************************************************************************
  */
+
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/common_function.php');
 require_once(__DIR__ . '/classes/configtable.php');
 require_once(__DIR__ . '/classes/items.php');
+
+// Access only with valid login
+require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
