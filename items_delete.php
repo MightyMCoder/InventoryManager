@@ -72,7 +72,7 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer) {
 		$imfNameIntern = $itemField->getValue('imf_name_intern');
 		$content = $items->getValue($imfNameIntern, 'database');
 
-		if ($imfNameIntern === 'RECEIVER' && strlen($content) > 0) {
+		if ($imfNameIntern === 'KEEPER' && strlen($content) > 0) {
 			$user->readDataById($content);
 			$content = $user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME');
 		} elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'DATE') {

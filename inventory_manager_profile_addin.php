@@ -40,7 +40,7 @@ $page->addHtml('<div class="card admidio-field-group" id="inventory_manager_box"
 					'export_and_filter' => true,
 					'show_all' => true,
 					'same_side' => true,
-					'filter_receiver' => $user->getValue('usr_id')
+					'filter_keeper' => $user->getValue('usr_id')
 				)) . '">
 					<i class="fas fa-key" data-toggle="tooltip" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER') . '"></i>
 				</a>

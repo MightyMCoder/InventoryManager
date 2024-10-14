@@ -222,14 +222,138 @@ class CConfigTablePIM
 	 */
 	private function initializeDefaultFields()
 	{
-		$sql = 'SELECT * FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE imf_name_intern = \'ITEMNAME\' AND imf_org_id = \'' . $GLOBALS['gCurrentOrgId'] . '\';';
+		$defaultData = array(
+			array('imf_id' => 1, 'imf_name' => 'PIM_ITEMNAME', 'imf_name_intern' => 'ITEMNAME', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_ITEMNAME_DESCRIPTION'), 'imf_sequence' => 0, 'imf_system' => 1, 'imf_mandatory' => 1),
+			array('imf_id' => 2, 'imf_name' => 'PIM_CATEGORY', 'imf_name_intern' => 'CATEGORY', 'imf_type' => 'DROPDOWN', 'imf_description' => convlanguagePIM('PIM_CATEGORY_DESCRIPTION'), 'imf_sequence' => 1, 'imf_system' => 1, 'imf_mandatory' => 1, 'imf_value_list' => 'Allgemein'),
+			array('imf_id' => 3, 'imf_name' => 'PIM_KEEPER', 'imf_name_intern' => 'KEEPER', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_KEEPER_DESCRIPTION'), 'imf_sequence' => 2, 'imf_system' => 1, 'imf_mandatory' => 0),
+			array('imf_id' => 4, 'imf_name' => 'PIM_IN_INVENTORY', 'imf_name_intern' => 'IN_INVENTORY', 'imf_type' => 'CHECKBOX', 'imf_description' => convlanguagePIM('PIM_IN_INVENTORY_DESCRIPTION'), 'imf_sequence' => 3, 'imf_system' => 1, 'imf_mandatory' => 0),
+			array('imf_id' => 5, 'imf_name' => 'PIM_LAST_RECEIVER', 'imf_name_intern' => 'LAST_RECEIVER', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_LAST_RECEIVER_DESCRIPTION'), 'imf_sequence' => 4, 'imf_system' => 1, 'imf_mandatory' => 0),
+			array('imf_id' => 6, 'imf_name' => 'PIM_RECEIVED_ON', 'imf_name_intern' => 'RECEIVED_ON', 'imf_type' => 'DATE', 'imf_description' => convlanguagePIM('PIM_RECEIVED_ON_DESCRIPTION'), 'imf_sequence' => 5, 'imf_system' => 1, 'imf_mandatory' => 0),
+			array('imf_id' => 7, 'imf_name' => 'PIM_RECEIVED_BACK_ON', 'imf_name_intern' => 'RECEIVED_BACK_ON', 'imf_type' => 'DATE', 'imf_description' => convlanguagePIM('PIM_RECEIVED_BACK_ON_DESCRIPTION'), 'imf_sequence' => 6, 'imf_system' => 1, 'imf_mandatory' => 0)
+		);
+
+		$sql = 'SELECT imf_id, imf_name, imf_name_intern, imf_type, imf_description, imf_sequence, imf_system, imf_mandatory, imf_value_list FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE imf_org_id = \'' . $GLOBALS['gCurrentOrgId'] . '\';';
 		$statement = $GLOBALS['gDb']->query($sql);
 
-		if ($statement->rowCount() == 0) {
-			$this->createField('PIM_ITEMNAME', 'ITEMNAME', 'TEXT', 'Der Name des Gegenstandes', 0, 1, 1);
-			$this->createField('PIM_CATEGORY', 'CATEGORY', 'DROPDOWN', 'Die Kategorie des Gegenstandes', 1, 0, 1, 'Allgemein');
-			$this->createField('PIM_RECEIVER', 'RECEIVER', 'TEXT', 'Der Empfänger des Gegenstandes', 2, 0, 0);
-			$this->createField('PIM_RECEIVED_ON', 'RECEIVED_ON', 'DATE', 'Das Empfangsdatum des Gegenstandes', 3, 0, 0);
+		$existingFields = array();
+		while ($row = $statement->fetch()) {
+			$existingFields[$row['imf_name']] = $row;
+		}
+
+		$defaultFieldNames = array_column($defaultData, 'imf_name');
+
+		$pimFields = array();
+		$customFields = array();
+
+		foreach ($existingFields as $fieldName => $fieldData) {
+			if (strpos($fieldName, 'PIM_') === 0) {
+				$pimFields[$fieldName] = $fieldData;
+			}
+			else {
+				$customFields[$fieldName] = $fieldData;
+			}
+		}
+		// Adjust pimFields to match the defaultData
+		foreach ($defaultData as $defaultField) {
+			$defaultFieldName = $defaultField['imf_name'];
+			if (!isset($pimFields[$defaultFieldName])) {
+				// Field does not exist, add it to pimFields
+				$pimFields[$defaultFieldName] = $defaultField;
+			}
+			else {
+				foreach($defaultField as $key => $value) {
+					if ($key === 'imf_value_list') {
+						continue;
+					}
+					$pimFields[$defaultFieldName][$key] = $value;
+				}
+			}
+		}
+
+		// Sort the array by imd_id but keep the name as imf_name
+		usort($pimFields, function($a, $b) {
+			return $a['imf_id'] <=> $b['imf_id'];
+		});
+		
+		$pimFields = array_combine(array_column($pimFields, 'imf_name'), $pimFields);
+
+		// Remove PIM fields that are not in the defaultData
+		foreach ($pimFields as $fieldName => $fieldData) {
+			if (!in_array($fieldName, $defaultFieldNames)) {
+				unset($pimFields[$fieldName]);
+			}
+		}
+		// Append customFields to pimFields
+		$allFields = array_merge($pimFields, $customFields);
+
+		// Update the imf_sequence based on the index in the array
+		$sequence = 0;
+		foreach ($allFields as &$field) {
+			$field['imf_sequence'] = $sequence++;
+		}
+		unset($field); // Break reference to the last element
+
+		// Now $allFields contains the combined and updated fields
+
+		// Clear the table and reset the AUTO_INCREMENT
+		$sql = 'TRUNCATE TABLE ' . TBL_INVENTORY_MANAGER_FIELDS;
+		$GLOBALS['gDb']->query($sql);
+
+		// Insert the new array into the database and keep track of new IDs
+		$newFieldIds = array();
+		foreach ($allFields as $field) {
+			$this->createField(
+				$field['imf_name'],
+				$field['imf_name_intern'],
+				$field['imf_type'],
+				$field['imf_description'],
+				$field['imf_sequence'],
+				$field['imf_system'],
+				$field['imf_mandatory'],
+				isset($field['imf_value_list']) ? $field['imf_value_list'] : ''
+			);
+
+			// Get the new ID of the inserted field
+			$newFieldId = $GLOBALS['gDb']->lastInsertId();
+			$newFieldIds[$field['imf_name']] = $newFieldId;
+		}
+
+		if (count($existingFields) < count($newFieldIds)) {
+		// Sort existing fields by imf_id in descending order
+		usort($existingFields, function($a, $b) {
+			return $b['imf_id'] <=> $a['imf_id'];
+		});
+
+		// Update the imd_imf_id in TBL_INVENTORY_MANAGER_DATA if the ID has changed
+		$existingFields = array_combine(array_column($existingFields, 'imf_name'), $existingFields);
+		}
+
+		foreach ($existingFields as $oldField) {
+			$oldFieldName = $oldField['imf_name'];
+			if (isset($newFieldIds[$oldFieldName])) {
+				if ($newFieldIds[$oldFieldName] != $oldField['imf_id']) {
+					$sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_DATA . ' SET imd_imf_id = ? WHERE imd_imf_id = ?';
+					$GLOBALS['gDb']->queryPrepared($sql, array($newFieldIds[$oldFieldName], $oldField['imf_id']));
+				}
+			}
+			else {
+				// Field no longer exists, set the field to empty and show an error message
+				$sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_DATA . ' SET imd_imf_id = NULL WHERE imd_imf_id = ?';
+				$GLOBALS['gDb']->queryPrepared($sql, array($oldField['imf_id']));
+				$_SESSION['error_messages'][] = 'Error: Field "' . $oldFieldName . '" no longer exists. Please manually check and adjust the database table"' . TBL_INVENTORY_MANAGER_DATA .'"  where "imd_imf_id" equals "NULL" to avoid data loss.';
+			}
+		}
+
+		// Display error messages in a browser window if there are any
+		if (!empty($_SESSION['error_messages'])) {
+			// Prepare error messages for safe output in JavaScript
+			$jsErrorMessages = json_encode(implode("\n", $_SESSION['error_messages']));
+
+			echo '<script type="text/javascript">';
+			echo 'alert(' . $jsErrorMessages . ');';
+			echo '</script>';
+
+			unset($_SESSION['error_messages']);
 		}
 	}
 

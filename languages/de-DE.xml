@@ -73,7 +73,7 @@
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN">Einstellungen für die Profilansicht</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">In der Profilansicht eines Mitglieds können ausgegebene Gegenstände angezeigt werden. Standardmäßig wird nur der Gegenstandsname angezeigt. Hier kann, zusätzlich zum Gegenstandsnamen, ein weiteres Eigenschaftsfeld ausgewählt und angezeigt werden.</string>    
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">Damit in der Profilansicht Gegenstände angezeigt werden, muss folgende Zeile in die profile.php eingefügt werden: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/inventory/inventory_manager_profile_addin.php');".\n\nWeitere Infos dazu finden sich in der Datei inventory_manager_profile_addin.php.</string>
-    <string name="PLG_INVENTORY_MANAGER_RECEIVER">Empfänger</string>     
+    <string name="PLG_INVENTORY_MANAGER_KEEPER">Verwalter</string>     
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Alle Gegenstände anzeigen</string>
     <string name="PLG_INVENTORY_MANAGER_SPECIAL_CASE_CURUSER_OR_ADMIN">Sonderfall: Aktueller Benutzer oder Administrator</string>    
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE">Benutzer mit Empfänger abgleichen</string>
@@ -84,7 +84,17 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">Die aufgelisteten Benutzer sind jetzt Ehemalige.</string>
     <!-- Phrases only in Database -->
     <string name="PIM_ITEMNAME">Gegenstandsname</string>
+    <string name="PIM_ITEMNAME_DESCRIPTION">Der Name des Gegenstandes</string>
     <string name="PIM_CATEGORY">Kategorie</string>
+    <string name="PIM_CATEGORY_DESCRIPTION">Die Kategorie des Gegenstandes</string>
+    <string name="PIM_KEEPER">Verwalter</string>        
+    <string name="PIM_KEEPER_DESCRIPTION">Der Verwalter des Gegenstandes</string>
+    <string name="PIM_IN_INVENTORY">im Inventar</string>        
+    <string name="PIM_IN_INVENTORY_DESCRIPTION">Gegenstand befindet sich im Inventar</string>
+    <string name="PIM_LAST_RECEIVER">letzter Empfänger</string>        
+    <string name="PIM_LAST_RECEIVER_DESCRIPTION">Der letzte Empfänger des Gegenstandes</string>
     <string name="PIM_RECEIVED_ON">empfangen am</string>
-    <string name="PIM_RECEIVER">Empfänger</string>        
+    <string name="PIM_RECEIVED_ON_DESCRIPTION">Das Empfangsdatum des Gegenstandes durch den letzten Empfänger</string>
+    <string name="PIM_RECEIVED_BACK_ON">zurückerhalten am</string>
+    <string name="PIM_RECEIVED_BACK_ON_DESCRIPTION">Das Empfangsdatum des Gegenstandes durch den Verwalter</string>
 </resources>

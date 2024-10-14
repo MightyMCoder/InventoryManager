@@ -528,7 +528,7 @@ class CItems
                     OR imi_org_id = ?)
                 AND imd_value = ?
                 '.$sqlWhereCondition.';';
-        $statement = $this->mDb->queryPrepared($sql, array($this->getProperty('RECEIVER', 'imf_id'), $organizationId, $userId));
+        $statement = $this->mDb->queryPrepared($sql, array($this->getProperty('KEEPER', 'imf_id'), $organizationId, $userId));
 
         while ($row = $statement->fetch()) {
             $this->items[] = array('imi_id' => $row['imi_id'], 'imi_former' => $row['imi_former']);
