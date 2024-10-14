@@ -73,7 +73,7 @@
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN">Profile view settings</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">Issued items can be viewed in a member's profile view. By default, only theitemname is displayed. In addition to theitemname, anotheritemfield can be selected and displayed here.</string>    
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">In order for items to be displayed in the profile view, the following line must be added to profile.php: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/inventory/inventory_manager_profile_addin.php');".\n\nFurther information can be found in the inventory_manager_profile_addin.php file.</string>
-    <string name="PLG_INVENTORY_MANAGER_RECEIVER">Receiver</string>     
+    <string name="PLG_INVENTORY_MANAGER_KEEPER">Keeper</string>     
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Display all items</string>
     <string name="PLG_INVENTORY_MANAGER_SPECIAL_CASE_CURUSER_OR_ADMIN">Special case: current user or administrator</string>    
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE">Synchronize users with recipients</string>
@@ -85,6 +85,6 @@
     <!-- Phrases only in Database -->
     <string name="PIM_ITEMNAME">Name of the item</string>
     <string name="PIM_CATEGORY">Category</string>
-   <string name="PIM_RECEIVED_ON">received on</string>
-    <string name="PIM_RECEIVER">Receiver</string>
+    <string name="PIM_KEEPER">Keeper</string>
+    <string name="PIM_RECEIVED_ON">received on</string>
 </resources>

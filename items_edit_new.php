@@ -78,7 +78,7 @@ foreach ($items->mItemFields as $itemField) {
         case 'CHECKBOX':
             $form->addCheckbox(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
-                $items->getProperty($imfNameIntern, 'imf_name'),
+                convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
                 (bool) $items->getValue($imfNameIntern),
                 array(
                     'property' => $fieldProperty,
@@ -103,7 +103,7 @@ foreach ($items->mItemFields as $itemField) {
         case 'RADIO_BUTTON':
             $form->addRadioButton(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
-                $items->getProperty($imfNameIntern, 'imf_name'),
+                convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
                 $items->getProperty($imfNameIntern, 'imf_value_list'),
                 array(
                     'property' => $fieldProperty,
@@ -117,7 +117,7 @@ foreach ($items->mItemFields as $itemField) {
         case 'TEXT_BIG':
             $form->addMultilineTextInput(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
-                $items->getProperty($imfNameIntern, 'imf_name'),
+                convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
                 $items->getValue($imfNameIntern),
                 3,
                 array(
@@ -132,7 +132,7 @@ foreach ($items->mItemFields as $itemField) {
             $fieldType = 'text';
             $maxlength = '50';
 
-            if ($imfNameIntern === 'RECEIVER') {
+            if ($imfNameIntern === 'KEEPER') {
                 $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
                         FROM ' . TBL_USERS . '
                         JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '

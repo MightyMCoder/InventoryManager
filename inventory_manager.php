@@ -24,7 +24,7 @@
  * mode              : Output(html, print, csv-ms, csv-oo, pdf, pdfl, xlsx)
  * filter_string     : general filter string
  * filter_category   : filter for category
- * filter_receiver   : filter for receiver
+ * filter_keeper   : filter for keeper
  * show_all          : 0 - (Default) show active items only
  *                     1 - show all items (also made to the former)
  * export_and_filter : 0 - (Default) No filter and export menu
@@ -51,7 +51,7 @@ if (!isUserAuthorized($scriptName)) {
 $sessionDefaults = array(
     'filter_string' => '',
     'filter_category' => '',
-    'filter_receiver' => 0,
+    'filter_keeper' => 0,
     'show_all' => false,
     'export_and_filter' => false
 );
@@ -68,7 +68,7 @@ $getMode = admFuncVariableIsValid($_GET, 'mode', 'string', array(
 ));
 $getFilterString = admFuncVariableIsValid($_GET, 'filter_string', 'string');
 $getFilterCategory = admFuncVariableIsValid($_GET, 'filter_category', 'string');
-$getFilterReceiver = admFuncVariableIsValid($_GET, 'filter_receiver', 'int');
+$getFilterKeeper = admFuncVariableIsValid($_GET, 'filter_keeper', 'int');
 $getShowAll = admFuncVariableIsValid($_GET, 'show_all', 'bool', array('defaultValue' => false));
 $getExportAndFilter = admFuncVariableIsValid($_GET, 'export_and_filter', 'bool', array('defaultValue' => false));
 $getSameSide = admFuncVariableIsValid($_GET, 'same_side', 'bool', array('defaultValue' => false));
@@ -77,7 +77,7 @@ if ($getSameSide) {
     $_SESSION['pInventoryManager'] = array(
         'filter_string' => $getFilterString,
         'filter_category' => $getFilterCategory,
-        'filter_receiver' => $getFilterReceiver,
+        'filter_keeper' => $getFilterKeeper,
         'show_all' => $getShowAll,
         'export_and_filter' => $getExportAndFilter
     );
@@ -85,7 +85,7 @@ if ($getSameSide) {
 else {
     $getFilterString = $_SESSION['pInventoryManager']['filter_string'];
     $getFilterCategory = $_SESSION['pInventoryManager']['filter_category'];
-    $getFilterReceiver = $_SESSION['pInventoryManager']['filter_receiver'];
+    $getFilterKeeper = $_SESSION['pInventoryManager']['filter_keeper'];
     $getShowAll = $_SESSION['pInventoryManager']['show_all'];
     $getExportAndFilter = $_SESSION['pInventoryManager']['export_and_filter'];
 }
@@ -202,7 +202,7 @@ switch ($getMode) {
 
         $inputFilterStringLabel = '<i class="fas fa-search" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_GENERAL').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_GENERAL').'"></i>';
         $selectBoxCategoryLabel ='<i class="fas fa-list" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_CATEGORY').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_ICATEGORY').'"></i>';
-        $selectBoxReceiverLabel = '<i class="fas fa-user" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_RECEIVER').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_RECEIVER').'"></i>';
+        $selectBoxKeeperLabel = '<i class="fas fa-user" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_KEEPER').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_KEEPER').'"></i>';
         
         // create html page object
         $page = new HtmlPage('plg-inventory-manager-main-html');
@@ -214,13 +214,13 @@ switch ($getMode) {
                 self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'mode'              => 'html',
                     'filter_string'     => $getFilterString,
-                    'filter_receiver'   => $getFilterReceiver,
+                    'filter_keeper'   => $getFilterKeeper,
                     'export_and_filter' => $getExportAndFilter,
                     'same_side'         => true,
                     'show_all'          => $getShowAll
                 )) . '&filter_category=" + $(this).val();
             });
-            $("#filter_receiver").change(function () {
+            $("#filter_keeper").change(function () {
                 self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'mode'              => 'html',
                     'filter_string'     => $getFilterString,
@@ -228,13 +228,13 @@ switch ($getMode) {
                     'export_and_filter' => $getExportAndFilter,
                     'same_side'         => true,
                     'show_all'          => $getShowAll
-                )) . '&filter_receiver=" + $(this).val();
+                )) . '&filter_keeper=" + $(this).val();
             });
             $("#menu_item_lists_print_view").click(function() {
                 window.open("'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString, 
                     'filter_category'   => $getFilterCategory, 
-                    'filter_receiver'   => $getFilterReceiver,
+                    'filter_keeper'   => $getFilterKeeper,
                     'export_and_filter' => $getExportAndFilter,                   
                     'show_all'          => $getShowAll,  
                     'mode'              => 'print'
@@ -259,7 +259,7 @@ switch ($getMode) {
                 SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
                     'filter_category'   => $getFilterCategory,
-                    'filter_receiver'   => $getFilterReceiver,
+                    'filter_keeper'   => $getFilterKeeper,
                     'export_and_filter' => $getExportAndFilter,
                     'show_all'          => $getShowAll,
                     'mode'              => 'xlsx')),
@@ -268,7 +268,7 @@ switch ($getMode) {
                 SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
                     'filter_category'   => $getFilterCategory,
-                    'filter_receiver'   => $getFilterReceiver,
+                    'filter_keeper'   => $getFilterKeeper,
                     'export_and_filter' => $getExportAndFilter,
                     'show_all'          => $getShowAll,
                     'mode'              => 'csv-ms')),
@@ -277,7 +277,7 @@ switch ($getMode) {
                 SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
                     'filter_category'   => $getFilterCategory,
-                    'filter_receiver'   => $getFilterReceiver,
+                    'filter_keeper'   => $getFilterKeeper,
                     'export_and_filter' => $getExportAndFilter,
                     'show_all'          => $getShowAll,
                     'mode'              => 'pdf')),
@@ -286,7 +286,7 @@ switch ($getMode) {
                 SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
                     'filter_category'   => $getFilterCategory,
-                    'filter_receiver'   => $getFilterReceiver,
+                    'filter_keeper'   => $getFilterKeeper,
                     'export_and_filter' => $getExportAndFilter,
                     'show_all'          => $getShowAll,
                     'mode'              => 'pdfl')),
@@ -295,7 +295,7 @@ switch ($getMode) {
                 SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
                     'filter_category'   => $getFilterCategory,
-                    'filter_receiver'   => $getFilterReceiver,
+                    'filter_keeper'   => $getFilterKeeper,
                     'export_and_filter' => $getExportAndFilter,
                     'show_all'          => $getShowAll,
                     'mode'              => 'csv-oo')),
@@ -336,7 +336,7 @@ switch ($getMode) {
                 }
             }
         
-            // read all receiver
+            // read all keeper
             $sql = 'SELECT DISTINCT imd_value, CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value) FROM '.TBL_INVENTORY_MANAGER_DATA.'
                     INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
                         ON imf_id = imd_imf_id
@@ -348,14 +348,14 @@ switch ($getMode) {
                         AND first_name.usd_usf_id = '. $gProfileFields->getProperty('FIRST_NAME', 'usf_id'). '
                     WHERE (imf_org_id  = '. $gCurrentOrgId .'
                         OR imf_org_id IS NULL)
-                    AND imf_name_intern = \'RECEIVER\'
+                    AND imf_name_intern = \'KEEPER\'
                     ORDER BY CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value) ASC;';
-            $form->addSelectBoxFromSql('filter_receiver',$selectBoxReceiverLabel, $gDb, $sql, array('defaultValue' => $getFilterReceiver , 'showContextDependentFirstEntry' => true));
+            $form->addSelectBoxFromSql('filter_keeper',$selectBoxKeeperLabel, $gDb, $sql, array('defaultValue' => $getFilterKeeper , 'showContextDependentFirstEntry' => true));
         }
         else {
             $form->addInput('filter_string', '', $getFilterString, array('property' => HtmlForm::FIELD_HIDDEN));
             $form->addInput('filter_category', '', $getFilterCategory, array('property' => HtmlForm::FIELD_HIDDEN));
-            $form->addInput('filter_receiver', '', $getFilterReceiver, array('property' => HtmlForm::FIELD_HIDDEN));          
+            $form->addInput('filter_keeper', '', $getFilterKeeper, array('property' => HtmlForm::FIELD_HIDDEN));          
         }
  
         $form->addCheckbox('show_all', $gL10n->get('PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS'), $getShowAll);                           
@@ -475,7 +475,7 @@ foreach ($items->items as $item) {
 
         if ($getExportAndFilter && (
             ($getFilterCategory !== '' && $imfNameIntern == 'CATEGORY' && $getFilterCategory != $items->getValue($imfNameIntern, 'database')) ||
-            ($getFilterReceiver !== 0 && $imfNameIntern == 'RECEIVER' && $getFilterReceiver != $items->getValue($imfNameIntern))
+            ($getFilterKeeper !== 0 && $imfNameIntern == 'KEEPER' && $getFilterKeeper != $items->getValue($imfNameIntern))
         )) {
             continue 2;
         }
@@ -487,7 +487,7 @@ foreach ($items->items as $item) {
 
         $content = $items->getValue($imfNameIntern, 'database');
 
-        if ($imfNameIntern == 'RECEIVER' && strlen($content) > 0) {
+        if ($imfNameIntern == 'KEEPER' && strlen($content) > 0) {
             $user->readDataById($content);
             $content = ($getMode == 'html') ?
                 '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>' :

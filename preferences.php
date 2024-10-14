@@ -119,7 +119,7 @@ $formProfileAddin = new HtmlForm('profile_addin_form', SecurityUtils::encodeUrl(
 $items = new CItems($gDb, $gCurrentOrgId);
 $valueList = array();
 foreach ($items->mItemFields as $itemField) {
-    if (!in_array($itemField->getValue('imf_name_intern'), array('ITEMNAME', 'RECEIVER', 'RECEIVED_ON'), true)) {
+    if (!in_array($itemField->getValue('imf_name_intern'), array('ITEMNAME', 'KEEPER', 'RECEIVED_ON'), true)) {
         $valueList[$itemField->getValue('imf_name_intern')] = $itemField->getValue('imf_name');
     }
 }
