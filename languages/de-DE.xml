@@ -84,7 +84,17 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">Die aufgelisteten Benutzer sind jetzt Ehemalige.</string>
     <!-- Phrases only in Database -->
     <string name="PIM_ITEMNAME">Gegenstandsname</string>
+    <string name="PIM_ITEMNAME_DESCRIPTION">Der Name des Gegenstandes</string>
     <string name="PIM_CATEGORY">Kategorie</string>
-    <string name="PIM_RECEIVED_ON">empfangen am</string>
+    <string name="PIM_CATEGORY_DESCRIPTION">Die Kategorie des Gegenstandes</string>
     <string name="PIM_KEEPER">Verwalter</string>        
+    <string name="PIM_KEEPER_DESCRIPTION">Der Verwalter des Gegenstandes</string>
+    <string name="PIM_IN_INVENTORY">im Inventar</string>        
+    <string name="PIM_IN_INVENTORY_DESCRIPTION">Gegenstand befindet sich im Inventar</string>
+    <string name="PIM_LAST_RECEIVER">letzter Empfänger</string>        
+    <string name="PIM_LAST_RECEIVER_DESCRIPTION">Der letzte Empfänger des Gegenstandes</string>
+    <string name="PIM_RECEIVED_ON">empfangen am</string>
+    <string name="PIM_RECEIVED_ON_DESCRIPTION">Das Empfangsdatum des Gegenstandes durch den letzten Empfänger</string>
+    <string name="PIM_RECEIVED_BACK_ON">zurückerhalten am</string>
+    <string name="PIM_RECEIVED_BACK_ON_DESCRIPTION">Das Empfangsdatum des Gegenstandes durch den Verwalter</string>
 </resources>
