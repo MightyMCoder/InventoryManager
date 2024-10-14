@@ -83,12 +83,22 @@ foreach ($items->items as $fieldId => $value) {
     }
 }
 
+
 $valueList = array();
 foreach ($assignedFieldColumn as $row => $values) {
     foreach ($items->mItemFields as $fields){
         $imfNameIntern = $fields->getValue('imf_name_intern');
+        if ($fields->getValue('imf_type')=='CHECKBOX') {
+            if ($values[$imfNameIntern] === $gL10n->get('SYS_YES')) {
+                $values[$imfNameIntern] = 1;
+            }
+            else {
+                $values[$imfNameIntern] = 0;
+            }
+        }
+
         if($imfNameIntern === 'ITEMNAME') {
-            if ($values[$imfNameIntern] == '') {
+            if ($values[$imfNameIntern] === '') {
                 break;
             }
             $val = $values[$imfNameIntern];
@@ -152,23 +162,12 @@ foreach ($assignedFieldColumn as $row => $values) {
     }
 
     if (count($assignedFieldColumn) > 0) {
-        // Use cURL to pass the $_POST data as POST to the redirection
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/items_save.php', array('item_id' => 0, 'redirect' => 0)));
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($_POST));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-    
-        // Handle the response if needed
-        if ($response === false) {
-            $gMessage->show($gL10n->get('SYS_ERROR'));
-        }
+        // save item
+        $_POST['redirect'] = 0;
+        require_once(__DIR__ . '/items_save.php');
         $importSuccess = true;
         unset($_POST);
-    }
-    
+    }   
 }
 
 $gNavigation->deleteLastUrl();
