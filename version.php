@@ -10,7 +10,7 @@
  */
 
 class CPluginInfoPIM {
-    protected const PLUGIN_VERSION = '1.0.1';
+    protected const PLUGIN_VERSION = '1.0.2';
     protected const PLUGIN_STAND = '14.10.2024';
 
     /**
