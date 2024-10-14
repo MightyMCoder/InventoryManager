@@ -38,7 +38,7 @@ class CConfigTablePIM
 	public function __construct()
 	{
 		require_once(__DIR__ . '/../version.php');
-		require_once(__DIR__ . '/../configdata.php');
+		require_once(__DIR__ . '/configdata.php');
 		
 		$this->table_name = TABLE_PREFIX .'_plugin_preferences';
 
