@@ -98,17 +98,12 @@ $itemFieldText = array(
 );
 asort($itemFieldText);
 
-if ($itemField->getValue('imf_system') == 1)
-{
-    //bei Systemfeldern darf der Datentyp nicht mehr veraendert werden
-    $form->addInput('imf_type', $gL10n->get('ORG_DATATYPE'), $itemFieldText[$itemField->getValue('imf_type')],
-            array('maxLength' => 30, 'property' => HtmlForm::FIELD_DISABLED));
-}
-else {
-    // fuer jeden Feldtypen einen Eintrag in der Combobox anlegen
-    $form->addSelectBox('imf_type', $gL10n->get('ORG_DATATYPE'), $itemFieldText,
-            array('property' => HtmlForm::FIELD_REQUIRED, 'defaultValue' => $itemField->getValue('imf_type')));
-}
+//bei Systemfeldern darf der Datentyp nicht mehr veraendert werden
+$form->addSelectBox('imf_type', $gL10n->get('ORG_DATATYPE'), $itemFieldText, array(
+    'property' => $itemField->getValue('imf_system') == 1 ? HtmlForm::FIELD_DISABLED : HtmlForm::FIELD_REQUIRED,
+    'defaultValue' => $itemField->getValue('imf_type')
+    )
+);
 
 $form->addMultilineTextInput('imf_value_list', $gL10n->get('ORG_VALUE_LIST'), (string)$itemField->getValue('imf_value_list', 'database'), 6, array(
     'property' => HtmlForm::FIELD_REQUIRED,
@@ -116,20 +111,11 @@ $form->addMultilineTextInput('imf_value_list', $gL10n->get('ORG_VALUE_LIST'), (s
     )
 );
 
-if ($itemField->getValue('imf_system') == 1) {
-    $form->addCheckbox('imf_mandatory', $gL10n->get('SYS_REQUIRED_INPUT'), (bool)$itemField->getValue('imf_mandatory'), array(
-        'property' => HtmlForm::FIELD_DISABLED,
-        'icon' => 'fa-asterisk'
-        )
-    );
-}
-else {
-    $form->addCheckbox('imf_mandatory', $gL10n->get('SYS_REQUIRED_INPUT'), (bool)$itemField->getValue('imf_mandatory'), array(
-        'property' => HtmlForm::FIELD_DEFAULT,
-        'icon' => 'fa-asterisk'
-        )
-    );
-}
+$form->addCheckbox('imf_mandatory', $gL10n->get('SYS_REQUIRED_INPUT'), (bool)$itemField->getValue('imf_mandatory'), array(
+    'property' => $itemField->getValue('imf_system') == 1 ? HtmlForm::FIELD_DISABLED : HtmlForm::FIELD_REQUIRED,
+    'icon' => 'fa-asterisk'
+    )
+);
 
 $form->addMultilineTextInput('imf_description', $gL10n->get('SYS_DESCRIPTION'), $itemField->getValue('imf_description'), 3);
 
