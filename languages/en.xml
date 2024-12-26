@@ -82,6 +82,14 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">All users are recipients of a item, no reconciliation can be performed.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">This is just an overview of the comparison, nothing has been saved yet.\n\n Users can only be made to a former if the number of items is 0 and they are not administrator or the current user.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">The listed users are now former.</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CREATED">An item has been added to the inventory</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">The item #VAR1_BOLD# was created by #VAR2_BOLD#:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CHANGED">An item in the inventory has been changed</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">The item #VAR1_BOLD# was changed by #VAR2_BOLD#:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_DELETED">An item in the inventory has been deleted</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">The item #VAR1_BOLD# was deleted by #VAR2_BOLD#:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_MADE_FORMER">An item in the inventory has been made to former</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER">The item #VAR1_BOLD# was made to former by #VAR2_BOLD#:</string>
     <!-- Phrases only in Database -->
     <string name="PIM_ITEMNAME">Itemname</string>
     <string name="PIM_ITEMNAME_DESCRIPTION">Name of the item</string>

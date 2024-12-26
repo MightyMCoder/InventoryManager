@@ -82,7 +82,15 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">Tous les utilisateurs sont les destinataires d'une objet, aucune réconciliation ne peut être effectuée.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">Ceci est juste un aperçu de la comparaison, rien n'a encore été enregistré.\n\n Les utilisateurs ne peuvent devenir des anciens que si le nombre de objets est 0 et qu'il ne s'agit ni de l'administrateur ni de l'utilisateur actuel.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">Les utilisateurs listés sont maintenant des anciens.</string>
-    <!-- Phrases only in Database -->
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CREATED">Un objet a été ajouté à l'inventaire</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">L'objet #VAR1_BOLD# a été créé par #VAR2_BOLD# :</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CHANGED">Un objet dans l'inventaire a été modifié</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">L'objet #VAR1_BOLD# a été modifié par #VAR2_BOLD# :</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_DELETED">Un objet dans l'inventaire a été supprimé</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">L'objet #VAR1_BOLD# a été supprimé par #VAR2_BOLD# :</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_MADE_FORMER">Un objet dans l'inventaire a été retiré</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER">L'objet #VAR1_BOLD# a été retiré par #VAR2_BOLD# :</string>
+   <!-- Phrases only in Database -->
     <string name="PIM_ITEMNAME">Nom de l'objet</string>
     <string name="PIM_ITEMNAME_DESCRIPTION">Le nom de l'objet</string>
     <string name="PIM_CATEGORY">Catégorie</string>

@@ -82,6 +82,14 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">Alle Benutzer sind Empfänger eines Gegenstandes, es kann kein Abgleich durchgeführt werden.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">Dies ist nur eine Übersicht des Abgleichs, es wurde noch nichts gespeichert.\n\n Benutzer können nur zu Ehemaligen gemacht werden, wenn die Anzahl der Gegenstände 0 beträgt und sie nicht Administrator oder der aktuelle Benutzer sind.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">Die aufgelisteten Benutzer sind jetzt Ehemalige.</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CREATED">Ein Gegenstand im Inventar wurde hinzugefügt</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# angelegt:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CHANGED">Ein Gegenstand im Inventar wurde geändert</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# geändert:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_DELETED">Ein Gegenstand im Inventar wurde gelöscht</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# gelöscht:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_MADE_FORMER">Ein Gegenstand im Inventar wurde ausgesondert</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# ausgesondert:</string>
     <!-- Phrases only in Database -->
     <string name="PIM_ITEMNAME">Gegenstandsname</string>
     <string name="PIM_ITEMNAME_DESCRIPTION">Der Name des Gegenstandes</string>

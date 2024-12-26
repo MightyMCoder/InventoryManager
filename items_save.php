@@ -42,7 +42,7 @@ for ($i = $startIdx; $i < $stopIdx; ++$i) {
 	$items->readItemData($getItemId, $gCurrentOrgId);
 
 	if ($getItemId == 0) {
-		$items->getNewItemId();
+		$items->getNewItemId($gCurrentOrgId);
 	}
 
 	// check all item fields
@@ -79,6 +79,9 @@ for ($i = $startIdx; $i < $stopIdx; ++$i) {
 
 	$gDb->endTransaction();
 }
+
+// Send notification to all users
+$items->sendNotification($gCurrentOrgId);
 
 if ($postRedirect == 1) {
 	$gNavigation->deleteLastUrl();
