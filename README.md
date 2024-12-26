@@ -39,7 +39,7 @@ The plugin sends notifications for inventory changes. Notifications will only be
 
 ## Support and Documentation
 
-For more information and support, refer to the [InventoryManager GitHub project page](https://github.com/MightyMCoder/InventoryManager).
+For more information and support, refer to the [InventoryManager GitHub wiki page](https://github.com/MightyMCoder/InventoryManager/wiki).
 
 ## License
 
