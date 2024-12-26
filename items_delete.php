@@ -48,10 +48,10 @@ switch ($getMode) {
 		displayItemDeleteForm($items, $user, $getItemId, $getItemFormer);
 		break;
 	case 2:
-		deleteItem($getItemId);
+		deleteItem($items, $getItemId, $gCurrentOrgId);
 		break;
 	case 3:
-		makeItemFormer($getItemId);
+		makeItemFormer($items, $getItemId, $gCurrentOrgId);
 		break;
 }
 
@@ -82,7 +82,7 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer) {
 			$content = $items->getHtmlValue($imfNameIntern, $content);
 		} elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), ['DROPDOWN', 'RADIO_BUTTON'])) {
 			$arrListValues = $items->getProperty($imfNameIntern, 'imf_value_list', 'text');
-			$content = $arrListValues[$content];
+			$content = isset($arrListValues[$content]) ? $arrListValues[$content] : '';
 		}
 
 		$form->addInput(
@@ -105,19 +105,17 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer) {
 
 /**
  * Deletes an item from the database.
+ * @param CItems $items 		The items object containing item data.
  * @param int $getItemId 		The ID of the item to be deleted.
+ * @param int $gCurrentOrgId 	The ID of the current organization.
  */
-function deleteItem($getItemId) {
-	global $gDb, $gCurrentOrgId, $gMessage, $gNavigation, $gL10n;
+function deleteItem($items, $getItemId, $gCurrentOrgId) {
+	global $gMessage, $gNavigation, $gL10n;
 
-	$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_LOG.' WHERE iml_imi_id = ?;';
-	$gDb->queryPrepared($sql, array($getItemId));
+ 	$items->deleteItem($getItemId, $gCurrentOrgId);
 
-	$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_DATA.' WHERE imd_imi_id = ?;';
-	$gDb->queryPrepared($sql, array($getItemId));
-
-	$sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_ITEMS.' WHERE imi_id = ? AND (imi_org_id = ? OR imi_org_id IS NULL);';
-	$gDb->queryPrepared($sql, array($getItemId, $gCurrentOrgId));
+	// Send notification to all users
+	$items->sendNotification($gCurrentOrgId);
 
 	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
 	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETED'));
@@ -125,13 +123,17 @@ function deleteItem($getItemId) {
 
 /**
  * Marks an item as former.
+ * @param CItems $items 		The items object containing item data.
  * @param int $getItemId 		The ID of the item to be marked as former.
+ * @param int $gCurrentOrgId 	The ID of the current organization.
  */
-function makeItemFormer($getItemId) {
-	global $gDb, $gMessage, $gNavigation, $gL10n;
+function makeItemFormer($items, $getItemId, $gCurrentOrgId) {
+	global $gMessage, $gNavigation, $gL10n;
 
-	$sql = 'UPDATE '.TBL_INVENTORY_MANAGER_ITEMS.' SET imi_former = 1 WHERE imi_id = ?;';
-	$gDb->queryPrepared($sql, array($getItemId));
+	$items->makeItemFormer($getItemId, $gCurrentOrgId);
+
+	// Send notification to all users
+	$items->sendNotification($gCurrentOrgId);
 
 	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
 	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEM_MADE_TO_FORMER'));
