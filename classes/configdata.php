@@ -34,6 +34,7 @@ class CConfigDataPIM
         ],
         'Plugininformationen' => [
             'version' => '',
+            'beta-version' => '',
             'stand' => '',
         ],
         'access' => [

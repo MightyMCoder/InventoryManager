@@ -10,8 +10,9 @@
  */
 
 class CPluginInfoPIM {
-    protected const PLUGIN_VERSION = '1.0.3';
-    protected const PLUGIN_STAND = '26.12.2024';
+    protected const PLUGIN_VERSION = '1.0.4';
+    protected const PLUGIN_VERSION_BETA = 'n/a';
+    protected const PLUGIN_STAND = '28.12.2024';
 
     /**
      * Current version of plugin InventoryManager
@@ -19,6 +20,14 @@ class CPluginInfoPIM {
      */    
     public static function getPluginVersion() {
         return self::PLUGIN_VERSION;
+    }
+
+    /**
+     * Current beta version of plugin InventoryManager
+     * @return string
+     */    
+    public static function getPluginBetaVersion() {
+        return self::PLUGIN_VERSION_BETA;
     }
 
     /**

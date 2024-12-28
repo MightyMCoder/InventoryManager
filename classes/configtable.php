@@ -393,6 +393,7 @@ class CConfigTablePIM
 		$this->read();
 
 		$this->config['Plugininformationen']['version'] = CPluginInfoPIM::getPluginVersion();
+		$this->config['Plugininformationen']['beta-version'] = CPluginInfoPIM::getPluginBetaVersion();
 		$this->config['Plugininformationen']['stand'] = CPluginInfoPIM::getPluginStand();
 
 		$configCurrent = $this->config;
