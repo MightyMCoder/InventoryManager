@@ -90,6 +90,9 @@
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">The item #VAR1_BOLD# was deleted by #VAR2_BOLD#:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_MADE_FORMER">An item in the inventory has been made to former</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER">The item #VAR1_BOLD# was made to former by #VAR2_BOLD#:</string>
+    <string name="PLG_INVENTORY_MANAGER_DOWNLOAD_PAGE">Go to GitHub release page</string>
+    <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">You are using the current #VAR1# version of InventoryManager!</string>
+    <string name="PLG_INVENTORY_MANAGER_CONNECTION_ERROR">Could not connect to the GitHub release page! Please check your internet connection or try again later. Alternatively, you can manually check on the #VAR1# website if an update is available.</string>
     <!-- Phrases only in Database -->
     <string name="PIM_ITEMNAME">Itemname</string>
     <string name="PIM_ITEMNAME_DESCRIPTION">Name of the item</string>

@@ -90,6 +90,9 @@
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# gelöscht:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_MADE_FORMER">Ein Gegenstand im Inventar wurde ausgesondert</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# ausgesondert:</string>
+    <string name="PLG_INVENTORY_MANAGER_DOWNLOAD_PAGE">Gehe zur GitHub-Relaseseite</string>
+    <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">Du benutzt eine aktuelle #VAR1#Version von InventoryManager!</string>
+    <string name="PLG_INVENTORY_MANAGER_CONNECTION_ERROR">Es konnte keine Verbindung zur GitHub-Relaseseite hergestellt werden! Bitte prüfen Sie Ihre Internetverbindung oder versuchn Sie es zu einem späteren Zeitpunkt nocheinmal. Alternativ können Sie auch manuell auf der Webseite von #VAR1# prüfen ob ein Update vorliegt.</string>
     <!-- Phrases only in Database -->
     <string name="PIM_ITEMNAME">Gegenstandsname</string>
     <string name="PIM_ITEMNAME_DESCRIPTION">Der Name des Gegenstandes</string>

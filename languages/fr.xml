@@ -90,7 +90,10 @@
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">L'objet #VAR1_BOLD# a été supprimé par #VAR2_BOLD# :</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_MADE_FORMER">Un objet dans l'inventaire a été retiré</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER">L'objet #VAR1_BOLD# a été retiré par #VAR2_BOLD# :</string>
-   <!-- Phrases only in Database -->
+    <string name="PLG_INVENTORY_MANAGER_DOWNLOAD_PAGE">Aller à la page de publication GitHub</string>
+    <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">Vous utilisez une #VAR1#version actuelle  d'InventoryManager!</string>
+    <string name="PLG_INVENTORY_MANAGER_CONNECTION_ERROR">Impossible de se connecter à la page de publication GitHub! Veuillez vérifier votre connexion Internet ou réessayer plus tard. Alternativement, vous pouvez vérifier manuellement sur le site Web de #VAR1# s'il y a une mise à jour.</string>
+    <!-- Phrases only in Database -->
     <string name="PIM_ITEMNAME">Nom de l'objet</string>
     <string name="PIM_ITEMNAME_DESCRIPTION">Le nom de l'objet</string>
     <string name="PIM_CATEGORY">Catégorie</string>

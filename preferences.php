@@ -88,6 +88,16 @@ $page->addJavascript('
                 }
             }
         });
+    });
+    
+    $("#link_check_for_update").click(function() {
+        var PIMVersionContent = $("#inventory_manager_version");
+
+        PIMVersionContent.html("<i class=\"fas fa-spinner fa-spin\"></i>").show();
+        $.get("'.ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER. '/check_for_update.php", {mode: "2", PIMVersion: "' .$pPreferences->config['Plugininformationen']['version']. '", PIMBetaVersion: "' .$pPreferences->config['Plugininformationen']['beta-version']. '"}, function(htmlVersion) {
+            PIMVersionContent.html(htmlVersion);
+        });
+        return false;
     });', true
 );
 
@@ -163,10 +173,13 @@ addPreferencePanel($page, 'access_preferences', $gL10n->get('PLG_INVENTORY_MANAG
 $pluginName = $gL10n->get('PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN');
 $link = '<a href="https://github.com/rmbinder/KeyManager">GitHub</a>';
 $pluginInfo = sprintf($pluginName, $link);
+$updateCheck = '<span id="inventory_manager_version">'.$pPreferences->config['Plugininformationen']['version'].'
+                    <a id="link_check_for_update" href="#link_check_for_update" title="'.$gL10n->get('SYS_CHECK_FOR_UPDATE').'">'.$gL10n->get('SYS_CHECK_FOR_UPDATE').'</a>
+                </span>';
 
 $formPluginInformations = new HtmlForm('plugin_informations_preferences_form', null, $page, array('class' => 'form-preferences'));
 $formPluginInformations->addStaticControl('plg_name', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_NAME'), $pluginInfo);
-$formPluginInformations->addStaticControl('plg_version', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_VERSION'), $pPreferences->config['Plugininformationen']['version']);
+$formPluginInformations->addCustomContent($gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_VERSION'), $updateCheck);
 $formPluginInformations->addStaticControl('plg_date', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_DATE'), $pPreferences->config['Plugininformationen']['stand']);
 addPreferencePanel($page, 'plugin_informations', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_INFORMATION'), 'fas fa-info-circle', $formPluginInformations->show());
 
