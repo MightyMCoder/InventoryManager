@@ -9,11 +9,11 @@
  ***********************************************************************************************
  */
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/common_function.php');
+require_once(__DIR__ . '/../../../adm_program/system/common.php');
+require_once(__DIR__ . '/../common_function.php');
 
 // Access only with valid login
-require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // only authorized user are allowed to start this module
 if (!isUserAuthorizedForPreferences()) {
@@ -59,7 +59,7 @@ if (!isset($formValues['import_enclosure'])) {
 $page = new HtmlPage('admidio-items-import', $headline);
 
 // show form
-$form = new HtmlForm('import_items_form',  ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import_read_file.php', $page, array('enableFileUpload' => true));
+$form = new HtmlForm('import_items_form',  ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import/import_read_file.php', $page, array('enableFileUpload' => true));
 $formats = array(
     'AUTO' => $gL10n->get('SYS_AUTO_DETECT'),
     'XLSX' => $gL10n->get('SYS_EXCEL_2007_365'),
