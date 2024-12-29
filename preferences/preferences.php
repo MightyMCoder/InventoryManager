@@ -94,7 +94,7 @@ $page->addJavascript('
         var PIMVersionContent = $("#inventory_manager_version");
 
         PIMVersionContent.html("<i class=\"fas fa-spinner fa-spin\"></i>").show();
-        $.get("'.ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER. '/check_for_update.php", {mode: "2", PIMVersion: "' .$pPreferences->config['Plugininformationen']['version']. '", PIMBetaVersion: "' .$pPreferences->config['Plugininformationen']['beta-version']. '"}, function(htmlVersion) {
+        $.get("'.ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER. '/preferences/preferences_check_for_update.php", {mode: "2", PIMVersion: "' .$pPreferences->config['Plugininformationen']['version']. '", PIMBetaVersion: "' .$pPreferences->config['Plugininformationen']['beta-version']. '"}, function(htmlVersion) {
             PIMVersionContent.html(htmlVersion);
         });
         return false;

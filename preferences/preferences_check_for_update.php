@@ -22,8 +22,8 @@
  *                                                    it with the latest stable and beta release versions
  ***********************************************************************************************
  */
-require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/common_function.php');
+require_once(__DIR__ . '/../../../adm_program/system/common.php');
+require_once(__DIR__ . '/../common_function.php');
 
 // Initialize and check the parameters
 $getMode = admFuncVariableIsValid($_GET, 'mode', 'int', array('defaultValue' => 1, 'directOutput' => true));
