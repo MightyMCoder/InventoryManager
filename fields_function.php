@@ -9,19 +9,20 @@
  * 
  * Parameters:
  * 
- * imf_id   : ID of the item field to be managed
- * mode     : 1 - create or edit item field
- *            2 - delete item field
- *            4 - change sequence of item field
- * sequence : direction to move the item field, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN
+ * imf_id               : ID of the item field to be managed
+ * mode                 : 1 - create or edit item field
+ *                        2 - delete item field
+ *                        4 - change sequence of item field
+ * sequence             : direction to move the item field, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN
+ * redirect_to_import   : If true, the user will be redirected to the import page after saving the field
  * 
  * Methods:
  * 
- * handleCreateOrUpdate($itemField)              : Handles the creation or update of an item field
- * handleDelete($itemField)                      : Handles the deletion of an item field
- * handleChangeSequence($itemField, $getSequence): Handles changing the sequence of an item field
- * validateRequiredFields($itemField)            : Validates the required fields for an item field
- * checkFieldExists($itemField)                  : Checks if an item field already exists
+ * handleCreateOrUpdate($itemField, $getRedirectToImport)               : Handles the creation or update of an item field
+ * handleDelete($itemField)                                             : Handles the deletion of an item field
+ * handleChangeSequence($itemField, $getSequence)                       : Handles changing the sequence of an item field
+ * validateRequiredFields($itemField)                                   : Validates the required fields for an item field
+ * checkFieldExists($itemField)                                         : Checks if an item field already exists
  ***********************************************************************************************
  */
 
@@ -36,6 +37,7 @@ require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
 $getimfId    = admFuncVariableIsValid($_GET, 'imf_id',   'int');
 $getMode     = admFuncVariableIsValid($_GET, 'mode',     'int',    array('requireValue' => true));
 $getSequence = admFuncVariableIsValid($_GET, 'sequence', 'string', array('validValues' => array(TableUserField::MOVE_UP, TableUserField::MOVE_DOWN)));
+$getRedirectToImport = admFuncVariableIsValid($_GET, 'redirect_to_import', 'bool', array('defaultValue' => false));
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
@@ -60,7 +62,7 @@ if ($getimfId > 0) {
 
 switch ($getMode) {
     case 1:
-        handleCreateOrUpdate($itemField);
+        handleCreateOrUpdate($itemField, $getRedirectToImport);
         break;
     case 2:
         handleDelete($itemField);
@@ -74,7 +76,7 @@ switch ($getMode) {
  * Handles the creation or update of an item field.
  * @param TableAccess $itemField        The item field object to be created or updated.
  */
-function handleCreateOrUpdate($itemField) {
+function handleCreateOrUpdate($itemField, $redirectToImport = false) {
     global $gMessage, $gL10n, $gDb, $gCurrentOrgId;
 
     $_SESSION['fields_request'] = $_POST;
@@ -84,7 +86,7 @@ function handleCreateOrUpdate($itemField) {
 
     // Check if the field already exists
     if (isset($_POST['imf_name']) && $itemField->getValue('imf_name') !== $_POST['imf_name']) {
-        checkFieldExists($itemField);
+        checkFieldExists($_POST['imf_name']);
     }
 
     // Make HTML in description secure
@@ -122,7 +124,11 @@ function handleCreateOrUpdate($itemField) {
 
     unset($_SESSION['fields_request']);
 
-    $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields.php', 1000);
+    if ($redirectToImport) {
+        $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import/import_column_config.php', 1000);
+    } else {
+        $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields.php', 1000);
+    }
     $gMessage->show($gL10n->get('SYS_SAVE_DATA'));
     // => EXIT
 }
@@ -200,7 +206,7 @@ function validateRequiredFields($itemField) {
 
 /**
  * Checks if an item field already exists.
- * @param TableAccess $itemField        The item field object to be checked.
+ * @param string $itemField        The item field string to be checked.
  */
 function checkFieldExists($itemField) {
     global $gMessage, $gL10n, $gDb, $gCurrentOrgId, $getimfId;
@@ -210,7 +216,7 @@ function checkFieldExists($itemField) {
             AND (imf_org_id = ? -- $gCurrentOrgId
                 OR imf_org_id IS NULL)
             AND imf_id <> ? -- $getimfId;';
-    $statement = $gDb->queryPrepared($sql, array($_POST['imf_name'], $gCurrentOrgId, $getimfId));
+    $statement = $gDb->queryPrepared($sql, array($itemField, $gCurrentOrgId, $getimfId));
 
     if ((int) $statement->fetchColumn() > 0) {
         $gMessage->show($gL10n->get('ORG_FIELD_EXIST'));

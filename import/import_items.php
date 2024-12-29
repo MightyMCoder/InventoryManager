@@ -10,12 +10,12 @@
  ***********************************************************************************************
  */
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/common_function.php');
-require_once(__DIR__ . '/classes/items.php');
+require_once(__DIR__ . '/../../../adm_program/system/common.php');
+require_once(__DIR__ . '/../common_function.php');
+require_once(__DIR__ . '/../classes/items.php');
 
 // Access only with valid login
-require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // only authorized user are allowed to start this module
 if (!isUserAuthorizedForPreferences()) {
@@ -82,7 +82,6 @@ foreach ($items->items as $fieldId => $value) {
         }
     }
 }
-
 
 $valueList = array();
 foreach ($assignedFieldColumn as $row => $values) {
@@ -162,9 +161,10 @@ foreach ($assignedFieldColumn as $row => $values) {
     }
 
     if (count($assignedFieldColumn) > 0) {
+ 
         // save item
         $_POST['redirect'] = 0;
-        require_once(__DIR__ . '/items_save.php');
+        require(__DIR__ . '/../items_save.php');
         $importSuccess = true;
         unset($_POST);
     }   

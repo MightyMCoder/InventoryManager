@@ -9,12 +9,12 @@
  ***********************************************************************************************
  */
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/common_function.php');
-require_once(__DIR__ . '/classes/items.php');
+require_once(__DIR__ . '/../../../adm_program/system/common.php');
+require_once(__DIR__ . '/../common_function.php');
+require_once(__DIR__ . '/../classes/items.php');
 
 // Access only with valid login
-require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // only authorized user are allowed to start this module
 if (!isUserAuthorizedForPreferences()) {
@@ -52,9 +52,6 @@ if (isset($_SESSION['import_csv_request'])) {
  */
 function getColumnAssignmentHtml(array $arrayColumnList, array $arrayCsvColumns): string
 {
-    global $gL10n;
-
-    $categoryName = null;
     $html = '';
 
     foreach ($arrayColumnList as $field) {
@@ -98,13 +95,13 @@ $items->readItems($gCurrentOrgId);
 
 // create html page object
 $page = new HtmlPage('admidio-items-import-csv', $headline);
-
-//page->addHtml('<p class="lead">'.$gL10n->get('SYS_ASSIGN_FIELDS_DESC').'</p>');
+$page->addHtml('<p class="lead">'.$gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_ASSIGN_FIELDS').'</p>');
 
 // show form
-$form = new HtmlForm('import_assign_fields_form', ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import_items.php', $page, array('type' => 'vertical'));
+$form = new HtmlForm('import_assign_fields_form', ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import/import_items.php', $page, array('type' => 'vertical'));
 $form->addCheckbox('first_row', $gL10n->get('SYS_FIRST_LINE_COLUMN_NAME'), $formValues['first_row']);
-$form->addHtml('<div class="alert alert-warning alert-small" id="admidio-import-unused"><i class="fas fa-exclamation-triangle"></i>'.$gL10n->get('SYS_IMPORT_UNUSED_HEAD').'<div id="admidio-import-unused-fields">-</div></div>');
+$form->addHtml('<div class="alert alert-warning alert-small" id="admidio-import-unused"><i class="fas fa-exclamation-triangle"></i>'.$gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_UNUSED_HEAD').'<div id="admidio-import-unused-fields">-</div></div>');
+
 $page->addJavascript(
     '
     $(".admidio-import-field").change(function() {
@@ -120,9 +117,18 @@ $page->addJavascript(
                 used.push($(this).text());
             }
         });
-        var outstr = $(available).not(used).get().join(", ");
+        var outstr = "";
+        $(available).not(used).each(function(index, value) {
+            if (value === "Nr.") {
+            outstr += "<tr><td>" + value + "</td><td></td></tr>";
+            } else {
+            outstr += "<tr><td>" + value + "</td><td><a href=\"' . ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields_edit_new.php?field_name=" + encodeURIComponent(value) + "&redirect_to_import=true\" class=\"btn btn-primary btn-sm\">' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE') . '</a></td></tr>";
+            }
+        });
         if (outstr == "") {
             outstr = "-";
+        } else {
+            outstr = "<table class=\"table table-condensed\"><tbody>" + outstr + "</tbody></table>";
         }
         $("#admidio-import-unused #admidio-import-unused-fields").html(outstr);
     });
@@ -130,11 +136,12 @@ $page->addJavascript(
     true
 );
 
+
 $htmlFieldTable = '
     <table class="table table-condensed import-config import-config-csv">
         <thead>
             <tr>
-                <th>'.$gL10n->get('SYS_PROFILE_FIELD').'</th>
+                <th>'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDS').'</th>
                 <th>'.$gL10n->get('SYS_FILE_COLUMN').'</th>
             </tr>
         </thead>';
@@ -152,9 +159,14 @@ $htmlFieldTable = '
         $row = array();
         foreach ($items->mItemFields as $columnKey => $columnValue) {
             $imfName = $columnValue->GetValue('imf_name');
-            $row = array(
-                $columnValue->GetValue('imf_name_intern') => $gL10n->get($imfName)
-            );
+            
+            // If the field name starts with 'PIM_', it is a language key
+            if (strpos($imfName, 'PIM_') !== false) {
+                $row = array($columnValue->GetValue('imf_name_intern') => $gL10n->get($imfName));
+            } else {
+                $row = array($columnValue->GetValue('imf_name_intern') => $imfName);
+            }
+            
             $arrayImportableFields[] = $row;
         }
 

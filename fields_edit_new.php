@@ -9,7 +9,9 @@
  * 
  * Parameters:
  * 
- * imf_id : ID of the item field that should be edited
+ * imf_id               : ID of the item field that should be edited
+ * field_name           : Name of the field that should be set
+ * redirect_to_import   : If true, the user will be redirected to the import page after saving the field
  * 
  ***********************************************************************************************
  */
@@ -23,6 +25,8 @@ require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
 $getimfId = admFuncVariableIsValid($_GET, 'imf_id', 'int');
+$getFieldName = admFuncVariableIsValid($_GET, 'field_name', 'string', array('defaultValue' => "", 'directOutput' => true));
+$getRedirectToImport = admFuncVariableIsValid($_GET, 'redirect_to_import', 'bool', array('defaultValue' => false));
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
@@ -45,6 +49,11 @@ if ($getimfId > 0) {
     if ($itemField->getValue('imf_org_id') > 0 && (int) $itemField->getValue('imf_org_id') !== (int) $gCurrentOrgId) {
         $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
     }
+}
+
+// Set the name of the field if it was passed as a parameter
+if ($getFieldName !== "") {
+    $itemField->setValue('imf_name', $getFieldName);
 }
 
 if (isset($_SESSION['fields_request'])) {
@@ -72,7 +81,7 @@ $page->addJavascript('
 ', true);
 
 // show form
-$form = new HtmlForm('item_fields_edit_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields_function.php', ['imf_id' => $getimfId, 'mode' => 1]), $page);
+$form = new HtmlForm('item_fields_edit_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields_function.php', ['imf_id' => $getimfId, 'mode' => 1, 'redirect_to_import' => $getRedirectToImport]), $page);
 
 $form->addInput('imf_name', $gL10n->get('SYS_NAME'), $itemField->getValue('imf_name', 'database'), array(
     'maxLength' => 100,
