@@ -14,13 +14,13 @@
  ***********************************************************************************************
  */
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/common_function.php');
-require_once(__DIR__ . '/classes/items.php');
-require_once(__DIR__ . '/classes/configtable.php');
+require_once(__DIR__ . '/../../../adm_program/system/common.php');
+require_once(__DIR__ . '/../common_function.php');
+require_once(__DIR__ . '/../classes/items.php');
+require_once(__DIR__ . '/../classes/configtable.php');
 
 // Access only with valid login
-require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 /**
  * Adds a new preference panel to the given page.
@@ -120,7 +120,7 @@ addPreferencePanel($page, 'itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMF
 
 // PANEL: INTERFACE_PFF
 if ($pPreferences->isPffInst()) {
-    $formInterfacePFF = new HtmlForm('interface_pff_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences_function.php', array('form' => 'interface_pff')), $page, array('class' => 'form-preferences'));
+    $formInterfacePFF = new HtmlForm('interface_pff_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences_function.php', array('form' => 'interface_pff')), $page, array('class' => 'form-preferences'));
     $formInterfacePFF->addSelectBox('interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_CONFIGURATION'), $pPreferences->configPff['Formular']['desc'], array('defaultValue' => $pPreferences->config['Optionen']['interface_pff'], 'showContextDependentFirstEntry' => false));
     $formInterfacePFF->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_INTERFACE_PFF_DESC'));
     $formInterfacePFF->addSubmitButton('btn_save_interface_pff', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
@@ -128,7 +128,7 @@ if ($pPreferences->isPffInst()) {
 }
 
 // PANEL: PROFILE ADDIN
-$formProfileAddin = new HtmlForm('profile_addin_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences_function.php', array('form' => 'profile_addin')), $page, array('class' => 'form-preferences'));
+$formProfileAddin = new HtmlForm('profile_addin_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences_function.php', array('form' => 'profile_addin')), $page, array('class' => 'form-preferences'));
 $items = new CItems($gDb, $gCurrentOrgId);
 $valueList = array();
 foreach ($items->mItemFields as $itemField) {
@@ -141,7 +141,7 @@ $formProfileAddin->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_S
 addPreferencePanel($page, 'profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_PROFILE_ADDIN'), 'fas fa-users-cog', $formProfileAddin->show());
 
 // PANEL: EXPORT
-$formExport = new HtmlForm('export_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences_function.php', array('form' => 'export')), $page, array('class' => 'form-preferences'));
+$formExport = new HtmlForm('export_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences_function.php', array('form' => 'export')), $page, array('class' => 'form-preferences'));
 $formExport->addInput('file_name', $gL10n->get('PLG_INVENTORY_MANAGER_FILE_NAME'), $pPreferences->config['Optionen']['file_name'], array('helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_FILE_NAME_DESC', 'property' => HtmlForm::FIELD_REQUIRED));
 $formExport->addCheckbox('add_date', $gL10n->get('PLG_INVENTORY_MANAGER_ADD_DATE'), $pPreferences->config['Optionen']['add_date'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ADD_DATE_DESC'));
 $formExport->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
@@ -149,17 +149,17 @@ addPreferencePanel($page, 'export', $gL10n->get('PLG_INVENTORY_MANAGER_EXPORT'),
 
 // PANEL: IMPORT
 $formImport = new HtmlForm('import_form',null, $page, array('class' => 'form-preferences'));
-$formImport->addButton('btn_save_configurations', $gL10n->get('SYS_IMPORT'),array('icon' => 'fa-arrow-circle-right', 'class' => 'offset-sm-3', 'link' => '' . ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import.php'));
+$formImport->addButton('btn_save_configurations', $gL10n->get('SYS_IMPORT'),array('icon' => 'fa-arrow-circle-right', 'class' => 'offset-sm-3', 'link' => '' . ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import/import.php'));
 addPreferencePanel($page, 'import', $gL10n->get('PLG_INVENTORY_MANAGER_IMPORT'), 'fas fa-file-import', $formImport->show());
 
 // PANEL: DEINSTALLATION
-$formDeinstallation = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences_function.php', array('mode' => 2)), $page);
+$formDeinstallation = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences_function.php', array('mode' => 2)), $page);
 $formDeinstallation->addSubmitButton('btn_save_deinstallation', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), array('icon' => 'fa-trash-alt', 'class' => 'offset-sm-3'));
 $formDeinstallation->addCustomContent('', ''.$gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION_DESC'));
 addPreferencePanel($page, 'deinstallation', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), 'fas fa-trash-alt', $formDeinstallation->show());
 
 // PANEL: ACCESS_PREFERENCES
-$formAccessPreferences = new HtmlForm('access_preferences_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences_function.php', array('form' => 'access_preferences')), $page, array('class' => 'form-preferences'));
+$formAccessPreferences = new HtmlForm('access_preferences_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences_function.php', array('form' => 'access_preferences')), $page, array('class' => 'form-preferences'));
 $sql = 'SELECT rol.rol_id, rol.rol_name, cat.cat_name FROM '.TBL_CATEGORIES.' AS cat, '.TBL_ROLES.' AS rol
         WHERE cat.cat_id = rol.rol_cat_id
         AND (cat.cat_org_id = '.$gCurrentOrgId.'
