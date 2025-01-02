@@ -17,7 +17,7 @@ For more information and support, refer to the [InventoryManager GitHub wiki pag
 
 ## License
 
-This plugin is licensed under the GNU General Public License v2.0. For more information, see the [LICENSE](LICENSE) file.
+This plugin is licensed under the GNU General Public License v3.0. For more information, see the [LICENSE](LICENSE) file.
 
 ## Authors
 
