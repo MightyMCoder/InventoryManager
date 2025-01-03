@@ -245,14 +245,23 @@ class CConfigTablePIM
 		$pimFields = array();
 		$customFields = array();
 
-		foreach ($existingFields as $fieldName => $fieldData) {
+		// Sort the array by imf_sequence to get the imf_name and imf_sequence for custom fields of the previous field
+		$existingFieldsOrdered = $existingFields;
+		usort($existingFieldsOrdered, function($a, $b) {
+			return $a['imf_sequence'] <=> $b['imf_sequence'];
+		});
+
+		foreach ($existingFields as $fieldName => $fieldData) {			
 			if (strpos($fieldName, 'PIM_') === 0) {
 				$pimFields[$fieldName] = $fieldData;
 			}
 			else {
 				$customFields[$fieldName] = $fieldData;
+				$customFields[$fieldName]['previous_imf_name'] = $existingFieldsOrdered[$fieldData['imf_sequence'] - 1]['imf_name'];
+				$customFields[$fieldName]['previous_sequence'] = $existingFieldsOrdered[$fieldData['imf_sequence'] - 1]['imf_sequence'];
 			}
 		}
+
 		// Adjust pimFields to match the defaultData
 		foreach ($defaultData as $defaultField) {
 			$defaultFieldName = $defaultField['imf_name'];
@@ -283,16 +292,33 @@ class CConfigTablePIM
 				unset($pimFields[$fieldName]);
 			}
 		}
+
 		// Append customFields to pimFields
-		$allFields = array_merge($pimFields, $customFields);
+		$allFields = $pimFields;
 
-		// Update the imf_sequence based on the index in the array
-		$sequence = 0;
-		foreach ($allFields as &$field) {
-			$field['imf_sequence'] = $sequence++;
+		// Adjust the sequence of pimFields based on customFields
+		foreach ($customFields as $customField) {
+			if (isset($customField['previous_imf_name']) && isset($allFields[$customField['previous_imf_name']])) {
+				$customSequence = $allFields[$customField['previous_imf_name']]['imf_sequence'] + 1;
+				$customField['imf_sequence'] = $customSequence;
+			}
+			else {
+				//old previous item doesnt exist anymore
+				$customSequence = $customField['previous_sequence'] - 1;
+			}
+			
+			foreach ($allFields as &$pimField) {
+				if ($pimField['imf_sequence'] >= $customSequence) {
+					$pimField['imf_sequence']++;
+				}
+			}
+
+			unset($pimField); // Break reference to the last element
+			
+			if (isset($customField['imf_name'])) {
+				$allFields[$customField['imf_name']] = $customField;
+			}
 		}
-		unset($field); // Break reference to the last element
-
 		// Now $allFields contains the combined and updated fields
 
 		// Clear the table and reset the AUTO_INCREMENT
