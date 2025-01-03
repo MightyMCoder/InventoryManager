@@ -3,9 +3,10 @@
  ***********************************************************************************************
  * Class to manage the items of the InventoryManager plugin
  *
- * @copyright The Admidio Team
- * @see https://www.admidio.org/
- * @license https://www.gnu.org/licenses/gpl-2.0.html GNU General Public License v2.0 only
+ * @see         https://github.com/MightyMCoder/InventoryManager/ The InventoryManager GitHub project
+ * @author      MightyMCoder
+ * @copyright   2024 - today MightyMCoder
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
  * methods:
  * 
