@@ -510,7 +510,7 @@ foreach ($items->items as $item) {
         }
 
         if ($imfNameIntern == 'ITEMNAME' && $getMode == 'html') {
-            $content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items_edit_new.php', array('item_id' => $item['imi_id'])) . '">' . $content . '</a>';
+            $content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">' . $content . '</a>';
         }
 
         if ($items->getProperty($imfNameIntern, 'imf_type') == 'CHECKBOX') {
@@ -547,7 +547,7 @@ foreach ($items->items as $item) {
         }
         if (isUserAuthorizedForPreferences()) {
             $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER . '/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
-                               <i class="fas fa-minus-circle" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE') . '"></i>
+                               <i class="fas fa-trash-alt" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE') . '"></i>
                            </a>';
         }
         $columnValues[] = $tempValue;
