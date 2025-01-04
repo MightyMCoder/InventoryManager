@@ -118,6 +118,11 @@ function deleteItem($items, $getItemId, $gCurrentOrgId) {
 	// Send notification to all users
 	$items->sendNotification($gCurrentOrgId);
 
+	// Go back to item view
+	if ($gNavigation->count() > 2) {
+		$gNavigation->deleteLastUrl();
+	}
+	
 	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
 	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETED'));
 }
