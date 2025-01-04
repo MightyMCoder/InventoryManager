@@ -70,12 +70,14 @@
     <string name="PLG_INVENTORY_MANAGER_NEW">New</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">The item #VAR1_BOLD# was changed by #VAR2_BOLD#:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">The item #VAR1_BOLD# was created by #VAR2_BOLD#:</string>
-    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">The item #VAR1_BOLD# was deleted by #VAR2_BOLD#:</string>
-    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER">The item #VAR1_BOLD# was made to former by #VAR2_BOLD#:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">An item was deleted:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER">An item was made to former:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEMS_IMPORTED">The following items were imported by #VAR1_BOLD#:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CHANGED">An item in the inventory has been changed</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CREATED">An item has been added to the inventory</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_DELETED">An item in the inventory has been deleted</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_MADE_FORMER">An item in the inventory has been made to former</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEMS_IMPORTED">Items have been imported into the inventory</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER">Number</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER_DESC">Number of items to be added</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER_OF_ITEMS">Number of items</string>
@@ -88,7 +90,8 @@
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN">Profile view settings</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">Issued items can be viewed in a member's profile view. By default, only the item name is displayed. In addition to the item name, another item field can be selected and displayed here.</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">In order for items to be displayed in the profile view, the following line must be added to profile.php: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/inventory/inventory_manager_profile_addin.php');".\n\nFurther information can be found in the inventory_manager_profile_addin.php file.</string>
-    <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Display all items</string>
+    <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_DESC">If this setting is enabled, former items of this organization will also be displayed in addition to the current items.</string>
+    <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Display all</string>
     <string name="PLG_INVENTORY_MANAGER_SPECIAL_CASE_CURUSER_OR_ADMIN">Special case: current user or administrator</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE">Synchronize users with recipients</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_DESC">This allows users to be made without a item to a former user.\n\n A T T E N T I O N\n\n  This feature should only be used if InventoryManager is operated in its own organization.</string>
