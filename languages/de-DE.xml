@@ -70,12 +70,14 @@
     <string name="PLG_INVENTORY_MANAGER_NEW">Neu</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# geändert:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# angelegt:</string>
-    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# gelöscht:</string>
-    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# ausgesondert:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">Ein Gegenstand im Inventar wurde gelöscht:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER">Ein Gegenstand im Inventar wurde ausgesondert:</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEMS_IMPORTED">Folgende Gegenstände wurden von #VAR1_BOLD# importiert:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CHANGED">Ein Gegenstand im Inventar wurde geändert</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CREATED">Ein Gegenstand im Inventar wurde hinzugefügt</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_DELETED">Ein Gegenstand im Inventar wurde gelöscht</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_MADE_FORMER">Ein Gegenstand im Inventar wurde ausgesondert</string>
+    <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEMS_IMPORTED">Im Inventar wurden Gegenstände importiert</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER">Anzahl</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER_DESC">Anzahl der anzufügenden Gegenstände</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER_OF_ITEMS">Anzahl der Gegenstände</string>
@@ -88,7 +90,8 @@
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN">Einstellungen für die Profilansicht</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">In der Profilansicht eines Mitglieds können ausgegebene Gegenstände angezeigt werden. Standardmäßig wird nur der Gegenstandsname angezeigt. Hier kann, zusätzlich zum Gegenstandsnamen, ein weiteres Eigenschaftsfeld ausgewählt und angezeigt werden.</string>    
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">Damit in der Profilansicht Gegenstände angezeigt werden, muss folgende Zeile in die profile.php eingefügt werden: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/inventory/inventory_manager_profile_addin.php');".\n\nWeitere Infos dazu finden sich in der Datei inventory_manager_profile_addin.php.</string>
-    <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Alle Gegenstände anzeigen</string>
+    <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_DESC">Bei gesetzter Einstellung werden neben den aktuellen Gegenständen dieser Organisation auch ausgesonderte Gegenstände angezeigt.</string>
+    <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Alle anzeigen</string>
     <string name="PLG_INVENTORY_MANAGER_SPECIAL_CASE_CURUSER_OR_ADMIN">Sonderfall: Aktueller Benutzer oder Administrator</string>    
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE">Benutzer mit Empfänger abgleichen</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_DESC">Hierüber können Benutzer ohne ausgeliehene Gegenstände zu Ehemaligen gemacht werden.\n\n V O R S I C H T\n\n Diese Funktion sollte nur verwendet werden, wenn InventoryManager in einer eigenen Organisation betrieben wird.</string>    
