@@ -35,10 +35,11 @@
  * Parameters:
  * 
  * mode              : Output(html, print, csv-ms, csv-oo, pdf, pdfl, xlsx)
+ * filter_string     : general filter string
  * filter_category   : filter for category
  * filter_keeper   : filter for keeper
  * show_all          : 0 - (Default) show active items only
- *                     1 - show all items (also made to the former)
+ *                     1 - show all items (also made to former)
  * same_side         : 0 - (Default) side was called by another side
  *                     1 - internal call of the side
  ***********************************************************************************************
@@ -77,6 +78,7 @@ $getMode = admFuncVariableIsValid($_GET, 'mode', 'string', array(
     'defaultValue' => 'html',
     'validValues' => ['csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx']
 ));
+$getFilterString = admFuncVariableIsValid($_GET, 'filter_string', 'string');
 $getFilterCategory = admFuncVariableIsValid($_GET, 'filter_category', 'string');
 $getFilterKeeper = admFuncVariableIsValid($_GET, 'filter_keeper', 'int');
 $getShowAll = admFuncVariableIsValid($_GET, 'show_all', 'bool', array('defaultValue' => false));
@@ -84,12 +86,14 @@ $getSameSide = admFuncVariableIsValid($_GET, 'same_side', 'bool', array('default
 
 if ($getSameSide) {
     $_SESSION['pInventoryManager'] = array(
+        'filter_string' => $getFilterString,
         'filter_category' => $getFilterCategory,
         'filter_keeper' => $getFilterKeeper,
         'show_all' => $getShowAll
     );
 }
 else {
+    $getFilterString = $_SESSION['pInventoryManager']['filter_string'];
     $getFilterCategory = $_SESSION['pInventoryManager']['filter_category'];
     $getFilterKeeper = $_SESSION['pInventoryManager']['filter_keeper'];
     $getShowAll = $_SESSION['pInventoryManager']['show_all'];
@@ -221,6 +225,7 @@ switch ($getMode) {
             $("#filter_category").change(function () {
                 self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'mode'              => 'html',
+                    'filter_string'     => $getFilterString,
                     'filter_keeper'   => $getFilterKeeper,
                     'same_side'         => true,
                     'show_all'          => $getShowAll
@@ -229,6 +234,7 @@ switch ($getMode) {
             $("#filter_keeper").change(function () {
                 self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
                     'mode'              => 'html',
+                    'filter_string'     => $getFilterString,
                     'filter_category'   => $getFilterCategory,
                     'same_side'         => true,
                     'show_all'          => $getShowAll
@@ -236,6 +242,7 @@ switch ($getMode) {
             });
             $("#menu_item_lists_print_view").click(function() {
                 window.open("'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+                    'filter_string'     => $getFilterString,
                     'filter_category'   => $getFilterCategory, 
                     'filter_keeper'   => $getFilterKeeper,
                     'show_all'          => $getShowAll,  
@@ -243,10 +250,10 @@ switch ($getMode) {
                 )) . '", "_blank");
             });
             $("#show_all").change(function() {
-                $("#navbar_birthdaylist_form").submit();
+                $("#navbar_inventorylist_form").submit();
             });
             $("#filter_string").change(function() {
-                $("#navbar_birthdaylist_form").submit();
+                $("#navbar_inventorylist_form").submit();
             });
         ', true);
 
@@ -255,6 +262,7 @@ switch ($getMode) {
         $page->addPageFunctionsMenuItem('menu_item_lists_export', $gL10n->get('SYS_EXPORT_TO'), '#', 'fa-file-download');
         $page->addPageFunctionsMenuItem('menu_item_lists_xlsx', $gL10n->get('SYS_MICROSOFT_EXCEL').' (XLSX)',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+                'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
                 'filter_keeper'   => $getFilterKeeper,
                 'show_all'          => $getShowAll,
@@ -262,6 +270,7 @@ switch ($getMode) {
             'fa-file-excel', 'menu_item_lists_export');
         $page->addPageFunctionsMenuItem('menu_item_lists_csv_ms', $gL10n->get('SYS_MICROSOFT_EXCEL').' (CSV)',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+                'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
                 'filter_keeper'   => $getFilterKeeper,
                 'show_all'          => $getShowAll,
@@ -269,6 +278,7 @@ switch ($getMode) {
             'fa-file-excel', 'menu_item_lists_export');
         $page->addPageFunctionsMenuItem('menu_item_lists_pdf', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_PORTRAIT').')',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+                'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
                 'filter_keeper'   => $getFilterKeeper,
                 'show_all'          => $getShowAll,
@@ -276,6 +286,7 @@ switch ($getMode) {
             'fa-file-pdf', 'menu_item_lists_export');
         $page->addPageFunctionsMenuItem('menu_item_lists_pdfl', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_LANDSCAPE').')',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+                'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
                 'filter_keeper'   => $getFilterKeeper,
                 'show_all'          => $getShowAll,
@@ -283,6 +294,7 @@ switch ($getMode) {
             'fa-file-pdf', 'menu_item_lists_export');
         $page->addPageFunctionsMenuItem('menu_item_lists_csv', $gL10n->get('SYS_CSV').' ('.$gL10n->get('SYS_UTF8').')',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+                'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
                 'filter_keeper'   => $getFilterKeeper,
                 'show_all'          => $getShowAll,
@@ -296,8 +308,10 @@ switch ($getMode) {
         
         // create filter menu with elements for role
         $filterNavbar = new HtmlNavbar('navbar_filter', '', null, 'filter');
-        $form = new HtmlForm('navbar_birthdaylist_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array('headline' => $headline)), $page, array('type' => 'navbar', 'setFocus' => false));
-           
+        $form = new HtmlForm('navbar_inventorylist_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array('headline' => $headline)), $page, array('type' => 'navbar', 'setFocus' => false));
+
+        $form->addInput('filter_string', $inputFilterStringLabel, $getFilterString);
+          
         $getItemId = admFuncVariableIsValid($_GET, 'item_id', 'int');
         $items2 = new CItems($gDb, $gCurrentOrgId);
         $items2->readItemData($getItemId, $gCurrentOrgId);
@@ -336,7 +350,7 @@ switch ($getMode) {
                 ORDER BY CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value) ASC;';
         $form->addSelectBoxFromSql('filter_keeper',$selectBoxKeeperLabel, $gDb, $sql, array('defaultValue' => $getFilterKeeper , 'showContextDependentFirstEntry' => true));
  
-        $form->addCheckbox('show_all', $gL10n->get('PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS'), $getShowAll);                           
+        $form->addCheckbox('show_all', $gL10n->get('PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS'), $getShowAll, array('helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_SHOW_ALL_DESC'));                           
         $form->addInput('same_side', '', '1', array('property' => HtmlForm::FIELD_HIDDEN));
         $filterNavbar->addForm($form->show());
         
@@ -510,17 +524,41 @@ foreach ($items->items as $item) {
         $columnValues[] = $tempValue;
     }
 
-    switch ($getMode) {
-        case 'csv':
-            $csvStr .= $tmp_csv . "\n";
-            break;
-        case 'xlsx':
-            $rows[] = $columnValues;
-            $strikethroughs[] = $strikethrough;
-            break;
-        default:
-            $table->addRowByArray($columnValues, '', array('nobr' => 'true'));
-            break;
+    $showRow = ($getFilterString == '') ? true : false;
+
+    if ($getFilterString !== '') {
+        $showRowException = false;
+        $filterArray = explode(',', $getFilterString);
+        foreach ($filterArray as $filterString) {
+            $filterString = trim($filterString);
+            if (substr($filterString, 0, 1) == '-') {
+                $filterString = substr($filterString, 1);
+                if (stristr(implode('', $columnValues), $filterString) || stristr($tmp_csv, $filterString)) {
+                    $showRowException = true;
+                }
+            }
+            if (stristr(implode('', $columnValues), $filterString) || stristr($tmp_csv, $filterString)) {
+                $showRow = true;
+            }
+        }
+        if ($showRowException) {
+            $showRow = false;
+        }
+    }
+
+    if ($showRow) {
+        switch ($getMode) {
+            case 'csv':
+                $csvStr .= $tmp_csv . "\n";
+                break;
+            case 'xlsx':
+                $rows[] = $columnValues;
+                $strikethroughs[] = $strikethrough;
+                break;
+            default:
+                $table->addRowByArray($columnValues, '', array('nobr' => 'true'));
+                break;
+            }
     }
 
     ++$listRowNumber;
@@ -574,11 +612,11 @@ switch ($getMode) {
         $writer->writeToStdOut();
         break;
     case 'html':
-        $page->addHtml($table->show(false));
+        $page->addHtml($table->show());
         $page->show();
         break;
     case 'print':
-        $page->addHtml($table->show(false));
+        $page->addHtml($table->show());
         $page->show();
         break;
 }
