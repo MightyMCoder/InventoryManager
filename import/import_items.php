@@ -85,6 +85,8 @@ foreach ($items->items as $fieldId => $value) {
 }
 
 $valueList = array();
+$importedItemData = array();
+
 foreach ($assignedFieldColumn as $row => $values) {
     foreach ($items->mItemFields as $fields){
         $imfNameIntern = $fields->getValue('imf_name_intern');
@@ -159,17 +161,24 @@ foreach ($assignedFieldColumn as $row => $values) {
             $val = $values[$imfNameIntern];
         }
         $_POST['imf-' . $fields->getValue('imf_id')] = '' . $val . '';
+        $ItemData[] = array($items->mItemFields[$imfNameIntern]->getValue('imf_name') => array('oldValue' => "", 'newValue' => $val));
     }
 
+    $importedItemData[] = $ItemData;
+    $ItemData = array();
     if (count($assignedFieldColumn) > 0) {
  
         // save item
         $_POST['redirect'] = 0;
+        $_POST['imported'] = 1;
         require(__DIR__ . '/../items_save.php');
         $importSuccess = true;
         unset($_POST);
     }   
 }
+
+// Send notification to all users
+$items->sendNotification($gCurrentOrgId, $importedItemData);
 
 $gNavigation->deleteLastUrl();
 
