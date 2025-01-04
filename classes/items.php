@@ -239,7 +239,14 @@ class CItems
             $imfType = $this->mItemFields[$fieldNameIntern]->getValue('imf_type');
             switch ($imfType) {
                 case 'CHECKBOX':
-                    $htmlValue = $value == 1 ? '<i class="fas fa-check-square"></i>' : '<i class="fas fa-square"></i>';
+                    $htmlValue = $value == 1 ? '<span class="fa-stack">
+                                                    <i class="fas fa-square-full fa-stack-1x"></i>
+                                                    <i class="fas fa-check-square fa-stack-1x fa-inverse"></i>
+                                                </span>' 
+                                             : '<span class="fa-stack">
+                                                    <i class="fas fa-square-full fa-stack-1x"></i>
+                                                    <i class="fas fa-square fa-stack-1x fa-inverse"></i>
+                                                </span>';
                     break;
                 case 'DATE':
                     if ($value !== '') {
