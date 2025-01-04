@@ -49,6 +49,7 @@ class CItems
     private $itemChanged;                   ///< flag if a new item was changed
     private $itemDeleted;                   ///< flag if a item was deleted
     private $itemMadeFormer;                ///< flag if a item was made to former item
+    private $itemImported;                   ///< flag if a item was imported
     private $showFormerItems;               ///< if true, than former items will be showed
     private $organizationId;                ///< ID of the organization for which the item field structure should be read
     public $columnsValueChanged;            ///< flag if a value of one field had changed
@@ -71,6 +72,7 @@ class CItems
         $this->itemChanged = false;
         $this->itemDeleted = false;
         $this->itemMadeFormer = false;
+        $this->itemImported = false;
         $this->showFormerItems = true;
     }
 
@@ -697,12 +699,19 @@ class CItems
      * @param int $itemId 		    The ID of the item to be marked as former.
      * @param int $organizationId   The id of the organization from which the items should be marked as former
      */
-    function makeItemFormer($itemId, $organizationId) {
+    public function makeItemFormer($itemId, $organizationId) {
 
     	$sql = 'UPDATE '.TBL_INVENTORY_MANAGER_ITEMS.' SET imi_former = 1 WHERE imi_id = ? AND (imi_org_id = ? OR imi_org_id IS NULL);';
         $this->mDb->queryPrepared($sql, array($itemId, $organizationId));
 
         $this->itemMadeFormer = true;
+    }
+
+    /**
+     * Marks an item as imported.
+     */
+    public function setImportedItem() {
+        $this->itemImported = true;
     }
 
     /**
@@ -715,7 +724,7 @@ class CItems
      * @throws AdmException             'SYS_EMAIL_NOT_SEND'
      * @throws Exception
      */
-    public function sendNotification($organizationId): bool
+    public function sendNotification($organizationId, $importData = null): bool
     {
         global $gProfileFields, $gCurrentUser, $gSettingsManager, $gL10n;
 
@@ -723,96 +732,133 @@ class CItems
         if ($gSettingsManager->getBool('system_notifications_new_entries')) {
             $notification = new Email();
 
-            if ($this->itemCreated) {
+            if ($this->itemImported && $importData === null) {
+                return false;
+            }
+            elseif ($this->itemImported) {
+                $messageTitleText = 'PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEMS_IMPORTED';
+                $messageHead = 'PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEMS_IMPORTED';
+            }
+            elseif ($this->itemCreated) {
                 $messageTitleText = 'PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CREATED';
                 $messageHead = 'PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED';
-            }elseif ($this->itemDeleted) {
+            }
+            elseif ($this->itemDeleted) {
                 $messageTitleText = 'PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_DELETED';
                 $messageHead = 'PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED';
-            }elseif ($this->itemMadeFormer) {
+            }
+            elseif ($this->itemMadeFormer) {
                 $messageTitleText = 'PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_MADE_FORMER';
                 $messageHead = 'PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_MADE_FORMER';
-            } elseif ($this->itemChanged) {
+            }
+            elseif ($this->itemChanged) {
                 $messageTitleText = 'PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEM_CHANGED';
                 $messageHead = 'PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED';
-            } else {
+            }
+            else {
                 return false;
             }
 
+            // if items were imported then sent a message with all itemnames, the user and the date
             // if item was created or changed then sent a message with all changed fields in a table
             // if item was deleted or made former then sent a message with the item name, the user and the date
-            if ($this->itemCreated || $this->itemChanged)   
-            {
+            if ($this->itemImported || $this->itemCreated || $this->itemChanged) {
                 $format_hdr = "<tr><th> %s </th><th> %s </th><th> %s </th></tr>\n";
                 $format_row = "<tr><th> %s </th><td> %s </td><td> %s </td></tr>\n";
                 $table_begin =  "<style>table, th, td {border: 1px solid black;}</style>"
                                 . "<table>";
                 $table_end = '</table><br>';
-    
-                $changes = array();
-                foreach ($this->mChangedItemData as $data) {
-                    foreach ($data as $key => $value) {
-                        if ($value['oldValue'] != $value['newValue']) {
-                            $listValues = $this->getProperty(strtoupper(str_replace('PIM_', '', $key)), 'imf_value_list');
-                            if ($key === 'PIM_KEEPER') {
-                                $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
-                                        FROM ' . TBL_USERS . '
-                                        JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
-                                        JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
-                                        LEFT JOIN ' . TBL_USER_DATA . ' as postcode ON postcode.usd_usr_id = usr_id AND postcode.usd_usf_id = ' . $gProfileFields->getProperty('POSTCODE', 'usf_id') . '
-                                        LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
-                                        LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
-                                        WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $organizationId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
 
-                                $statement = $this->mDb->query($sql);
-                                foreach ($statement->fetchAll() as $user) {
-                                    $users[$user['usr_id']] = $user['name'];
-                                }
-
-                                $changes[] = array(
-                                    $key,
-                                    isset($users[$value['oldValue']]) ? $users[$value['oldValue']] : '',
-                                    isset($users[$value['newValue']]) ? $users[$value['newValue']] : ''
-                                );
-                            }
-                            else if ($listValues !== '') {
-                                $changes[] = array(
-                                    $key,
-                                    isset($listValues[$value['oldValue']]) ? $listValues[$value['oldValue']] : '',
-                                    isset($listValues[$value['newValue']]) ? $listValues[$value['newValue']] : ''
-                                );
-                            }
-                            else {
-                                $changes[] = array($key, $value['oldValue'], $value['newValue']);
-                            }
-                        }
-                    } 
+                // create message header
+                if ($this->itemImported) {
+                    $message = $gL10n->get($messageHead, array($gCurrentUser->getValue('FIRST_NAME') . ' ' . $gCurrentUser->getValue('LAST_NAME'))) . '<br/><br/>';
+                    $itemData = $importData;
+                } else {
+                    $message = $gL10n->get($messageHead, array($this->getValue('ITEMNAME','html'), $gCurrentUser->getValue('FIRST_NAME') . ' ' . $gCurrentUser->getValue('LAST_NAME'))) . '<br/><br/>';
+                    $itemData[] = $this->mChangedItemData;
                 }
 
-                if ($changes) {
-                    $message = $gL10n->get($messageHead, array($this->getValue('ITEMNAME','html'), $gCurrentUser->getValue('FIRST_NAME') . ' ' . $gCurrentUser->getValue('LAST_NAME'))) . '<br /><br />';
-                    $message .= $table_begin
-                        . sprintf(
-                            $format_hdr,
-                            $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD'),
-                            $gL10n->get('SYS_PREVIOUS_VALUE'),
-                            $gL10n->get('SYS_NEW_VALUE')
-                        );
-                    foreach ($changes as $c) {
-                        $message .= sprintf($format_row, (str_contains($c[0], 'PIM_') ? $gL10n->get($c[0]) : $c[0]), $c[1], $c[2]);
+                $itemName = "";
+                $changes = array();
+                foreach ($itemData as $items) {
+                    foreach ($items as $data) {
+                        foreach ($data as $key => $value) {
+                            if ($value['oldValue'] != $value['newValue']) {
+                                $listValues = $this->getProperty(strtoupper(str_replace('PIM_', '', $key)), 'imf_value_list');
+                                if ($key === 'PIM_ITEMNAME') {
+                                    $itemName = $value['newValue'];
+                                }
+                                elseif ($key === 'PIM_KEEPER') {
+                                    $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
+                                            FROM ' . TBL_USERS . '
+                                            JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
+                                            JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
+                                            LEFT JOIN ' . TBL_USER_DATA . ' as postcode ON postcode.usd_usr_id = usr_id AND postcode.usd_usf_id = ' . $gProfileFields->getProperty('POSTCODE', 'usf_id') . '
+                                            LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
+                                            LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
+                                            WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $organizationId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
+
+                                    $statement = $this->mDb->query($sql);
+                                    foreach ($statement->fetchAll() as $user) {
+                                        $users[$user['usr_id']] = $user['name'];
+                                    }
+
+                                    $changes[] = array(
+                                        $key,
+                                        isset($users[$value['oldValue']]) ? $users[$value['oldValue']] : '',
+                                        isset($users[$value['newValue']]) ? $users[$value['newValue']] : ''
+                                    );
+                                }
+                                elseif ($key === 'PIM_IN_INVENTORY')  {
+                                    $changes[] = array(
+                                        $key,
+                                        $value['oldValue'] == 1 ? $gL10n->get('SYS_YES') : ($value['oldValue'] == 0 ? $gL10n->get('SYS_NO') : $value['oldValue']),
+                                        $value['newValue'] == 1 ? $gL10n->get('SYS_YES') : ($value['newValue'] == 0 ? $gL10n->get('SYS_NO') : $value['newValue'])
+                                    );
+                                }
+                                elseif ($listValues !== '') {
+                                    $changes[] = array(
+                                        $key,
+                                        isset($listValues[$value['oldValue']]) ? $listValues[$value['oldValue']] : '',
+                                        isset($listValues[$value['newValue']]) ? $listValues[$value['newValue']] : ''
+                                    );
+                                }
+                                else {
+                                    $changes[] = array($key, $value['oldValue'], $value['newValue']);
+                                }
+                            }
+                        }
                     }
 
-                    $message .= $table_end;
+                    if ($changes) {
+                        if ($itemName === "") {
+                            $itemName = $this->getValue('ITEMNAME','html');
+                        }
+                        $message .= '<p style="font-size:120%;""><b><u>'. $itemName . ':</u></b></p>';
+                        $message .= $table_begin
+                            . sprintf(
+                                $format_hdr,
+                                $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD'),
+                                $gL10n->get('SYS_PREVIOUS_VALUE'),
+                                $gL10n->get('SYS_NEW_VALUE')
+                            );
+                        foreach ($changes as $c) {
+                            $message .= sprintf($format_row, (str_contains($c[0], 'PIM_') ? $gL10n->get($c[0]) : $c[0]), $c[1], $c[2]);
+                        }
+
+                        $message .= $table_end;
+                        $changes = array();
+                    }
                 }
             }
             else {
                 $messageUserText = 'SYS_CHANGED_BY';
                 $messageDateText = 'SYS_CHANGED_AT';
 
-                $message = $gL10n->get($messageHead, array($this->getValue('ITEMNAME','html'), $gCurrentUser->getValue('FIRST_NAME') . ' ' . $gCurrentUser->getValue('LAST_NAME'))) . '<br /><br />'
-                    . $gL10n->get('PIM_ITEMNAME') . ': ' . $this->getValue('ITEMNAME','html') . '<br />'
-                    . $gL10n->get($messageUserText) . ': ' . $gCurrentUser->getValue('FIRST_NAME') . ' ' . $gCurrentUser->getValue('LAST_NAME') . '<br />'
-                    . $gL10n->get($messageDateText) . ': ' . date($gSettingsManager->getString('system_date') . ' ' . $gSettingsManager->getString('system_time')) . '<br />';
+                $message = $gL10n->get($messageHead) . '<br/><br/>'
+                    . '<b>' . $gL10n->get('PIM_ITEMNAME') . ':</b> ' . $this->getValue('ITEMNAME','html') . '<br/>'
+                    . '<b>' . $gL10n->get($messageUserText) . ':</b> ' . $gCurrentUser->getValue('FIRST_NAME') . ' ' . $gCurrentUser->getValue('LAST_NAME') . '<br/>'
+                    . '<b>' . $gL10n->get($messageDateText) . ':</b> ' . date($gSettingsManager->getString('system_date') . ' ' . $gSettingsManager->getString('system_time')) . '<br/>';
             }
             
             return $notification->sendNotification(

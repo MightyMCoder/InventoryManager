@@ -28,6 +28,7 @@ $getItemId = admFuncVariableIsValid($_GET, 'item_id', 'int');
 $postCopyNumber = admFuncVariableIsValid($_POST, 'copy_number', 'numeric', ['defaultValue' => 1]);
 $postCopyField = admFuncVariableIsValid($_POST, 'copy_field', 'int');
 $postRedirect = admFuncVariableIsValid($_POST, 'redirect', 'numeric', ['defaultValue' => 1]);
+$postImported = admFuncVariableIsValid($_POST, 'imported', 'numeric', ['defaultValue' => 0]);
 
 $items = new CItems($gDb, $gCurrentOrgId);
 
@@ -79,6 +80,11 @@ for ($i = $startIdx; $i < $stopIdx; ++$i) {
 	}
 
 	$gDb->endTransaction();
+}
+
+//mark item as imported to prevent notification
+if ($postImported == 1) {
+	$items->setImportedItem();
 }
 
 // Send notification to all users
