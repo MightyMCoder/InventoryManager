@@ -431,7 +431,7 @@ elseif ($getMode == 'pdf') {
     $table->addTableHeader();
     $table->addRow();
     foreach ($arrValidColumns as $column) {
-        $table->addColumn($column, array('style' => 'text-align:center;font-size:10;font-weight:bold;;background-color:#C7C7C7;'), 'th');
+        $table->addColumn($column, array('style' => 'text-align:center;font-size:10;font-weight:bold;background-color:#C7C7C7;'), 'th');
     }
 }
 
@@ -467,10 +467,6 @@ foreach ($items->items as $item) {
                 $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME');
         }
 
-        if ($imfNameIntern == 'ITEMNAME' && $getMode == 'html') {
-            $content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">' . $content . '</a>';
-        }
-
         if ($items->getProperty($imfNameIntern, 'imf_type') == 'CHECKBOX') {
             $content = ($content != 1) ? 0 : 1;
             $content = ($getMode == 'csv' || $getMode == 'pdf' || $getMode == 'xlsx') ?
@@ -504,6 +500,9 @@ foreach ($items->items as $item) {
                            </a>';
         }
         if (isUserAuthorizedForPreferences()) {
+            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
+                                <i class="fas fa-edit" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_EDIT') . '"></i>
+                            </a>';
             $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER . '/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
                                <i class="fas fa-trash-alt" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE') . '"></i>
                            </a>';
