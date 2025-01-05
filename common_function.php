@@ -1,4 +1,5 @@
 <?php
+
 /**
  ***********************************************************************************************
  * Common functions for the Admidio plugin InventoryManager
@@ -70,7 +71,7 @@ function isUserAuthorized($scriptName)
 		$sql = 'SELECT men_id, men_com_id, com_name_intern FROM ' . TBL_MENU . '
 			LEFT JOIN ' . TBL_COMPONENTS . ' ON com_id = men_com_id
 			WHERE men_id = ? ORDER BY men_men_id_parent DESC, men_order;';
-		$menuStatement = $gDb->queryPrepared($sql,array($menId));
+		$menuStatement = $gDb->queryPrepared($sql, array($menId));
 
 		while ($row = $menuStatement->fetch()) {
 			if ((int)$row['men_com_id'] === 0 || Component::isVisible($row['com_name_intern'])) {
@@ -96,7 +97,7 @@ function getMenuIdByScriptName($scriptName)
 	global $gDb;
 
 	$sql = 'SELECT men_id FROM ' . TBL_MENU . ' WHERE men_url = ?;';
-	$menuStatement = $gDb->queryPrepared($sql,array($scriptName));
+	$menuStatement = $gDb->queryPrepared($sql, array($scriptName));
 
 	if ($menuStatement->rowCount() === 1) {
 		return (int)$menuStatement->fetch()['men_id'];
@@ -120,6 +121,43 @@ function isUserAuthorizedForPreferences()
 	foreach ($pPreferences->config['access']['preferences'] as $roleId) {
 		if ($gCurrentUser->isMemberOfRole((int)$roleId)) {
 			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Check if the user is authorized to see the Inventory Manager Addin on the profile page
+ * @return bool 					true if the user is authorized
+ */
+function isUserAuthorizedForInventoryManagerAddin()
+{
+	global $gDb;
+	$sql = 'SELECT men_id, men_name, men_name_intern
+			FROM ' . TBL_MENU . '
+			WHERE men_men_id_parent IS NULL
+			ORDER BY men_order';
+
+	$mainNodesStatement = $gDb->queryPrepared($sql);
+
+	while ($mainNodes = $mainNodesStatement->fetch()) {
+		$menuNodes = new MenuNode($mainNodes['men_name_intern'], $mainNodes['men_name']);
+
+		$nodeId = $mainNodes['men_id'];
+		$sql = 'SELECT men_id, men_com_id, men_name_intern, men_name, men_description, men_url, men_icon, com_name_intern
+				FROM ' . TBL_MENU . '
+				LEFT JOIN ' . TBL_COMPONENTS . ' ON com_id = men_com_id
+				WHERE men_men_id_parent = ?
+				ORDER BY men_men_id_parent DESC, men_order';
+
+		$nodesStatement = $gDb->queryPrepared($sql, array($nodeId));
+
+		while ($node = $nodesStatement->fetch(PDO::FETCH_ASSOC)) {
+			if ((int) $node['men_com_id'] === 0 || Component::isVisible($node['com_name_intern'])) {
+				if ($node['men_url'] === "/adm_plugins/InventoryManager/inventory_manager.php" && $menuNodes->menuItemIsVisible($node['men_id'])) {
+					return true;
+				}
+			}
 		}
 	}
 	return false;
@@ -181,8 +219,16 @@ function genNewSequence()
 function umlautePIM($tmptext)
 {
 	$replacements = [
-		'&uuml;' => 'ue', '&auml;' => 'ae', '&ouml;' => 'oe', '&szlig;' => 'ss',
-		'&Uuml;' => 'Ue', '&Auml;' => 'Ae', '&Ouml;' => 'Oe', '.' => '', ',' => '', '/' => ''
+		'&uuml;' => 'ue',
+		'&auml;' => 'ae',
+		'&ouml;' => 'oe',
+		'&szlig;' => 'ss',
+		'&Uuml;' => 'Ue',
+		'&Auml;' => 'Ae',
+		'&Ouml;' => 'Oe',
+		'.' => '',
+		',' => '',
+		'/' => ''
 	];
 
 	return str_replace(array_keys($replacements), array_values($replacements), htmlentities($tmptext));
