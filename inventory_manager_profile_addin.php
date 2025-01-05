@@ -59,7 +59,7 @@ if ($userIsAuthorized) {
 
 	// prepare header for table
 	$inventoryAddinTable = new HtmlTable('adm_inventory_addin_table', $page, true, true, 'table table-condensed');
-	$inventoryAddinTable->setDatatablesRowsPerPage($gSettingsManager->getInt('groups_roles_members_per_page'));
+	$inventoryAddinTable->setDatatablesRowsPerPage(10);
 
 	// create array with all column heading values
 
