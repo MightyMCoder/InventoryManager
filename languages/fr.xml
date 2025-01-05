@@ -4,6 +4,7 @@
     <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Ici, en plus du rôle "Administrateur", vous pouvez autoriser d'autres rôles pour accéder au module "Paramétrages".</string>     
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE">Ajouter la date</string>
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE_DESC">Si une date au format AAAA-MM-JJ doit être ajoutée à un fichier d'exportation, la coche doit être cochée.</string> 
+    <string name="PLG_INVENTORY_MANAGER_BASED_ON">(basé sur #VAR1#)</string>
     <string name="PLG_INVENTORY_MANAGER_CATEGORY">Catégorie</string>
     <string name="PLG_INVENTORY_MANAGER_CONFIGURATION">Configuration</string>
     <string name="PLG_INVENTORY_MANAGER_CONNECTION_ERROR">Impossible de se connecter à la page de publication GitHub! Veuillez vérifier votre connexion Internet ou réessayer plus tard. Alternativement, vous pouvez vérifier manuellement sur le site Web de #VAR1# s'il y a une mise à jour.</string>
@@ -66,7 +67,7 @@
     <string name="PLG_INVENTORY_MANAGER_ITEMNAME">Nom objet</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER">Propriétaire</string>     
     <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">Le contrôle d\'autorisation du plug-in a échoué. Plus d\'un élément de menu est défini avec la même URL.\n\n=> #VAR1_BOLD#</string>    
-    <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager (basé sur KeyManager %s)</string>
+    <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_NEW">Nouveau</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">L'objet #VAR1_BOLD# a été modifié par #VAR2_BOLD#:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">L'objet #VAR1_BOLD# a été créé par #VAR2_BOLD#:</string>
