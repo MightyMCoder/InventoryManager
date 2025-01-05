@@ -137,7 +137,9 @@ foreach ($items->mItemFields as $itemField) {
         $valueList[$itemField->getValue('imf_name_intern')] = $itemField->getValue('imf_name');
     }
 }
-$formProfileAddin->addSelectBox('profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD'), $valueList, array('defaultValue' => $pPreferences->config['Optionen']['profile_addin'], 'showContextDependentFirstEntry' => true, 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC', 'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2'));
+$helpTextIdLabelLink = '<a href="https://github.com/MightyMCoder/InventoryManager/wiki/Profile-View-AddIn" target="_blank">GitHub Wiki</a>';
+$helpTextIdLabel = $gL10n->get('PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2', array($helpTextIdLabelLink));
+$formProfileAddin->addSelectBox('profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD'), $valueList, array('defaultValue' => $pPreferences->config['Optionen']['profile_addin'], 'showContextDependentFirstEntry' => true, 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC', 'helpTextIdLabel' => $helpTextIdLabel));
 $formProfileAddin->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 addPreferencePanel($page, 'profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_PROFILE_ADDIN'), 'fas fa-users-cog', $formProfileAddin->show());
 
