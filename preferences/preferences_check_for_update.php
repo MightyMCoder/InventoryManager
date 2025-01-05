@@ -25,11 +25,18 @@
  */
 require_once(__DIR__ . '/../../../adm_program/system/common.php');
 require_once(__DIR__ . '/../common_function.php');
+require_once(__DIR__ . '/../classes/configtable.php');
+
+// Access only with valid login
+require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
 $getMode = admFuncVariableIsValid($_GET, 'mode', 'int', array('defaultValue' => 1, 'directOutput' => true));
 $PIMVersion = admFuncVariableIsValid($_GET, 'PIMVersion', 'string', array('defaultValue' => "n/a", 'directOutput' => true));
 $PIMBetaVersion = admFuncVariableIsValid($_GET, 'PIMBetaVersion', 'string', array('defaultValue' => "n/a", 'directOutput' => true));
+
+$pPreferences = new CConfigTablePIM();
+$pPreferences->read();
 
 // only authorized user are allowed to start this module
 if (!isUserAuthorizedForPreferences()) {
