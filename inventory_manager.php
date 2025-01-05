@@ -303,7 +303,7 @@ switch ($getMode) {
         
         if (isUserAuthorizedForPreferences()) {
             $page->addPageFunctionsMenuItem('menu_preferences', $gL10n->get('SYS_SETTINGS'), SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences.php'),  'fa-cog');
-            $page->addPageFunctionsMenuItem('itemcreate_form_btn', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE'), SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/items_edit_new.php', array('item_id' => 0)), 'fas fa-plus-circle');
+            $page->addPageFunctionsMenuItem('itemcreate_form_btn', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE'), SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/items/items_edit_new.php', array('item_id' => 0)), 'fas fa-plus-circle');
         } 
         
         // create filter menu with elements for role
@@ -509,15 +509,15 @@ foreach ($items->items as $item) {
     if ($getMode == 'html') {
         $tempValue = '';
         if ($pPreferences->isPffInst()) {
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER . '/items_export_to_pff.php', array('item_id' => $item['imi_id'])) . '">
+            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER . '/items/items_export_to_pff.php', array('item_id' => $item['imi_id'])) . '">
                                <i class="fas fa-print" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT') . '"></i>
                            </a>';
         }
         if (isUserAuthorizedForPreferences()) {
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
+            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
                                 <i class="fas fa-edit" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_EDIT') . '"></i>
                             </a>';
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER . '/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
+            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER . '/items/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
                                <i class="fas fa-trash-alt" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE') . '"></i>
                            </a>';
         }
