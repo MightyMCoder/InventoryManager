@@ -113,7 +113,7 @@
     <string name="PIM_LAST_RECEIVER">letzter Empfänger</string>        
     <string name="PIM_LAST_RECEIVER_DESCRIPTION">Der letzte Empfänger des Gegenstandes</string>
     <string name="PIM_RECEIVED_BACK_ON">zurückerhalten am</string>
-    <string name="PIM_RECEIVED_BACK_ON_DESCRIPTION">Das Empfangsdatum des Gegenstandes durch den Verwalter</string>
-    <string name="PIM_RECEIVED_ON">empfangen am</string>
-    <string name="PIM_RECEIVED_ON_DESCRIPTION">Das Empfangsdatum des Gegenstandes durch den letzten Empfänger</string>
+    <string name="PIM_RECEIVED_BACK_ON_DESCRIPTION">Das Datum, an dem der Gegenstand an den Verwalter zurückgegeben wurde</string>
+    <string name="PIM_RECEIVED_ON">verliehen am</string>
+    <string name="PIM_RECEIVED_ON_DESCRIPTION">Das Verleihdatum des Gegenstandes an den letzten Empfänger</string>
 </resources>
