@@ -90,7 +90,7 @@
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_VERSION">Version</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN">Profile view settings</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">Issued items can be viewed in a member's profile view. By default, only the item name is displayed. In addition to the item name, another item field can be selected and displayed here.</string>
-    <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">In order for items to be displayed in the profile view, the following line must be added to profile.php: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/inventory/inventory_manager_profile_addin.php');".\n\nFurther information can be found in the inventory_manager_profile_addin.php file.</string>
+    <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">In order for items to be displayed in the profile view, the following line must be added to profile.php: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/InventoryManager/inventory_manager_profile_addin.php');".\n\nFurther information can be found on the #VAR1#.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_DESC">If this setting is enabled, former items of this organization will also be displayed in addition to the current items.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Display all</string>
     <string name="PLG_INVENTORY_MANAGER_SPECIAL_CASE_CURUSER_OR_ADMIN">Special case: current user or administrator</string>
