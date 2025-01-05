@@ -113,7 +113,7 @@
     <string name="PIM_LAST_RECEIVER">dernier destinataire</string>
     <string name="PIM_LAST_RECEIVER_DESCRIPTION">Le dernier destinataire de l'objet</string>
     <string name="PIM_RECEIVED_BACK_ON">rendue le</string>
-    <string name="PIM_RECEIVED_BACK_ON_DESCRIPTION">La date à laquelle l'objet a été rendu au propriétaire</string>
-    <string name="PIM_RECEIVED_ON">reçu le</string>
-    <string name="PIM_RECEIVED_ON_DESCRIPTION">La date à laquelle l'objet a été reçu par le dernier destinataire</string>
+    <string name="PIM_RECEIVED_BACK_ON_DESCRIPTION">La date à laquelle l'objet a été retourné au gestionnaire</string>
+    <string name="PIM_RECEIVED_ON">prêté le</string>
+    <string name="PIM_RECEIVED_ON_DESCRIPTION">La date de prêt de l'objet au dernier destinataire</string>
 </resources>

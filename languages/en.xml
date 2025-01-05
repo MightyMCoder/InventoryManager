@@ -113,7 +113,7 @@
     <string name="PIM_LAST_RECEIVER">last receiver</string>        
     <string name="PIM_LAST_RECEIVER_DESCRIPTION">Last receiver of the item</string>
     <string name="PIM_RECEIVED_BACK_ON">received back on</string>
-    <string name="PIM_RECEIVED_BACK_ON_DESCRIPTION">Date of receive of the item by the keeper</string>
-    <string name="PIM_RECEIVED_ON">received on</string>
-    <string name="PIM_RECEIVED_ON_DESCRIPTION">Date of receive of the item by the last receiver</string>
+    <string name="PIM_RECEIVED_BACK_ON_DESCRIPTION">The date the item was returned to the keeper</string>
+    <string name="PIM_RECEIVED_ON">lent on</string>
+    <string name="PIM_RECEIVED_ON_DESCRIPTION">The lending date of the item to the last recipient</string>
 </resources>
