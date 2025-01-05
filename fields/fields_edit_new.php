@@ -17,12 +17,12 @@
  ***********************************************************************************************
  */
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/common_function.php');
-require_once(__DIR__ . '/classes/configtable.php');
+require_once(__DIR__ . '/../../../adm_program/system/common.php');
+require_once(__DIR__ . '/../common_function.php');
+require_once(__DIR__ . '/../classes/configtable.php');
 
 // Access only with valid login
-require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
 $getimfId = admFuncVariableIsValid($_GET, 'imf_id', 'int');
@@ -82,7 +82,7 @@ $page->addJavascript('
 ', true);
 
 // show form
-$form = new HtmlForm('item_fields_edit_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields_function.php', ['imf_id' => $getimfId, 'mode' => 1, 'redirect_to_import' => $getRedirectToImport]), $page);
+$form = new HtmlForm('item_fields_edit_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields_function.php', ['imf_id' => $getimfId, 'mode' => 1, 'redirect_to_import' => $getRedirectToImport]), $page);
 
 $form->addInput('imf_name', $gL10n->get('SYS_NAME'), $itemField->getValue('imf_name', 'database'), array(
     'maxLength' => 100,
