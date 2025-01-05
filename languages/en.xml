@@ -4,6 +4,7 @@
     <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Here, in addition to the role "Administrator", you can authorize additional roles for access to the "Preferences" module.</string>
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE">Append date</string>
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE_DESC">If a date in the format YYYY-MM-DD is to be added to an export file, the checkmark must be set.</string>
+    <string name="PLG_INVENTORY_MANAGER_BASED_ON">(based on #VAR1#)</string>
     <string name="PLG_INVENTORY_MANAGER_CATEGORY">Category</string>
     <string name="PLG_INVENTORY_MANAGER_CONFIGURATION">Configuration</string>
     <string name="PLG_INVENTORY_MANAGER_CONNECTION_ERROR">Could not connect to the GitHub release page! Please check your internet connection or try again later. Alternatively, you can manually check on the #VAR1# website if an update is available.</string>
@@ -66,7 +67,7 @@
     <string name="PLG_INVENTORY_MANAGER_ITEMNAME">Item name</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER">Keeper</string>
     <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">The authorization check of the plugin failed. There is more than one menu item with the same URL defined.\n\n=> #VAR1_BOLD#</string>
-    <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager(based on KeyManager %s)</string>
+    <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_NEW">New</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">The item #VAR1_BOLD# was changed by #VAR2_BOLD#:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">The item #VAR1_BOLD# was created by #VAR2_BOLD#:</string>

@@ -128,7 +128,7 @@ if ($pPreferences->isPffInst()) {
     addPreferencePanel($page, 'interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_INTERFACE_PFF'), 'fas fa-file-pdf', $formInterfacePFF->show());
 }
 
-// PANEL: PROFILE ADDIN
+/* // PANEL: PROFILE ADDIN
 $formProfileAddin = new HtmlForm('profile_addin_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences_function.php', array('form' => 'profile_addin')), $page, array('class' => 'form-preferences'));
 $items = new CItems($gDb, $gCurrentOrgId);
 $valueList = array();
@@ -140,6 +140,7 @@ foreach ($items->mItemFields as $itemField) {
 $formProfileAddin->addSelectBox('profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD'), $valueList, array('defaultValue' => $pPreferences->config['Optionen']['profile_addin'], 'showContextDependentFirstEntry' => true, 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC', 'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2'));
 $formProfileAddin->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 addPreferencePanel($page, 'profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_PROFILE_ADDIN'), 'fas fa-users-cog', $formProfileAddin->show());
+ */
 
 // PANEL: EXPORT
 $formExport = new HtmlForm('export_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences_function.php', array('form' => 'export')), $page, array('class' => 'form-preferences'));
@@ -172,14 +173,19 @@ addPreferencePanel($page, 'access_preferences', $gL10n->get('PLG_INVENTORY_MANAG
 
 // PANEL: PLUGIN INFORMATIONS
 $pluginName = $gL10n->get('PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN');
-$link = '<a href="https://github.com/rmbinder/KeyManager">GitHub</a>';
-$pluginInfo = sprintf($pluginName, $link);
+$linkInventoryManager = '<a href="https://github.com/MightyMCoder/InventoryManager" target="_blank">%s</a>';
+$linkKeyManager = '<a href="https://github.com/rmbinder/KeyManager" target="_blank">KeyManager (GitHub)</a>';
+$pluginInfo = sprintf($linkInventoryManager, $pluginName);
+$pluginBasedInfo = $pluginInfo .' ' . $gL10n->get('PLG_INVENTORY_MANAGER_BASED_ON', array($linkKeyManager));
 $updateCheck = '<span id="inventory_manager_version">'.$pPreferences->config['Plugininformationen']['version'].'
                     <a id="link_check_for_update" href="#link_check_for_update" title="'.$gL10n->get('SYS_CHECK_FOR_UPDATE').'">'.$gL10n->get('SYS_CHECK_FOR_UPDATE').'</a>
                 </span>';
+$dokumentationLink = '<a href="https://github.com/MightyMCoder/InventoryManager/wiki" target="_blank">'.$gL10n->get('PLG_INVENTORY_MANAGER_DOCUMENTATION_OPEN').'</a>';
 
 $formPluginInformations = new HtmlForm('plugin_informations_preferences_form', null, $page, array('class' => 'form-preferences'));
-$formPluginInformations->addStaticControl('plg_name', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_NAME'), $pluginInfo);
+$formPluginInformations->addStaticControl('plg_name', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_NAME'), $pluginBasedInfo);
+$formPluginInformations->addStaticControl('plg_dokumentation', $gL10n->get('PLG_INVENTORY_MANAGER_DOCUMENTATION'), $dokumentationLink, array('helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_DOCUMENTATION_OPEN_DESC'));
+
 $formPluginInformations->addCustomContent($gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_VERSION'), $updateCheck);
 $formPluginInformations->addStaticControl('plg_date', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_DATE'), $pPreferences->config['Plugininformationen']['stand']);
 addPreferencePanel($page, 'plugin_informations', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_INFORMATION'), 'fas fa-info-circle', $formPluginInformations->show());
