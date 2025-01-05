@@ -128,19 +128,18 @@ if ($pPreferences->isPffInst()) {
     addPreferencePanel($page, 'interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_INTERFACE_PFF'), 'fas fa-file-pdf', $formInterfacePFF->show());
 }
 
-/* // PANEL: PROFILE ADDIN
+// PANEL: PROFILE ADDIN
 $formProfileAddin = new HtmlForm('profile_addin_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences_function.php', array('form' => 'profile_addin')), $page, array('class' => 'form-preferences'));
 $items = new CItems($gDb, $gCurrentOrgId);
 $valueList = array();
 foreach ($items->mItemFields as $itemField) {
-    if (!in_array($itemField->getValue('imf_name_intern'), array('ITEMNAME', 'KEEPER', 'RECEIVED_ON'), true)) {
+    if (!in_array($itemField->getValue('imf_name_intern'), array('ITEMNAME', 'KEEPER', 'LAST_RECEIVER'), true)) {
         $valueList[$itemField->getValue('imf_name_intern')] = $itemField->getValue('imf_name');
     }
 }
 $formProfileAddin->addSelectBox('profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD'), $valueList, array('defaultValue' => $pPreferences->config['Optionen']['profile_addin'], 'showContextDependentFirstEntry' => true, 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC', 'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2'));
 $formProfileAddin->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 addPreferencePanel($page, 'profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_PROFILE_ADDIN'), 'fas fa-users-cog', $formProfileAddin->show());
- */
 
 // PANEL: EXPORT
 $formExport = new HtmlForm('export_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences_function.php', array('form' => 'export')), $page, array('class' => 'form-preferences'));
