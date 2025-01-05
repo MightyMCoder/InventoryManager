@@ -123,7 +123,7 @@ $page->addJavascript(
             if (value === "Nr.") {
             outstr += "<tr><td>" + value + "</td><td></td></tr>";
             } else {
-            outstr += "<tr><td>" + value + "</td><td><a href=\"' . ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields_edit_new.php?field_name=" + encodeURIComponent(value) + "&redirect_to_import=true\" class=\"btn btn-primary btn-sm\">' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE') . '</a></td></tr>";
+            outstr += "<tr><td>" + value + "</td><td><a href=\"' . ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields_edit_new.php?field_name=" + encodeURIComponent(value) + "&redirect_to_import=true\" class=\"btn btn-primary btn-sm\">' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE') . '</a></td></tr>";
             }
         });
         if (outstr == "") {
