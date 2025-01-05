@@ -19,13 +19,13 @@
  ***********************************************************************************************
  */
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/common_function.php');
-require_once(__DIR__ . '/classes/items.php');
-require_once(__DIR__ . '/classes/configtable.php');
+require_once(__DIR__ . '/../../../adm_program/system/common.php');
+require_once(__DIR__ . '/../common_function.php');
+require_once(__DIR__ . '/../classes/items.php');
+require_once(__DIR__ . '/../classes/configtable.php');
 
 // Access only with valid login
-require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
 $getMode      = admFuncVariableIsValid($_GET, 'mode',      'numeric', array('defaultValue' => 1));
@@ -94,9 +94,9 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer) {
 		);
 	}
 
-	$form->addButton('btn_delete', $gL10n->get('SYS_DELETE'), array('icon' => 'fa-trash-alt', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/items_delete.php', array('item_id' => $getItemId, 'mode' => 2)), 'class' => 'btn-primary offset-sm-3'));
+	$form->addButton('btn_delete', $gL10n->get('SYS_DELETE'), array('icon' => 'fa-trash-alt', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 2)), 'class' => 'btn-primary offset-sm-3'));
 	if (!$getItemFormer) {
-		$form->addButton('btn_former', $gL10n->get('PLG_INVENTORY_MANAGER_FORMER'), array('icon' => 'fa-eye-slash', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/items_delete.php', array('item_id' => $getItemId, 'mode' => 3)), 'class' => 'btn-primary offset-sm-3'));
+		$form->addButton('btn_former', $gL10n->get('PLG_INVENTORY_MANAGER_FORMER'), array('icon' => 'fa-eye-slash', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 3)), 'class' => 'btn-primary offset-sm-3'));
 		$form->addCustomContent('', '<br />'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEM_MAKE_TO_FORMER'));
 	}
 

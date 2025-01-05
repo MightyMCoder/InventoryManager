@@ -16,13 +16,13 @@
  ***********************************************************************************************
  */
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/classes/items.php');
-require_once(__DIR__ . '/classes/configtable.php');
-require_once(__DIR__ . '/common_function.php');
+require_once(__DIR__ . '/../../../adm_program/system/common.php');
+require_once(__DIR__ . '/../classes/items.php');
+require_once(__DIR__ . '/../classes/configtable.php');
+require_once(__DIR__ . '/../common_function.php');
 
 // Access only with valid login
-require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
 $getItemId = admFuncVariableIsValid($_GET, 'item_id', 'int');
@@ -52,19 +52,19 @@ if ($getItemId != 0) {
 	// show link to view profile field change history
     if ($gSettingsManager->getBool('profile_log_edit_fields')) {
         $page->addPageFunctionsMenuItem('menu_item_change_history', $gL10n->get('SYS_CHANGE_HISTORY'),
-            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items_history.php', array('item_id' => $getItemId)), 'fa-history');
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items/items_history.php', array('item_id' => $getItemId)), 'fa-history');
     }
 
     if (isUserAuthorizedForPreferences()) {
         $page->addPageFunctionsMenuItem('menu_copy_item', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_COPY'),
-            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items_edit_new.php', array('item_id' => $getItemId, 'copy' => 1)), 'fa-clone');
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items/items_edit_new.php', array('item_id' => $getItemId, 'copy' => 1)), 'fa-clone');
         $page->addPageFunctionsMenuItem('menu_delete_item', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE'),
-            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER . '/items_delete.php', array('item_id' => $getItemId, 'item_former' => $getItemFormer)), 'fa-trash');
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER . '/items/items_delete.php', array('item_id' => $getItemId, 'item_former' => $getItemFormer)), 'fa-trash');
    }
 }
 
 // Create HTML form
-$form = new HtmlForm('edit_item_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items_save.php', ['item_id' => $getItemId]), $page);
+$form = new HtmlForm('edit_item_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items/items_save.php', ['item_id' => $getItemId]), $page);
 
 foreach ($items->mItemFields as $itemField) {
     $imfNameIntern = $itemField->getValue('imf_name_intern');

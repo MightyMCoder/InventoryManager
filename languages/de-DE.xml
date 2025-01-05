@@ -90,7 +90,7 @@
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_VERSION">Version</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN">Einstellungen für die Profilansicht</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">In der Profilansicht eines Mitglieds können ausgegebene Gegenstände angezeigt werden. Standardmäßig wird nur der Gegenstandsname angezeigt. Hier können Sie, zusätzlich zum Gegenstandsnamen, ein weiteres Eigenschaftsfeld auswählen und anzeigen lassen.</string>    
-    <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">Damit in der Profilansicht Gegenstände angezeigt werden, müssen Sie folgende Zeile in die profile.php einfügen: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/InventoryManager/inventory_manager_profile_addin.php');".\n\nWeitere Informationen hierzu finden Sie in der Datei inventory_manager_profile_addin.php.</string>
+    <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">Damit in der Profilansicht Gegenstände angezeigt werden, müssen Sie folgende Zeile in die profile.php einfügen: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/InventoryManager/inventory_manager_profile_addin.php');".\n\nWeitere Informationen hierzu finden Sie in der #VAR1#.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_DESC">Bei gesetzter Einstellung werden neben den aktuellen Gegenständen dieser Organisation auch ausgesonderte Gegenstände angezeigt.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Alle anzeigen</string>
     <string name="PLG_INVENTORY_MANAGER_SPECIAL_CASE_CURUSER_OR_ADMIN">Sonderfall: Aktueller Benutzer oder Administrator</string>    

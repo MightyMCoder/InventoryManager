@@ -171,7 +171,7 @@ foreach ($assignedFieldColumn as $row => $values) {
         // save item
         $_POST['redirect'] = 0;
         $_POST['imported'] = 1;
-        require(__DIR__ . '/../items_save.php');
+        require(__DIR__ . '/../items/items_save.php');
         $importSuccess = true;
         unset($_POST);
     }   

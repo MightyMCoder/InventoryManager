@@ -16,13 +16,13 @@
  ***********************************************************************************************
  */
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/common_function.php');
-require_once(__DIR__ . '/classes/configtable.php');
-require_once(__DIR__ . '/classes/items.php');
+require_once(__DIR__ . '/../../../adm_program/system/common.php');
+require_once(__DIR__ . '/../common_function.php');
+require_once(__DIR__ . '/../classes/configtable.php');
+require_once(__DIR__ . '/../classes/items.php');
 
 // Access only with valid login
-require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
@@ -93,12 +93,12 @@ $page->addJavascript('
 
         if (secondSequence > 0) {
             // Nun erst mal die neue Position von dem gewaehlten Feld aktualisieren
-            $.get("' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields_function.php', array('mode' => 4)) . '&imf_id=" + imfID + "&sequence=" + direction);
+            $.get("' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields_function.php', array('mode' => 4)) . '&imf_id=" + imfID + "&sequence=" + direction);
         }
     }
 ');
 
-$page->addPageFunctionsMenuItem('admMenuItemPreferencesLists', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE'), ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields_edit_new.php', 'fa-plus-circle');
+$page->addPageFunctionsMenuItem('admMenuItemPreferencesLists', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE'), ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields_edit_new.php', 'fa-plus-circle');
 
 // Create table
 $table = new HtmlTable('tbl_profile_fields', $page, true);
@@ -150,12 +150,12 @@ foreach ($items->mItemFields as $itemField) {
 
     $imfSystem = $itemField->getValue('imf_system') == 1
         ? '<i class="fas fa-trash invisible"></i>'
-        : '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields_delete.php', ['imf_id' => $imfId]) . '">
+        : '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields_delete.php', ['imf_id' => $imfId]) . '">
             <i class="fas fa-trash-alt" data-toggle="tooltip" title="' . $gL10n->get('SYS_DELETE') . '"></i></a>';
 
     // create array with all column values
     $columnValues = array(
-        '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields_edit_new.php', ['imf_id' => $imfId]) . '">' . convlanguagePIM($itemField->getValue('imf_name')) . '</a> ',
+        '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields_edit_new.php', ['imf_id' => $imfId]) . '">' . convlanguagePIM($itemField->getValue('imf_name')) . '</a> ',
         '<a class="admidio-icon-link" href="javascript:void(0)" onclick="moveCategory(\'' . TableUserField::MOVE_UP . '\', ' . $imfId . ')">
             <i class="fas fa-chevron-circle-up" data-toggle="tooltip" title="' . $gL10n->get('SYS_MOVE_UP', ['SYS_PROFILE_FIELD']) . '"></i></a>
         <a class="admidio-icon-link" href="javascript:void(0)" onclick="moveCategory(\'' . TableUserField::MOVE_DOWN . '\', ' . $imfId . ')">

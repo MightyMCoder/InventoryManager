@@ -27,12 +27,12 @@
  ***********************************************************************************************
  */
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
-require_once(__DIR__ . '/common_function.php');
-require_once(__DIR__ . '/classes/configtable.php');
+require_once(__DIR__ . '/../../../adm_program/system/common.php');
+require_once(__DIR__ . '/../common_function.php');
+require_once(__DIR__ . '/../classes/configtable.php');
 
 // Access only with valid login
-require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
 $getimfId    = admFuncVariableIsValid($_GET, 'imf_id',   'int');
@@ -128,7 +128,7 @@ function handleCreateOrUpdate($itemField, $redirectToImport = false) {
     if ($redirectToImport) {
         $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import/import_column_config.php', 1000);
     } else {
-        $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields.php', 1000);
+        $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields.php', 1000);
     }
     $gMessage->show($gL10n->get('SYS_SAVE_DATA'));
     // => EXIT
