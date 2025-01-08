@@ -57,7 +57,7 @@ require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
 $scriptName = substr($_SERVER['SCRIPT_NAME'], strpos($_SERVER['SCRIPT_NAME'], FOLDER_PLUGINS));
 
 // only authorized user are allowed to start this module
-if (!isUserAuthorized($scriptName)) {
+if (!isUserAuthorizedForPIM($scriptName)) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 
@@ -301,7 +301,7 @@ switch ($getMode) {
                 'mode'              => 'csv-oo')),
             'fa-file-csv', 'menu_item_lists_export');
         
-        if (isUserAuthorizedForPreferences()) {
+        if (isUserAuthorizedForPreferencesPIM()) {
             $page->addPageFunctionsMenuItem('menu_preferences', $gL10n->get('SYS_SETTINGS'), SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences.php'),  'fa-cog');
             $page->addPageFunctionsMenuItem('itemcreate_form_btn', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE'), SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/items/items_edit_new.php', array('item_id' => 0)), 'fas fa-plus-circle');
         } 
@@ -513,7 +513,7 @@ foreach ($items->items as $item) {
                                <i class="fas fa-print" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT') . '"></i>
                            </a>';
         }
-        if (isUserAuthorizedForPreferences()) {
+        if (isUserAuthorizedForPreferencesPIM()) {
             $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
                                 <i class="fas fa-edit" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_EDIT') . '"></i>
                             </a>';

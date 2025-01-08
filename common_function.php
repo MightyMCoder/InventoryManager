@@ -11,27 +11,28 @@
  * 
  * methods:
  * 
- * defineConstants()                             : Define necessary constants if not already defined
- * isUserAuthorized($scriptName)                 : Check if the user is authorized to access the plugin
- * getMenuIdByScriptName($scriptName)            : Get menu ID by script name
- * isUserAuthorizedForPreferences()              : Check if the user is authorized to access the Preferences module
+ * defineConstantsPIM()                          : Define necessary constants if not already defined
+ * isUserAuthorizedForPIM($scriptName)           : Check if the user is authorized to access the plugin
+ * getMenuIdByScriptNamePIM($scriptName)         : Get menu ID by script name
+ * isUserAuthorizedForPreferencesPIM()           : Check if the user is authorized to access the Preferences module
+ * function isUserAuthorizedForAddinPIM()		 : Check if the user is authorized to see the Inventory Manager Addin on the profile page
  * convlanguagePIM($field_name)                  : Translate field name according to naming conventions
- * getNewNameIntern($name, $index)               : Generate a new internal name
- * genNewSequence()                              : Generate a new sequence number
+ * getNewNameInternPIM($name, $index)            : Generate a new internal name
+ * genNewSequencePIM()                           : Generate a new sequence number
  * umlautePIM($tmptext)                          : Replace umlauts in the text
- * getPreferencePanel($group, $id, $title, $icon, $body) : Generate HTML for a preference panel
+ * getPreferencePanelPIM($group, $id, $title, $icon, $body) : Generate HTML for a preference panel
  * 
  ***********************************************************************************************
  */
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 
-defineConstants();
+defineConstantsPIM();
 
 /**
  * Define necessary constants if not already defined
  */
-function defineConstants()
+function defineConstantsPIM()
 {
 	global $g_tbl_praefix;
 
@@ -57,13 +58,13 @@ function defineConstants()
  * @param string $scriptName 		The script name of the plugin
  * @return bool						true if the user is authorized
  */
-function isUserAuthorized($scriptName)
+function isUserAuthorizedForPIM($scriptName)
 {
 	global $gMessage, $gL10n, $gDb, $gCurrentUser;
 	$gCurrentUser = $GLOBALS['gCurrentUser'];
 
 	$userIsAuthorized = false;
-	$menId = getMenuIdByScriptName($scriptName);
+	$menId = getMenuIdByScriptNamePIM($scriptName);
 
 	if ($menId === null) {
 		$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_MENU_URL_ERROR', [$scriptName]), $gL10n->get('SYS_ERROR'));
@@ -92,7 +93,7 @@ function isUserAuthorized($scriptName)
  * @param string $scriptName		The script name of the plugin
  * @return int|null					The menu ID or null if not found
  */
-function getMenuIdByScriptName($scriptName)
+function getMenuIdByScriptNamePIM($scriptName)
 {
 	global $gDb;
 
@@ -109,7 +110,7 @@ function getMenuIdByScriptName($scriptName)
  * Check if the user is authorized to access the Preferences module
  * @return bool 					true if the user is authorized
  */
-function isUserAuthorizedForPreferences()
+function isUserAuthorizedForPreferencesPIM()
 {
 	global $pPreferences, $gCurrentUser;
 	$gCurrentUser = $GLOBALS['gCurrentUser'];
@@ -130,7 +131,7 @@ function isUserAuthorizedForPreferences()
  * Check if the user is authorized to see the Inventory Manager Addin on the profile page
  * @return bool 					true if the user is authorized
  */
-function isUserAuthorizedForInventoryManagerAddin()
+function isUserAuthorizedForAddinPIM()
 {
 	global $gDb;
 	$sql = 'SELECT men_id, men_name, men_name_intern
@@ -179,7 +180,7 @@ function convlanguagePIM($field_name)
  * @param int $index				index to append to the internal name
  * @return string 					new internal name
  */
-function getNewNameIntern($name, $index)
+function getNewNameInternPIM($name, $index)
 {
 	$name = umlautePIM($name);
 	$newNameIntern = strtoupper(str_replace(' ', '_', $name));
@@ -192,7 +193,7 @@ function getNewNameIntern($name, $index)
 	$userFieldsStatement = $GLOBALS['gDb']->queryPrepared($sql, array($newNameIntern));
 
 	if ($userFieldsStatement->rowCount() > 0) {
-		return getNewNameIntern($name, ++$index);
+		return getNewNameInternPIM($name, ++$index);
 	}
 
 	return $newNameIntern;
@@ -202,7 +203,7 @@ function getNewNameIntern($name, $index)
  * Generate a new sequence number
  * @return int 						new sequence number
  */
-function genNewSequence()
+function genNewSequencePIM()
 {
 	$sql = 'SELECT max(imf_sequence) as max_sequence FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE (imf_org_id = ? OR imf_org_id IS NULL);';
 	$statement = $GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId']));
@@ -243,7 +244,7 @@ function umlautePIM($tmptext)
  * @param string $body				body of the preference panel
  * @return string 					HTML for the preference panel
  */
-function getPreferencePanel($group, $id, $title, $icon, $body)
+function getPreferencePanelPIM($group, $id, $title, $icon, $body)
 {
 	return '
 		<div class="card" id="' . $group . '_panel_' . $id . '">

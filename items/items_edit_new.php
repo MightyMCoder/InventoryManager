@@ -55,7 +55,7 @@ if ($getItemId != 0) {
             SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items/items_history.php', array('item_id' => $getItemId)), 'fa-history');
     }
 
-    if (isUserAuthorizedForPreferences()) {
+    if (isUserAuthorizedForPreferencesPIM()) {
         $page->addPageFunctionsMenuItem('menu_copy_item', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_COPY'),
             SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items/items_edit_new.php', array('item_id' => $getItemId, 'copy' => 1)), 'fa-clone');
         $page->addPageFunctionsMenuItem('menu_delete_item', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE'),
@@ -83,7 +83,7 @@ foreach ($items->mItemFields as $itemField) {
 }
 
 foreach ($items->mItemFields as $itemField) {
-    $fieldProperty = isUserAuthorizedForPreferences() ? HtmlForm::FIELD_DEFAULT : HtmlForm::FIELD_DISABLED;
+    $fieldProperty = isUserAuthorizedForPreferencesPIM() ? HtmlForm::FIELD_DEFAULT : HtmlForm::FIELD_DISABLED;
     $helpId = '';
     $imfNameIntern = $itemField->getValue('imf_name_intern');
     
@@ -165,7 +165,7 @@ foreach ($items->mItemFields as $itemField) {
         $form->addInput('dummy', 'dummy', 'dummy', ['type' => 'date', 'property' => HtmlForm::FIELD_HIDDEN]);
     }
 
-    if ($items->getProperty($imfNameIntern, 'imf_mandatory') == 1 && isUserAuthorizedForPreferences()) {
+    if ($items->getProperty($imfNameIntern, 'imf_mandatory') == 1 && isUserAuthorizedForPreferencesPIM()) {
         $fieldProperty = HtmlForm::FIELD_REQUIRED;
     }
 

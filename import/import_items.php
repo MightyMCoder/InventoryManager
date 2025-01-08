@@ -19,7 +19,7 @@ require_once(__DIR__ . '/../classes/items.php');
 require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // only authorized user are allowed to start this module
-if (!isUserAuthorizedForPreferences()) {
+if (!isUserAuthorizedForPreferencesPIM()) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 

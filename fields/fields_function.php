@@ -44,7 +44,7 @@ $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
 
 // only authorized user are allowed to start this module
-if (!isUserAuthorizedForPreferences()) {
+if (!isUserAuthorizedForPreferencesPIM()) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
     // => EXIT
 }
@@ -111,8 +111,8 @@ function handleCreateOrUpdate($itemField, $redirectToImport = false) {
     $itemField->setValue('imf_org_id', (int) $gCurrentOrgId);
 
     if ($itemField->isNewRecord()) {
-        $itemField->setValue('imf_name_intern', getNewNameIntern($itemField->getValue('imf_name', 'database'), 1));
-        $itemField->setValue('imf_sequence', genNewSequence());
+        $itemField->setValue('imf_name_intern', getNewNameInternPIM($itemField->getValue('imf_name', 'database'), 1));
+        $itemField->setValue('imf_sequence', genNewSequencePIM());
     }
 
     // Save data to the database
