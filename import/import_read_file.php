@@ -55,7 +55,7 @@ try {
 }
 
 // only authorized user are allowed to start this module
-if (!isUserAuthorizedForPreferences()) {
+if (!isUserAuthorizedForPreferencesPIM()) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 

@@ -25,7 +25,7 @@ require_once(__DIR__ . '/../../adm_program/system/classes/MenuNode.php');
 require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
 
 // Check if the user is authorized to see the plugin addin on the profile page
-$userIsAuthorized = isUserAuthorizedForInventoryManagerAddin();
+$userIsAuthorized = isUserAuthorizedForAddinPIM();
 
 if ($userIsAuthorized) {
 	$getUserUuid = admFuncVariableIsValid($_GET, 'user_uuid', 'string', array('defaultValue' => $gCurrentUser->getValue('usr_uuid')));
@@ -160,7 +160,7 @@ if ($userIsAuthorized) {
 							<i class="fas fa-print" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT') . '"></i>
 						</a>';
 		}
-		if (isUserAuthorizedForPreferences()) {
+		if (isUserAuthorizedForPreferencesPIM()) {
 			$tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
 								<i class="fas fa-edit" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_EDIT') . '"></i>
 							</a>';

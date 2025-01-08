@@ -35,14 +35,14 @@ require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
  */
 // Function to add new preference panels
 function addPreferencePanel($page, $id, $title, $icon, $content) {
-    $page->addHtml(getPreferencePanel('preferences', $id, $title, $icon, $content));
+    $page->addHtml(getPreferencePanelPIM('preferences', $id, $title, $icon, $content));
 }
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
 
 // only authorized user are allowed to start this module
-if (!isUserAuthorizedForPreferences()) {
+if (!isUserAuthorizedForPreferencesPIM()) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 
