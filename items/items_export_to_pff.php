@@ -32,7 +32,7 @@ $pPreferences->read();
 $pPreferences->readPff();
 
 if (substr_count($gNavigation->getUrl(), 'items_export_to_pff') === 1) {
-	admRedirect(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/inventory_manager.php');
+	admRedirect(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php');
 	// => EXIT
 }
 

@@ -36,8 +36,8 @@ function defineConstantsPIM()
 {
 	global $g_tbl_praefix;
 
-	if (!defined('PLUGIN_FOLDER')) {
-		define('PLUGIN_FOLDER', '/' . basename(__DIR__));
+	if (!defined('PLUGIN_FOLDER_IM')) {
+		define('PLUGIN_FOLDER_IM', '/' . basename(__DIR__));
 	}
 	if (!defined('TBL_INVENTORY_MANAGER_FIELDS')) {
 		define('TBL_INVENTORY_MANAGER_FIELDS', $g_tbl_praefix . '_inventory_manager_fields');

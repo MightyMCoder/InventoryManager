@@ -60,7 +60,7 @@ if (!isset($formValues['import_enclosure'])) {
 $page = new HtmlPage('admidio-items-import', $headline);
 
 // show form
-$form = new HtmlForm('import_items_form',  ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import/import_read_file.php', $page, array('enableFileUpload' => true));
+$form = new HtmlForm('import_items_form',  ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_read_file.php', $page, array('enableFileUpload' => true));
 $formats = array(
     'AUTO' => $gL10n->get('SYS_AUTO_DETECT'),
     'XLSX' => $gL10n->get('SYS_EXCEL_2007_365'),

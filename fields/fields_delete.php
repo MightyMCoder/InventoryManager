@@ -65,7 +65,7 @@ switch ($getMode) {
 		$page->addHtml('<p class="lead">' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_DELETE_DESC') . '</p>');
 
 		// show form
-		$form = new HtmlForm('itemfield_delete_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields_delete.php', array('imf_id' => $getimfId, 'mode' => 2)), $page);
+		$form = new HtmlForm('itemfield_delete_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/fields/fields_delete.php', array('imf_id' => $getimfId, 'mode' => 2)), $page);
 
 		$form->addInput('imf_name', $gL10n->get('SYS_NAME'), $itemField->getValue('imf_name', 'database'), array('maxLength' => 100, 'property' => HtmlForm::FIELD_DISABLED));
 

@@ -82,7 +82,7 @@ $page->addJavascript('
 ', true);
 
 // show form
-$form = new HtmlForm('item_fields_edit_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields_function.php', ['imf_id' => $getimfId, 'mode' => 1, 'redirect_to_import' => $getRedirectToImport]), $page);
+$form = new HtmlForm('item_fields_edit_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/fields/fields_function.php', ['imf_id' => $getimfId, 'mode' => 1, 'redirect_to_import' => $getRedirectToImport]), $page);
 
 $form->addInput('imf_name', $gL10n->get('SYS_NAME'), $itemField->getValue('imf_name', 'database'), array(
     'maxLength' => 100,

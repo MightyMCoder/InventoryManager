@@ -126,9 +126,9 @@ function handleCreateOrUpdate($itemField, $redirectToImport = false) {
     unset($_SESSION['fields_request']);
 
     if ($redirectToImport) {
-        $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import/import_column_config.php', 1000);
+        $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_column_config.php', 1000);
     } else {
-        $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields.php', 1000);
+        $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/fields/fields.php', 1000);
     }
     $gMessage->show($gL10n->get('SYS_SAVE_DATA'));
     // => EXIT

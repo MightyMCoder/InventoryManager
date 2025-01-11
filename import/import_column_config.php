@@ -99,7 +99,7 @@ $page = new HtmlPage('admidio-items-import-csv', $headline);
 $page->addHtml('<p class="lead">'.$gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_ASSIGN_FIELDS').'</p>');
 
 // show form
-$form = new HtmlForm('import_assign_fields_form', ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import/import_items.php', $page, array('type' => 'vertical'));
+$form = new HtmlForm('import_assign_fields_form', ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_items.php', $page, array('type' => 'vertical'));
 $form->addCheckbox('first_row', $gL10n->get('SYS_FIRST_LINE_COLUMN_NAME'), $formValues['first_row']);
 $form->addHtml('<div class="alert alert-warning alert-small" id="admidio-import-unused"><i class="fas fa-exclamation-triangle"></i>'.$gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_UNUSED_HEAD').'<div id="admidio-import-unused-fields">-</div></div>');
 
@@ -123,7 +123,7 @@ $page->addJavascript(
             if (value === "Nr.") {
             outstr += "<tr><td>" + value + "</td><td></td></tr>";
             } else {
-            outstr += "<tr><td>" + value + "</td><td><a href=\"' . ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/fields/fields_edit_new.php?field_name=" + encodeURIComponent(value) + "&redirect_to_import=true\" class=\"btn btn-primary btn-sm\">' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE') . '</a></td></tr>";
+            outstr += "<tr><td>" + value + "</td><td><a href=\"' . ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/fields/fields_edit_new.php?field_name=" + encodeURIComponent(value) + "&redirect_to_import=true\" class=\"btn btn-primary btn-sm\">' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE') . '</a></td></tr>";
             }
         });
         if (outstr == "") {
