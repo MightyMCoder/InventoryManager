@@ -259,12 +259,20 @@ class CItems
                     if ($value !== '') {
                         // date must be formatted
                         if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                            //check if date is datetime or only date
+                            if (strpos($value, ' ') === false) {
+                                $value .=  ' 00:00';
+                            }
                             $date = \DateTime::createFromFormat('Y-m-d H:i', $value);
                             if ($date instanceof \DateTime) {
                                 $htmlValue = $date->format($gSettingsManager->getString('system_date').' '.$gSettingsManager->getString('system_time'));
                             }
                         }
                         else {
+                            // check if date is date or datetime
+                            if (strpos($value, ' ') !== false) {
+                                $value = substr($value, 0, 10);
+                            }
                             $date = \DateTime::createFromFormat('Y-m-d', $value);
                             if ($date instanceof \DateTime) {
                                 $htmlValue = $date->format($gSettingsManager->getString('system_date'));
@@ -362,9 +370,17 @@ class CItems
                     if ($value !== '') {
                         // if date field then the current date format must be used
                         if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                            //check if date is datetime or only date
+                            if (strpos($value, ' ') === false) {
+                                $value .=  ' 00:00';
+                            }                            
                             $date = \DateTime::createFromFormat('Y-m-d H:i', $value);
                         }
                         else {
+                            // check if date is date or datetime
+                            if (strpos($value, ' ') !== false) {
+                                $value = substr($value, 0, 10);
+                            }
                             $date = \DateTime::createFromFormat('Y-m-d', $value);
                         }
 
@@ -645,12 +661,20 @@ class CItems
         // format of date will be local but database has stored Y-m-d format must be changed for compare
         if ($this->mItemFields[$fieldNameIntern]->getValue('imf_type') === 'DATE') {
             if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                //check if date is datetime or only date
+                if (strpos($newValue, ' ') === false) {
+                    $newValue .=  ' 00:00';
+                }                
                 $date = \DateTime::createFromFormat('Y-m-d H:i', $newValue);
                 if ($date !== false) {
                     $newValue = $date->format('Y-m-d H:i');
                 }
             }
             else {
+                // check if date is date or datetime
+                if (strpos($newValue, ' ') !== false) {
+                    $newValue = substr($newValue, 0, 10);
+                }
                 $date = \DateTime::createFromFormat('Y-m-d', $newValue);
                 if ($date !== false) {
                     $newValue = $date->format('Y-m-d');
