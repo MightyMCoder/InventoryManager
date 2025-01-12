@@ -29,12 +29,11 @@
  * 
  * @note:
  *  - InventoryManager is based on KeyManager by rmbinder (https://github.com/rmbinder/KeyManager)
- *  - InventoryManager uses the external class XLSXWriter (https://github.com/mk-j/PHP_XLSXWriter)
  * 
  * 
  * Parameters:
  * 
- * mode              : Output(html, print, csv-ms, csv-oo, pdf, pdfl, xlsx)
+ * mode              : Output(html, print, csv-ms, csv-oo, pdf, pdfl, xlsx, ods)
  * filter_string     : general filter string
  * filter_category   : filter for category
  * filter_keeper   : filter for keeper
@@ -61,6 +60,11 @@ if (!isUserAuthorizedForPIM($scriptName)) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Ods;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 $sessionDefaults = array(
     'filter_string' => '',
     'filter_category' => '',
@@ -76,7 +80,7 @@ foreach ($sessionDefaults as $key => $default) {
 
 $getMode = admFuncVariableIsValid($_GET, 'mode', 'string', array(
     'defaultValue' => 'html',
-    'validValues' => ['csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx']
+    'validValues' => ['csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx', 'ods']
 ));
 $getFilterString = admFuncVariableIsValid($_GET, 'filter_string', 'string');
 $getFilterCategory = admFuncVariableIsValid($_GET, 'filter_category', 'string');
@@ -120,16 +124,13 @@ $modeSettings = array(
     'pdfl' => array('pdf', null, null, null, 'table', 'L'),
     'html' => array('html', null, null, null, 'table table-condensed', null),
     'print' => array('print', null, null, null, 'table table-condensed table-striped', null),
-    'xlsx' => array('xlsx', null, null, null, null, null)
+    'xlsx' => array('xlsx', null, null, null, null, null),
+    'ods' => array('ods', null, null, null, null, null)
 );
 
 if (isset($modeSettings[$getMode])) {
     [$getMode, $separator, $valueQuotes, $charset, $classTable, $orientation] = $modeSettings[$getMode];
-    if ($getMode === 'xlsx') {
-        include_once(__DIR__ . '/libs/PHP_XLSXWriter/xlsxwriter.class.php');
-    }
 }
-
 // Array for valid columns visible for current user.
 // Needed for PDF export to set the correct colspan for the layout
 // Maybe there are hidden fields.
@@ -161,6 +162,7 @@ $hoverRows = false;
 
 switch ($getMode) {
     case 'csv':
+    case 'ods':
     case 'xlsx':
         break;  // don't show HtmlTable
     case 'print':
@@ -260,7 +262,7 @@ switch ($getMode) {
         // links to print and exports
         $page->addPageFunctionsMenuItem('menu_item_lists_print_view', $gL10n->get('SYS_PRINT_PREVIEW'), 'javascript:void(0);', 'fa-print');
         $page->addPageFunctionsMenuItem('menu_item_lists_export', $gL10n->get('SYS_EXPORT_TO'), '#', 'fa-file-download');
-        $page->addPageFunctionsMenuItem('menu_item_lists_xlsx', $gL10n->get('SYS_MICROSOFT_EXCEL').' (XLSX)',
+        $page->addPageFunctionsMenuItem('menu_item_lists_xlsx', $gL10n->get('SYS_MICROSOFT_EXCEL').' (*.xlsx)',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                 'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
@@ -268,7 +270,15 @@ switch ($getMode) {
                 'show_all'          => $getShowAll,
                 'mode'              => 'xlsx')),
             'fa-file-excel', 'menu_item_lists_export');
-        $page->addPageFunctionsMenuItem('menu_item_lists_csv_ms', $gL10n->get('SYS_MICROSOFT_EXCEL').' (CSV)',
+        $page->addPageFunctionsMenuItem('menu_item_lists_ods', $gL10n->get('SYS_ODF_SPREADSHEET'),
+            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
+                'filter_string'     => $getFilterString,
+                'filter_category'   => $getFilterCategory,
+                'filter_keeper'   => $getFilterKeeper,
+                'show_all'          => $getShowAll,
+                'mode'              => 'ods')),
+            'fa-file-alt', 'menu_item_lists_export');    
+        $page->addPageFunctionsMenuItem('menu_item_lists_csv_ms', $gL10n->get('SYS_COMMA_SEPARATED_FILE'),
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                 'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
@@ -276,6 +286,14 @@ switch ($getMode) {
                 'show_all'          => $getShowAll,
                 'mode'              => 'csv-ms')),
             'fa-file-excel', 'menu_item_lists_export');
+        $page->addPageFunctionsMenuItem('menu_item_lists_csv', $gL10n->get('SYS_COMMA_SEPARATED_FILE').' ('.$gL10n->get('SYS_UTF8').')',
+            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
+                'filter_string'     => $getFilterString,
+                'filter_category'   => $getFilterCategory,
+                'filter_keeper'   => $getFilterKeeper,
+                'show_all'          => $getShowAll,
+                'mode'              => 'csv-oo')),
+            'fa-file-csv', 'menu_item_lists_export');
         $page->addPageFunctionsMenuItem('menu_item_lists_pdf', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_PORTRAIT').')',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                 'filter_string'     => $getFilterString,
@@ -292,14 +310,6 @@ switch ($getMode) {
                 'show_all'          => $getShowAll,
                 'mode'              => 'pdfl')),
             'fa-file-pdf', 'menu_item_lists_export');
-        $page->addPageFunctionsMenuItem('menu_item_lists_csv', $gL10n->get('SYS_CSV').' ('.$gL10n->get('SYS_UTF8').')',
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                'filter_string'     => $getFilterString,
-                'filter_category'   => $getFilterCategory,
-                'filter_keeper'   => $getFilterKeeper,
-                'show_all'          => $getShowAll,
-                'mode'              => 'csv-oo')),
-            'fa-file-csv', 'menu_item_lists_export');
         
         if (isUserAuthorizedForPreferencesPIM()) {
             $page->addPageFunctionsMenuItem('menu_preferences', $gL10n->get('SYS_SETTINGS'), SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences.php'),  'fa-cog');
@@ -402,7 +412,7 @@ foreach ($items->mItemFields as $itemField) {
         $arrValidColumns[] = $gL10n->get('SYS_ABR_NO');
     }
 
-    if ($getMode == 'xlsx' && $columnNumber === 1) {
+    if ($getMode == 'xlsx' || $getMode == "ods" && $columnNumber === 1) {
         $header[$gL10n->get('SYS_ABR_NO')] = 'string';
     }
 
@@ -410,6 +420,7 @@ foreach ($items->mItemFields as $itemField) {
         case 'csv':
             $csvStr .= $separator . $valueQuotes . $columnHeader . $valueQuotes;
             break;
+        case "ods":
         case 'xlsx':
             $header[$columnHeader] = 'string';
             break;
@@ -476,23 +487,29 @@ foreach ($items->items as $item) {
 
         if ($imfNameIntern == 'KEEPER' && strlen($content) > 0) {
             $user->readDataById($content);
-            $content = ($getMode == 'html') ?
+            if ($user->getValue('usr_uuid') == '') {
+                $content = $gL10n->get('SYS_DELETED_USER');
+            }
+            else {
+                $content = ($getMode == 'html') ?
                 '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>' :
                 $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME');
+            }
         }
 
         if ($imfNameIntern == 'LAST_RECEIVER' && strlen($content) > 0) {
             if (is_numeric($content)) {
                 $user->readDataById($content);
-                $content = ($getMode == 'html') ?
+                if (!$user->getValue('usr_uuid') == '') {
+                    $content = ($getMode == 'html') ?
                     '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>' :
                     $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME');
+                }
             }
         }
-
         if ($items->getProperty($imfNameIntern, 'imf_type') == 'CHECKBOX') {
             $content = ($content != 1) ? 0 : 1;
-            $content = ($getMode == 'csv' || $getMode == 'pdf' || $getMode == 'xlsx') ?
+            $content = ($getMode == 'csv' || $getMode == 'pdf' || $getMode == 'xlsx'|| $getMode == 'ods') ?
                 ($content == 1 ? $gL10n->get('SYS_YES') : $gL10n->get('SYS_NO')) :
                 $items->getHtmlValue($imfNameIntern, $content);
         }
@@ -509,7 +526,7 @@ foreach ($items->items as $item) {
             $tmp_csv .= $separator . $valueQuotes . $content . $valueQuotes;
         }
         else {
-            $columnValues[] = ($strikethrough && $getMode != 'xlsx') ? '<s>' . $content . '</s>' : $content;
+            $columnValues[] = ($strikethrough && $getMode != 'xlsx' && $getMode != 'ods') ? '<s>' . $content . '</s>' : $content;
         }
 
         $columnNumber++;
@@ -560,6 +577,7 @@ foreach ($items->items as $item) {
             case 'csv':
                 $csvStr .= $tmp_csv . "\n";
                 break;
+            case 'ods':
             case 'xlsx':
                 $rows[] = $columnValues;
                 $strikethroughs[] = $strikethrough;
@@ -573,7 +591,7 @@ foreach ($items->items as $item) {
     ++$listRowNumber;
 }
 
-if (in_array($getMode, array('csv', 'pdf', 'xlsx'))) {
+if (in_array($getMode, array('csv', 'pdf', 'xlsx', 'ods'))) {
     $filename = FileSystemUtils::getSanitizedPathEntry($filename) . '.' . $getMode;
     if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false) {
         $filename = urlencode($filename);
@@ -585,8 +603,19 @@ if (in_array($getMode, array('csv', 'pdf', 'xlsx'))) {
 
 switch ($getMode) {
     case 'csv':
-        header('Content-Type: text/comma-separated-values; charset=' . $charset);
-        echo ($charset == 'iso-8859-1') ? mb_convert_encoding($csvStr, 'ISO-8859-1', 'UTF-8') : $csvStr;
+        header('Content-Type: text/csv; charset=' . $charset);
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray(explode("\n", $csvStr), NULL, 'A1');
+        
+        $writer = new Csv($spreadsheet);
+        $writer->setDelimiter($separator);
+        $writer->setEnclosure($valueQuotes);
+        $writer->setSheetIndex(0);
+        
+        $writer->save('php://output');
         break;
     case 'pdf':
         $pdf->writeHTML($table->getHtmlTable(), true, false, true);
@@ -601,24 +630,41 @@ switch ($getMode) {
             $gLogger->error('Could not delete file!', array('filePath' => $file));
         }
         break;
+    case 'ods':
     case 'xlsx':
-        header('Content-disposition: attachment; filename="' . XLSXWriter::sanitize_filename($filename) . '"');
-        header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        $contentType = ($getMode == 'xlsx') ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/vnd.oasis.opendocument.spreadsheet";
+        $writerClass = ($getMode == 'xlsx') ? Xlsx::class : Ods::class;
+
+        header('Content-disposition: attachment; filename="' . $filename . '"');
+        header("Content-Type: $contentType");
         header('Content-Transfer-Encoding: binary');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
-        $writer = new XLSXWriter();
-        $writer->setAuthor($gCurrentUser->getValue('FIRST_NAME') . ' ' . $gCurrentUser->getValue('LAST_NAME'));
-        $writer->setTitle($filename);
-        $writer->setSubject($gL10n->get('PLG_INVENTORY_MANAGER_ITEMLIST'));
-        $writer->setCompany($gCurrentOrganization->getValue('org_longname'));
-        $writer->setKeywords(array($gL10n->get('PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN'), $gL10n->get('PLG_INVENTORY_MANAGER_ITEM')));
-        $writer->setDescription($gL10n->get('PLG_INVENTORY_MANAGER_CREATED_WITH'));
-        $writer->writeSheetHeader('Sheet1', $header);
-        for ($i = 0; $i < count($rows); $i++) {
-            $writer->writeSheetRow('Sheet1', $rows[$i], $strikethroughs[$i] ? array('font-style' => 'strikethrough') : array());
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getProperties()
+            ->setCreator($gCurrentUser->getValue('FIRST_NAME') . ' ' . $gCurrentUser->getValue('LAST_NAME'))
+            ->setTitle($filename)
+            ->setSubject($gL10n->get('PLG_INVENTORY_MANAGER_ITEMLIST'))
+            ->setCompany($gCurrentOrganization->getValue('org_longname'))
+            ->setKeywords($gL10n->get('PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN') . ', ' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM'))
+            ->setDescription($gL10n->get('PLG_INVENTORY_MANAGER_CREATED_WITH'));
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray(array_keys($header), NULL, 'A1');
+        $sheet->fromArray($rows, NULL, 'A2');
+
+        foreach ($strikethroughs as $index => $strikethrough) {
+            if ($strikethrough) {
+                $sheet->getStyle('A' . ($index + 2) . ':' . $sheet->getHighestColumn() . ($index + 2))
+                    ->getFont()->setStrikethrough(true);
+            }
         }
-        $writer->writeToStdOut();
+
+        formatSpreadsheet($spreadsheet, $rows, true);
+
+        $writer = new $writerClass($spreadsheet);
+        $writer->save('php://output');
         break;
     case 'html':
         $page->addHtml($table->show());
@@ -628,4 +674,30 @@ switch ($getMode) {
         $page->addHtml($table->show());
         $page->show();
         break;
+}
+
+function formatSpreadsheet($spreadsheet, $data, $containsHeadline)
+{
+    $alphabet = range('A', 'Z');
+    $column = $alphabet[count($data[0])-1];
+
+    if ($containsHeadline) {
+        $spreadsheet
+            ->getActiveSheet()
+            ->getStyle('A1:'.$column.'1')
+            ->getFill()
+            ->setFillType(PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()
+            ->setARGB('ffdddddd');
+        $spreadsheet
+            ->getActiveSheet()
+            ->getStyle('A1:'.$column.'1')
+            ->getFont()
+            ->setBold(true);
+    }
+
+    for($number = 0; $number < count($data[0]); $number++) {
+        $spreadsheet->getActiveSheet()->getColumnDimension($alphabet[$number])->setAutoSize(true);
+    }
+    $spreadsheet->getDefaultStyle()->getAlignment()->setWrapText(true);
 }
