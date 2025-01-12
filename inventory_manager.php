@@ -223,7 +223,7 @@ switch ($getMode) {
 
         $page->addJavascript('
             $("#filter_category").change(function () {
-                self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+                self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                     'mode'              => 'html',
                     'filter_string'     => $getFilterString,
                     'filter_keeper'   => $getFilterKeeper,
@@ -232,7 +232,7 @@ switch ($getMode) {
                 )) . '&filter_category=" + $(this).val();
             });
             $("#filter_keeper").change(function () {
-                self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+                self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                     'mode'              => 'html',
                     'filter_string'     => $getFilterString,
                     'filter_category'   => $getFilterCategory,
@@ -241,7 +241,7 @@ switch ($getMode) {
                 )) . '&filter_keeper=" + $(this).val();
             });
             $("#menu_item_lists_print_view").click(function() {
-                window.open("'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+                window.open("'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                     'filter_string'     => $getFilterString,
                     'filter_category'   => $getFilterCategory, 
                     'filter_keeper'   => $getFilterKeeper,
@@ -261,7 +261,7 @@ switch ($getMode) {
         $page->addPageFunctionsMenuItem('menu_item_lists_print_view', $gL10n->get('SYS_PRINT_PREVIEW'), 'javascript:void(0);', 'fa-print');
         $page->addPageFunctionsMenuItem('menu_item_lists_export', $gL10n->get('SYS_EXPORT_TO'), '#', 'fa-file-download');
         $page->addPageFunctionsMenuItem('menu_item_lists_xlsx', $gL10n->get('SYS_MICROSOFT_EXCEL').' (XLSX)',
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                 'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
                 'filter_keeper'   => $getFilterKeeper,
@@ -269,7 +269,7 @@ switch ($getMode) {
                 'mode'              => 'xlsx')),
             'fa-file-excel', 'menu_item_lists_export');
         $page->addPageFunctionsMenuItem('menu_item_lists_csv_ms', $gL10n->get('SYS_MICROSOFT_EXCEL').' (CSV)',
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                 'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
                 'filter_keeper'   => $getFilterKeeper,
@@ -277,7 +277,7 @@ switch ($getMode) {
                 'mode'              => 'csv-ms')),
             'fa-file-excel', 'menu_item_lists_export');
         $page->addPageFunctionsMenuItem('menu_item_lists_pdf', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_PORTRAIT').')',
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                 'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
                 'filter_keeper'   => $getFilterKeeper,
@@ -285,7 +285,7 @@ switch ($getMode) {
                 'mode'              => 'pdf')),
             'fa-file-pdf', 'menu_item_lists_export');
         $page->addPageFunctionsMenuItem('menu_item_lists_pdfl', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_LANDSCAPE').')',
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                 'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
                 'filter_keeper'   => $getFilterKeeper,
@@ -293,7 +293,7 @@ switch ($getMode) {
                 'mode'              => 'pdfl')),
             'fa-file-pdf', 'menu_item_lists_export');
         $page->addPageFunctionsMenuItem('menu_item_lists_csv', $gL10n->get('SYS_CSV').' ('.$gL10n->get('SYS_UTF8').')',
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array(
+            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
                 'filter_string'     => $getFilterString,
                 'filter_category'   => $getFilterCategory,
                 'filter_keeper'   => $getFilterKeeper,
@@ -302,13 +302,13 @@ switch ($getMode) {
             'fa-file-csv', 'menu_item_lists_export');
         
         if (isUserAuthorizedForPreferencesPIM()) {
-            $page->addPageFunctionsMenuItem('menu_preferences', $gL10n->get('SYS_SETTINGS'), SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/preferences/preferences.php'),  'fa-cog');
-            $page->addPageFunctionsMenuItem('itemcreate_form_btn', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE'), SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/items/items_edit_new.php', array('item_id' => 0)), 'fas fa-plus-circle');
+            $page->addPageFunctionsMenuItem('menu_preferences', $gL10n->get('SYS_SETTINGS'), SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences.php'),  'fa-cog');
+            $page->addPageFunctionsMenuItem('itemcreate_form_btn', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE'), SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_edit_new.php', array('item_id' => 0)), 'fas fa-plus-circle');
         } 
         
         // create filter menu with elements for role
         $filterNavbar = new HtmlNavbar('navbar_filter', '', null, 'filter');
-        $form = new HtmlForm('navbar_inventorylist_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER .'/inventory_manager.php', array('headline' => $headline)), $page, array('type' => 'navbar', 'setFocus' => false));
+        $form = new HtmlForm('navbar_inventorylist_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array('headline' => $headline)), $page, array('type' => 'navbar', 'setFocus' => false));
 
         $form->addInput('filter_string', $inputFilterStringLabel, $getFilterString);
           
@@ -476,7 +476,7 @@ foreach ($items->items as $item) {
 
         if ($imfNameIntern == 'KEEPER' && strlen($content) > 0) {
             $user->readDataById($content);
-            $content = ($getMode == 'html') ?
+                            $content = ($getMode == 'html') ?
                 '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>' :
                 $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME');
         }
@@ -509,15 +509,15 @@ foreach ($items->items as $item) {
     if ($getMode == 'html') {
         $tempValue = '';
         if ($pPreferences->isPffInst()) {
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER . '/items/items_export_to_pff.php', array('item_id' => $item['imi_id'])) . '">
+            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER_IM . '/items/items_export_to_pff.php', array('item_id' => $item['imi_id'])) . '">
                                <i class="fas fa-print" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT') . '"></i>
                            </a>';
         }
         if (isUserAuthorizedForPreferencesPIM()) {
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
+            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
                                 <i class="fas fa-edit" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_EDIT') . '"></i>
                             </a>';
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER . '/items/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
+            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
                                <i class="fas fa-trash-alt" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE') . '"></i>
                            </a>';
         }

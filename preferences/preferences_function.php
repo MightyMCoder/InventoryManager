@@ -113,7 +113,7 @@ function showDeinstallationDialog() {
 	$page->addHtml('<p class="lead">' . $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION_FORM_DESC') . '</p>');
 
 	// show form
-	$form = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/preferences/preferences_function.php', array('mode' => 3)), $page);
+	$form = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/preferences/preferences_function.php', array('mode' => 3)), $page);
 	$radioButtonEntries = array('0' => $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY'), '1' => $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ALLORG'));
 	$form->addRadioButton('deinst_org_select', $gL10n->get('PLG_INVENTORY_MANAGER_ORG_CHOICE'), $radioButtonEntries, array('defaultValue' => '0'));
 	$form->addSubmitButton('btn_deinstall', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), array('icon' => 'fa-trash-alt', 'class' => 'offset-sm-3'));

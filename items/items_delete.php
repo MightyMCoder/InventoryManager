@@ -94,9 +94,9 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer) {
 		);
 	}
 
-	$form->addButton('btn_delete', $gL10n->get('SYS_DELETE'), array('icon' => 'fa-trash-alt', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 2)), 'class' => 'btn-primary offset-sm-3'));
+	$form->addButton('btn_delete', $gL10n->get('SYS_DELETE'), array('icon' => 'fa-trash-alt', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 2)), 'class' => 'btn-primary offset-sm-3'));
 	if (!$getItemFormer) {
-		$form->addButton('btn_former', $gL10n->get('PLG_INVENTORY_MANAGER_FORMER'), array('icon' => 'fa-eye-slash', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 3)), 'class' => 'btn-primary offset-sm-3'));
+		$form->addButton('btn_former', $gL10n->get('PLG_INVENTORY_MANAGER_FORMER'), array('icon' => 'fa-eye-slash', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 3)), 'class' => 'btn-primary offset-sm-3'));
 		$form->addCustomContent('', '<br />'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEM_MAKE_TO_FORMER'));
 	}
 

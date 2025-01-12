@@ -146,5 +146,5 @@ if (isset($reader) and !is_null($reader)) {
     }
 }
 
-admRedirect(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER . '/import/import_column_config.php');
+admRedirect(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_column_config.php');
 // => EXIT
