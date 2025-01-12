@@ -526,7 +526,11 @@ class CConfigTablePIM
 			}
 			else 
 			{
-				$configArray[$array[1]] [$array[2]] = $row['plp_value'];
+				if (is_numeric($row['plp_value'])) {
+					$configArray[$array[1]] [$array[2]] = (int)$row['plp_value'];
+				} else {
+					$configArray[$array[1]] [$array[2]] = $row['plp_value'];
+				}
 			}
 
 			// if array data is again enclosed in ((  )) -> split again

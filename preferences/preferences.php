@@ -113,6 +113,13 @@ $page->addHtml('
     <div class="tab-pane fade" id="tabs-preferences" role="tabpanel">
         <div class="accordion" id="accordion_preferences">');
 
+// PANEL: GENERAL
+$formGeneralSettings = new HtmlForm('default_configurations_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'general_settings')), $page, array('class' => 'form-preferences'));
+$formGeneralSettings->addCheckbox('current_user_default_keeper', $gL10n->get('PLG_INVENTORY_MANAGER_USE_CURRENT_USER'), $pPreferences->config['Optionen']['current_user_default_keeper'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC'));
+$formGeneralSettings->addSelectBox('field_date_time_format', $gL10n->get('PLG_INVENTORY_MANAGER_DATETIME_FORMAT'), array($gL10n->get('SYS_DATE'), $gL10n->get('SYS_DATE') .' & ' .$gL10n->get('SYS_TIME')), array('defaultValue' => (($pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') ? 1 : 0), 'showContextDependentFirstEntry' => false));
+$formGeneralSettings->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
+addPreferencePanel($page, 'field_settings', $gL10n->get('SYS_COMMON'), 'fas fa-cog fa-fw', $formGeneralSettings->show());
+
 // PANEL: ITEMFIELDS
 $formItemFields = new HtmlForm('itemfields_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/fields/fields.php'), $page);
 $formItemFields->addSubmitButton('btn_save_itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE'), array('icon' => 'fa-edit', 'class' => 'offset-sm-3'));

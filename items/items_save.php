@@ -18,6 +18,7 @@
 
 require_once(__DIR__ . '/../../../adm_program/system/common.php');
 require_once(__DIR__ . '/../classes/items.php');
+require_once(__DIR__ . '/../classes/configtable.php');
 require_once(__DIR__ . '/../common_function.php');
 
 // Access only with valid login
@@ -29,6 +30,9 @@ $postCopyNumber = admFuncVariableIsValid($_POST, 'copy_number', 'numeric', ['def
 $postCopyField = admFuncVariableIsValid($_POST, 'copy_field', 'int');
 $postRedirect = admFuncVariableIsValid($_POST, 'redirect', 'numeric', ['defaultValue' => 1]);
 $postImported = admFuncVariableIsValid($_POST, 'imported', 'numeric', ['defaultValue' => 0]);
+
+$pPreferences = new CConfigTablePIM();
+$pPreferences->read();
 
 $items = new CItems($gDb, $gCurrentOrgId);
 
@@ -51,14 +55,26 @@ for ($i = $startIdx; $i < $stopIdx; ++$i) {
 	foreach ($items->mItemFields as $itemField) {
 		$postId = 'imf-' . $itemField->getValue('imf_id');
 
+
 		if (isset($_POST[$postId])) {
 			if (strlen($_POST[$postId]) === 0 && $itemField->getValue('imf_mandatory') == 1) {
 				$gMessage->show($gL10n->get('SYS_FIELD_EMPTY', array(convlanguagePIM($itemField->getValue('imf_name')))));
 			}
 
-			// Write value from field to the item class object
-			if (!$items->setValue($itemField->getValue('imf_name_intern'), $_POST[$postId])) {
-				$gMessage->show($gL10n->get('SYS_DATABASE_ERROR'), $gL10n->get('SYS_ERROR'));
+			if ($itemField->getValue('imf_type') === 'DATE' && $pPreferences->config['Optionen']['field_date_time_format'] == 'datetime') {
+				// Check if time is set separately
+				isset($_POST[$postId . '_time'])? $dateValue= $_POST[$postId] . ' ' . $_POST[$postId . '_time'] : $dateValue = $_POST[$postId];
+
+				// Write value from field to the item class object with time
+				if (!$items->setValue($itemField->getValue('imf_name_intern'), $dateValue)) {
+					$gMessage->show($gL10n->get('SYS_DATABASE_ERROR'), $gL10n->get('SYS_ERROR'));
+				}
+			}
+			else {
+				// Write value from field to the item class object
+				if (!$items->setValue($itemField->getValue('imf_name_intern'), $_POST[$postId])) {
+					$gMessage->show($gL10n->get('SYS_DATABASE_ERROR'), $gL10n->get('SYS_ERROR'));
+				}
 			}
 		}
 		elseif ($itemField->getValue('imf_type') === 'CHECKBOX') {

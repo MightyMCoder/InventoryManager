@@ -35,6 +35,7 @@
  * 
  ***********************************************************************************************
  */
+require_once(__DIR__ . '/configtable.php');
 
 class CItems
 {
@@ -53,6 +54,7 @@ class CItems
     private $showFormerItems;               ///< if true, than former items will be showed
     private $organizationId;                ///< ID of the organization for which the item field structure should be read
     public $columnsValueChanged;            ///< flag if a value of one field had changed
+    private $pPreferences;                  ///< object of the class CConfigTablePIM    
 
     private $itemFieldsSort = array();
    
@@ -74,6 +76,9 @@ class CItems
         $this->itemMadeFormer = false;
         $this->itemImported = false;
         $this->showFormerItems = true;
+        $this->pPreferences = new CConfigTablePIM();
+        $this->pPreferences->read();
+
     }
 
     /**
@@ -253,9 +258,17 @@ class CItems
                 case 'DATE':
                     if ($value !== '') {
                         // date must be formatted
-                        $date = \DateTime::createFromFormat('Y-m-d', $value);
-                        if ($date instanceof \DateTime) {
-                            $htmlValue = $date->format($gSettingsManager->getString('system_date'));
+                        if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                            $date = \DateTime::createFromFormat('Y-m-d H:i', $value);
+                            if ($date instanceof \DateTime) {
+                                $htmlValue = $date->format($gSettingsManager->getString('system_date').' '.$gSettingsManager->getString('system_time'));
+                            }
+                        }
+                        else {
+                            $date = \DateTime::createFromFormat('Y-m-d', $value);
+                            if ($date instanceof \DateTime) {
+                                $htmlValue = $date->format($gSettingsManager->getString('system_date'));
+                            }
                         }
                     }
                     break;
@@ -348,14 +361,25 @@ class CItems
                 case 'DATE':
                     if ($value !== '') {
                         // if date field then the current date format must be used
-                        $date = DateTime::createFromFormat('Y-m-d', $value);
+                        if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                            $date = \DateTime::createFromFormat('Y-m-d H:i', $value);
+                        }
+                        else {
+                            $date = \DateTime::createFromFormat('Y-m-d', $value);
+                        }
+
                         if ($date === false) {
                             return $value;
                         }
 
                         // if no format or html is set then show date format from Admidio settings
                         if ($format === '' || $format === 'html') {
-                            $value = $date->format($gSettingsManager->getString('system_date'));
+                            if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                                $value = $date->format($gSettingsManager->getString('system_date').' '.$gSettingsManager->getString('system_time'));
+                            }
+                            else {
+                                $value = $date->format($gSettingsManager->getString('system_date'));
+                            }
                         } else {
                             $value = $date->format($format);
                         }
@@ -620,10 +644,17 @@ class CItems
 
         // format of date will be local but database has stored Y-m-d format must be changed for compare
         if ($this->mItemFields[$fieldNameIntern]->getValue('imf_type') === 'DATE') {
-            $date = \DateTime::createFromFormat($gSettingsManager->getString('system_date'), $newValue);
-
-            if ($date !== false) {
-                $newValue = $date->format('Y-m-d');
+            if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                $date = \DateTime::createFromFormat('Y-m-d H:i', $newValue);
+                if ($date !== false) {
+                    $newValue = $date->format('Y-m-d H:i');
+                }
+            }
+            else {
+                $date = \DateTime::createFromFormat('Y-m-d', $newValue);
+                if ($date !== false) {
+                    $newValue = $date->format('Y-m-d');
+                }
             }
         }
 

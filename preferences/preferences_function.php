@@ -88,6 +88,11 @@ function handleFormSubmission($form, $preferences) {
 			$preferences->config['access']['preferences'] = isset($_POST['access_preferences']) ? array_filter($_POST['access_preferences']) : array();
 			break;
 
+		case 'general_settings':
+			$preferences->config['Optionen']['current_user_default_keeper'] = isset($_POST['current_user_default_keeper']) ? 1 : 0;
+			$preferences->config['Optionen']['field_date_time_format'] = ($_POST['field_date_time_format'] == "0") ? 'date': 'datetime';
+			break;
+
 		default:
 			global $gMessage, $gL10n;
 			$gMessage->show($gL10n->get('SYS_INVALID_PAGE_VIEW'));
