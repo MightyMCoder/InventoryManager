@@ -294,7 +294,14 @@ class CItems
                         $arrListValuesWithItems[++$index] = $listValue;
                     }
 
+                    if (array_key_exists($value, $arrListValuesWithItems)) {
                         $htmlValue = $arrListValuesWithItems[$value];
+                    } else {
+                        // if value is not in list then delete the value
+                        $htmlValue = ''; //'list value '.$value .' not found';
+                        //$htmlValue = $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD', array($value));
+
+                    }
                     break;
                 case 'TEXT_BIG':
                     $htmlValue = nl2br($value);
