@@ -294,7 +294,7 @@ class CItems
                         $arrListValuesWithItems[++$index] = $listValue;
                     }
 
-                    $htmlValue = $arrListValuesWithItems[$value];
+                        $htmlValue = $arrListValuesWithItems[$value];
                     break;
                 case 'TEXT_BIG':
                     $htmlValue = nl2br($value);
@@ -542,8 +542,9 @@ class CItems
      * and stores the values to the @b items array.
      * @param int $organizationId       The id of the organization for which the items should be read.
      * @param int $userId               The id of the user for which the items should be read.
+     * @param string[] $fieldNames      field names that should be read
      */
-    public function readItemsByUser($organizationId, $userId)
+    public function readItemsByUser($organizationId, $userId, $fieldNames = array('KEEPER'))
     {
         // first initialize existing data
         $this->items = array();
@@ -553,17 +554,25 @@ class CItems
             $sqlWhereCondition .= 'AND imi_former = 0';
         }
 
+        $sqlImfIds = 'AND (';
+        if (count($fieldNames) > 0) {
+            foreach ($fieldNames as $fieldNameIntern) {
+                $sqlImfIds .= 'imf_id = ' . $this->getProperty($fieldNameIntern, 'imf_id') . ' OR ';
+            }
+            $sqlImfIds = substr($sqlImfIds, 0, -4).')';
+        }
+
         $sql = 'SELECT DISTINCT imi_id, imi_former FROM '.TBL_INVENTORY_MANAGER_DATA.'
                 INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
                     ON imf_id = imd_imf_id
-                    AND imf_id = ?
+                    '. $sqlImfIds .'
                 INNER JOIN '.TBL_INVENTORY_MANAGER_ITEMS.'
                     ON imi_id = imd_imi_id
                 WHERE (imi_org_id IS NULL
                     OR imi_org_id = ?)
                 AND imd_value = ?
                 '.$sqlWhereCondition.';';
-        $statement = $this->mDb->queryPrepared($sql, array($this->getProperty('KEEPER', 'imf_id'), $organizationId, $userId));
+        $statement = $this->mDb->queryPrepared($sql, array($organizationId, $userId));
 
         while ($row = $statement->fetch()) {
             $this->items[] = array('imi_id' => $row['imi_id'], 'imi_former' => $row['imi_former']);
@@ -805,8 +814,29 @@ class CItems
 
                                     $changes[] = array(
                                         $key,
-                                        isset($users[$value['oldValue']]) ? $users[$value['oldValue']] : '',
-                                        isset($users[$value['newValue']]) ? $users[$value['newValue']] : ''
+                                        isset($users[$value['oldValue']]) ? $users[$value['oldValue']] : $gL10n->get('SYS_DELETED_USER'),
+                                        isset($users[$value['newValue']]) ? $users[$value['newValue']] : $gL10n->get('SYS_DELETED_USER')
+                                    );
+                                }
+                                elseif ($key === 'PIM_LAST_RECEIVER') {
+                                    $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
+                                            FROM ' . TBL_USERS . '
+                                            JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
+                                            JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
+                                            LEFT JOIN ' . TBL_USER_DATA . ' as postcode ON postcode.usd_usr_id = usr_id AND postcode.usd_usf_id = ' . $gProfileFields->getProperty('POSTCODE', 'usf_id') . '
+                                            LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
+                                            LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
+                                            WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $organizationId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
+
+                                    $statement = $this->mDb->query($sql);
+                                    foreach ($statement->fetchAll() as $user) {
+                                        $users[$user['usr_id']] = $user['name'];
+                                    }
+
+                                    $changes[] = array(
+                                        $key,
+                                        isset($users[$value['oldValue']]) ? $users[$value['oldValue']] : $value['oldValue'],
+                                        isset($users[$value['newValue']]) ? $users[$value['newValue']] : $value['newValue']
                                     );
                                 }
                                 elseif ($key === 'PIM_IN_INVENTORY')  {
