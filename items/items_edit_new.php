@@ -250,7 +250,89 @@ foreach ($items->mItemFields as $itemField) {
                     )
                 );
             }
-                        else {
+            elseif ($imfNameIntern === "LAST_RECEIVER") {
+                $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
+                        FROM ' . TBL_USERS . '
+                        JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
+                        JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
+                        LEFT JOIN ' . TBL_USER_DATA . ' as postcode ON postcode.usd_usr_id = usr_id AND postcode.usd_usf_id = ' . $gProfileFields->getProperty('POSTCODE', 'usf_id') . '
+                        LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
+                        LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
+                        WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
+
+                $form->addSelectBoxFromSql(
+                    'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
+                    convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
+                    $gDb,
+                    $sql,
+                    array(
+                        'property' => $fieldProperty,
+                        'helpTextIdLabel' => $helpId,
+                        'icon' => $items->getProperty($imfNameIntern, 'imf_icon', 'database'),
+                        'defaultValue' => $items->getValue($imfNameIntern),
+                        'multiselect' => false
+                    )
+                );
+
+                if ($page instanceof HtmlPage) {
+                    $page->addCssFile(ADMIDIO_URL . FOLDER_LIBS_CLIENT . '/select2/css/select2.css');
+                    $page->addCssFile(ADMIDIO_URL . FOLDER_LIBS_CLIENT . '/select2-bootstrap-theme/select2-bootstrap4.css');
+                    $page->addJavascriptFile(ADMIDIO_URL . FOLDER_LIBS_CLIENT . '/select2/js/select2.js');
+                    $page->addJavascriptFile(ADMIDIO_URL . FOLDER_LIBS_CLIENT . '/select2/js/i18n/' . $gL10n->getLanguageLibs() . '.js');
+                }
+    
+                $page->addJavascript('
+                $(document).ready(function() {
+                    var pimReceivedBackOnField = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '\']");
+                    var pimReceivedBackOnGroup = document.getElementById("imf-' . $pimReceivedBackOnId . '_group");
+
+                    var selectId = "#imf-' . $items->getProperty($imfNameIntern, 'imf_id') . '";
+                    var defaultValue = "' . htmlspecialchars($items->getValue($imfNameIntern)) . '";
+                    var defaultText = "' . htmlspecialchars($items->getValue($imfNameIntern)) . '"; // Der Text für den Default-Wert
+
+                    function setRequired(field, group, required) {
+                        if (required) {
+                        field.setAttribute("required", "required");
+                        group.classList.add("admidio-form-group-required");
+                        } else {
+                        field.removeAttribute("required");
+                        group.classList.remove("admidio-form-group-required");
+                        }
+                    }
+
+                    function isSelect2Empty(selectId) {
+                        // Hole den aktuellen Wert des Select2-Feldes
+                        var value = $(selectId).val();
+                        
+                        // Überprüfe, ob der Wert leer ist
+                        if (!value || value.length === 0) {
+                            setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, false);
+                        } else {
+                            setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, true);
+                        }
+                    }
+                    // Prüfe, ob der Default-Wert in den Optionen enthalten ist
+                    if ($(selectId + " option[value=\'" + defaultValue + "\']").length === 0) {
+                        // Füge den Default-Wert als neuen Tag hinzu
+                        var newOption = new Option(defaultText, defaultValue, true, true);
+                        $(selectId).append(newOption).trigger("change");
+                    }
+
+                    $("#imf-' . $items->getProperty($imfNameIntern, 'imf_id').'").select2({
+                    theme: "bootstrap4",
+                    allowClear: true,
+                    placeholder: "",
+                    language: "' . $gL10n->getLanguageLibs() . '",
+                    tags: true
+                    });
+
+                    // Überwache Änderungen im Select2-Feld
+                    $(selectId).on("change.select2", function() {
+                        isSelect2Empty(selectId);
+                    });
+                });', true);
+            }
+            else {
                 if ($items->getProperty($imfNameIntern, 'imf_type') === 'DATE') {
                     $fieldType = $imfNameIntern === 'BIRTHDAY' ? 'birthday' : 'date';
                     $maxlength = '10';
