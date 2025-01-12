@@ -162,7 +162,7 @@ foreach ($items->mItemFields as $itemField) {
     }
     
     if ($itemField->getValue('imf_type') === 'DATE' && $itemField->getValue('imf_sequence') === '1') {
-        $form->addInput('dummy', 'dummy', 'dummy', ['type' => 'date', 'property' => HtmlForm::FIELD_HIDDEN]);
+        $form->addInput('dummy', 'dummy', 'dummy', ['type' => $pPreferences->config['Optionen']['field_date_time_format'], 'property' => HtmlForm::FIELD_HIDDEN]);
     }
 
     if ($items->getProperty($imfNameIntern, 'imf_mandatory') == 1 && isUserAuthorizedForPreferencesPIM()) {
@@ -236,7 +236,12 @@ foreach ($items->mItemFields as $itemField) {
                         LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
                         LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
                         WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
-                $form->addSelectBoxFromSql(
+                if ($pPreferences->config['Optionen']['current_user_default_keeper'] === 1) {
+                	$user = new User($gDb, $gProfileFields);
+                    $user->readDataByUuid($gCurrentUser->getValue('usr_uuid'));
+                }
+                
+                        $form->addSelectBoxFromSql(
                     'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
                     convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
                     $gDb,
@@ -245,7 +250,7 @@ foreach ($items->mItemFields as $itemField) {
                         'property' => $fieldProperty,
                         'helpTextIdLabel' => $helpId,
                         'icon' => $items->getProperty($imfNameIntern, 'imf_icon', 'database'),
-                        'defaultValue' => $items->getValue($imfNameIntern),
+                        'defaultValue' => ($pPreferences->config['Optionen']['current_user_default_keeper'] === 1) ? $user->getValue('usr_id') : $items->getValue($imfNameIntern),
                         'multiselect' => false
                     )
                 );
@@ -334,8 +339,8 @@ foreach ($items->mItemFields as $itemField) {
             }
             else {
                 if ($items->getProperty($imfNameIntern, 'imf_type') === 'DATE') {
-                    $fieldType = $imfNameIntern === 'BIRTHDAY' ? 'birthday' : 'date';
-                    $maxlength = '10';
+                    $fieldType = $pPreferences->config['Optionen']['field_date_time_format'];
+                    $maxlength = null;
                 }
                 elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'NUMBER') {
                     $fieldType = 'number';

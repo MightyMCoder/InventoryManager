@@ -10,6 +10,7 @@
     <string name="PLG_INVENTORY_MANAGER_CONNECTION_ERROR">Could not connect to the GitHub release page! Please check your internet connection or try again later. Alternatively, you can manually check on the #VAR1# website if an update is available.</string>
     <string name="PLG_INVENTORY_MANAGER_COPY_PREFERENCES">Settings for copying a item:</string>
     <string name="PLG_INVENTORY_MANAGER_CREATED_WITH">created with the Plugin InventoryManager of the online member administration Admidio</string>
+    <string name="PLG_INVENTORY_MANAGER_DATETIME_FORMAT">Date representation</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY">Delete only data of the current organization.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ALLORG">Delete data in all organizations.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE">- The table #VAR1_BOLD# could not be deleted because it still contains data from another organization or another plug-in.\n</string>
@@ -100,6 +101,8 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">All users are recipients of a item, no reconciliation can be performed.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">This is just an overview of the comparison, nothing has been saved yet.\n\n Users can only be made to a former if the number of items is 0 and they are not administrator or the current user.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">The listed users are now former.</string>
+    <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">Current user as default selection</string>
+    <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">If the current user is to be preset as the keeper when adding new items, the checkbox must be checked.</string>
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">You are using the current #VAR1# version of InventoryManager!</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Category</string>

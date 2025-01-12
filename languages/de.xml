@@ -10,6 +10,7 @@
     <string name="PLG_INVENTORY_MANAGER_CONNECTION_ERROR">Es konnte keine Verbindung zur GitHub-Relaseseite hergestellt werden! Bitte prüfe deine Internetverbindung oder versuche es zu einem späteren Zeitpunkt nocheinmal. Alternativ kannst du auch manuell auf der Webseite von #VAR1# prüfen ob ein Update vorliegt.</string>
     <string name="PLG_INVENTORY_MANAGER_COPY_PREFERENCES">Einstellungen für das Kopieren eines Gegenstandes:</string>
     <string name="PLG_INVENTORY_MANAGER_CREATED_WITH">erstellt mit dem Plugin InventoryManager der Online-Mitgliederverwaltung Admidio</string> 
+    <string name="PLG_INVENTORY_MANAGER_DATETIME_FORMAT">Datumsdarstellung</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY">Nur Daten der aktuellen Organisation löschen.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ALLORG">Daten in allen Organisationen löschen.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE">- Die Tabelle #VAR1_BOLD# konnte nicht gelöscht werden, da sich darin noch Daten einer weiteren Organisation oder eines anderen Plugins befinden.\n</string> 
@@ -100,6 +101,8 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">Alle Benutzer sind Empfänger eines Gegenstandes, es kann kein Abgleich durchgeführt werden.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">Dies ist nur eine Übersicht des Abgleichs, es wurde noch nichts gespeichert.\n\n Benutzer können nur zu Ehemaligen gemacht werden, wenn die Anzahl der Gegenstände 0 beträgt und sie nicht Administrator oder der aktuelle Benutzer sind.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">Die aufgelisteten Benutzer sind jetzt Ehemalige.</string>
+    <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">aktueller Benutzer als Standardauswahl</string>
+    <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">Soll der aktuelle Benutzer beim Hinzufügen neuer Gegenstände standardmäßig als Verwalter voreingestellt werden, so ist der Haken zu setzen.</string>    
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">Du benutzt eine aktuelle #VAR1#Version von InventoryManager!</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Kategorie</string>

@@ -10,6 +10,7 @@
     <string name="PLG_INVENTORY_MANAGER_CONNECTION_ERROR">Impossible de se connecter à la page de publication GitHub! Veuillez vérifier votre connexion Internet ou réessayer plus tard. Alternativement, vous pouvez vérifier manuellement sur le site Web de #VAR1# s'il y a une mise à jour.</string>
     <string name="PLG_INVENTORY_MANAGER_COPY_PREFERENCES">Paramètres de copie d'une objet:</string>
     <string name="PLG_INVENTORY_MANAGER_CREATED_WITH">créé avec le Plugin InventoryManager de l'administration des membres en ligne Admidio</string> 
+    <string name="PLG_INVENTORY_MANAGER_DATETIME_FORMAT">Représentation de la date</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY">Supprimer uniquement les données de l\'organisation actuelle.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ALLORG">Supprimer les données de toutes les organisations.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE">- La table #VAR1_BOLD# n\'a pas pu être supprimé parce qu\'il contient encore des données d\'une autre organisation ou d\'un autre plugin. \n</string> 
@@ -100,6 +101,8 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">Tous les utilisateurs sont les destinataires d'une objet, aucune réconciliation ne peut être effectuée.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">Ceci est juste un aperçu de la comparaison, rien n'a encore été enregistré.\n\n Les utilisateurs ne peuvent devenir des anciens que si le nombre de objets est 0 et qu'il ne s'agit ni de l'administrateur ni de l'utilisateur actuel.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">Les utilisateurs listés sont maintenant des anciens.</string>
+    <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">Utilisateur actuel comme sélection par défaut</string>
+    <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">Si l'utilisateur actuel doit être défini par défaut comme gestionnaire lors de l'ajout de nouveaux objets, cochez cette case.</string>    
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">Vous utilisez une #VAR1#version actuelle  d'InventoryManager!</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Catégorie</string>

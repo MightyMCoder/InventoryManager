@@ -32,6 +32,8 @@ class CConfigDataPIM
             'profile_addin' => '',
             'file_name' => 'InventoryManager',
             'add_date' => 0,
+            'current_user_default_keeper' => 0,
+            'field_date_time_format' => 'date',
         ],
         'Plugininformationen' => [
             'version' => '',
