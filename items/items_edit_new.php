@@ -89,6 +89,9 @@ foreach ($items->mItemFields as $itemField) {
     
     if (isset($pimInInventoryId, $pimLastReceiverId, $pimReceivedOnId, $pimReceivedBackOnId) && $imfNameIntern === 'IN_INVENTORY') {
         // Add JavaScript to check the PIM_LAST_RECEIVER field and set the required attribute for pimReceivedOnId
+
+        $pPreferences->config['Optionen']['field_date_time_format'] === 'datetime' ? $datetime = 'true' : $datetime = 'false';
+        
         $page->addJavascript('
             document.addEventListener("DOMContentLoaded", function() {
             var pimInInventoryField = document.querySelector("[id=\'imf-' . $pimInInventoryId . '\']");
@@ -96,6 +99,10 @@ foreach ($items->mItemFields as $itemField) {
             var pimLastReceiverField = document.querySelector("[id=\'imf-' . $pimLastReceiverId . '\']");
             var pimLastReceiverGroup = document.getElementById("imf-' . $pimLastReceiverId . '_group");
             var pimReceivedOnField = document.querySelector("[id=\'imf-' . $pimReceivedOnId . '\']");
+            if ('.$datetime.' === "true") {
+                var pimReceivedOnFieldTime = document.querySelector("[id=\'imf-' . $pimReceivedOnId . '_time\']");
+                var pimReceivedBackOnFieldTime = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '_time\']");
+            }
             var pimReceivedOnGroup = document.getElementById("imf-' . $pimReceivedOnId . '_group");
             var pimReceivedBackOnField = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '\']");
             var pimReceivedBackOnGroup = document.getElementById("imf-' . $pimReceivedBackOnId . '_group");
@@ -116,18 +123,33 @@ foreach ($items->mItemFields as $itemField) {
                 var receivedBackOnValue = pimReceivedBackOnField.value;
 
                 setRequired(pimReceivedOnField, pimReceivedOnGroup, isInInventoryChecked && lastReceiverValue !== "");
+                if ('.$datetime.' === "true") {
+                    setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, isInInventoryChecked && lastReceiverValue !== "");
+                    setRequired(pimReceivedBackOnFieldTime, pimReceivedBackOnGroup, isInInventoryChecked && lastReceiverValue !== "");
+                }
                 setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, isInInventoryChecked && lastReceiverValue !== "");
 
                 setRequired(pimLastReceiverField, pimLastReceiverGroup, !isInInventoryChecked);
                 setRequired(pimReceivedOnField, pimReceivedOnGroup, !isInInventoryChecked);
 
+                if ('.$datetime.' === "true") {
+                    setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, !isInInventoryChecked);
+                }
+                
                 if (!isInInventoryChecked && lastReceiverValue === "") {
-                pimReceivedOnField.value = "";
+                    pimReceivedOnField.value = "";
+                    if ('.$datetime.' === "true") {
+                        pimReceivedOnFieldTime.value = "";
+                    }
                 }
 
                 if (receivedBackOnValue !== "") {
-                setRequired(pimLastReceiverField, pimLastReceiverGroup, true);
-                setRequired(pimReceivedOnField, pimReceivedOnGroup, true);
+                    setRequired(pimLastReceiverField, pimLastReceiverGroup, true);
+                    setRequired(pimReceivedOnField, pimReceivedOnGroup, true);
+                    if ('.$datetime.' === "true") {
+                        setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, true);
+                        setRequired(pimReceivedBackOnFieldTime, pimReceivedOnGroup, true);
+                    }
                 }
 
                 var previousPimInInventoryState = isInInventoryChecked;
@@ -135,19 +157,27 @@ foreach ($items->mItemFields as $itemField) {
                 pimInInventoryField.addEventListener("change", function() {
                 if (!pimInInventoryField.checked && previousPimInInventoryState) {
                     pimReceivedBackOnField.value = "";
+                    if ('.$datetime.' === "true") {
+                        pimReceivedBackOnFieldTime.value = "";
+                    }
                 }
                 previousPimInInventoryState = pimInInventoryField.checked;
                 });
             }
 
             function validateReceivedOnAndBackOn() {
-                var receivedOnDate = new Date(pimReceivedOnField.value);
-                var receivedBackOnDate = new Date(pimReceivedBackOnField.value);
+                if ('.$datetime.' === "true") {
+                    var receivedOnDate = new Date(pimReceivedOnField.value + " " + pimReceivedOnFieldTime.value);
+                    var receivedBackOnDate = new Date(pimReceivedBackOnField.value + " " + pimReceivedBackOnFieldTime.value);
+                } else {
+                    var receivedOnDate = new Date(pimReceivedOnField.value);
+                    var receivedBackOnDate = new Date(pimReceivedBackOnField.value);
+                }
 
                 if (receivedOnDate > receivedBackOnDate) {
-                pimReceivedOnField.setCustomValidity("ReceivedOn date cannot be after ReceivedBack date.");
+                    pimReceivedOnField.setCustomValidity("ReceivedOn date cannot be after ReceivedBack date.");
                 } else {
-                pimReceivedOnField.setCustomValidity("");
+                    pimReceivedOnField.setCustomValidity("");
                 }
             }
 
@@ -155,6 +185,11 @@ foreach ($items->mItemFields as $itemField) {
             pimLastReceiverField.addEventListener("input", checkPimInInventory);
             pimReceivedBackOnField.addEventListener("input", checkPimInInventory);
             pimReceivedOnField.addEventListener("input", validateReceivedOnAndBackOn);
+            
+            if ('.$datetime.' === "true") {
+                pimReceivedOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
+                pimReceivedBackOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
+        }
             pimReceivedBackOnField.addEventListener("input", validateReceivedOnAndBackOn);
             checkPimInInventory();
             });
@@ -288,7 +323,11 @@ foreach ($items->mItemFields as $itemField) {
     
                 $page->addJavascript('
                 $(document).ready(function() {
+                    var pimInInventoryField = document.querySelector("[id=\'imf-' . $pimInInventoryId . '\']");
                     var pimReceivedBackOnField = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '\']");
+                    if ('.$datetime.' === "true") {
+                        var pimReceivedBackOnFieldTime = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '_time\']");
+                    }
                     var pimReceivedBackOnGroup = document.getElementById("imf-' . $pimReceivedBackOnId . '_group");
 
                     var selectId = "#imf-' . $items->getProperty($imfNameIntern, 'imf_id') . '";
@@ -310,10 +349,16 @@ foreach ($items->mItemFields as $itemField) {
                         var value = $(selectId).val();
                         
                         // Überprüfe, ob der Wert leer ist
-                        if (!value || value.length === 0) {
+                        if (!value || value.length === 0 || !pimInInventoryField.checked) {
                             setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, false);
+                            if ('.$datetime.' === "true") {
+                                setRequired(pimReceivedBackOnFieldTime, pimReceivedBackOnGroup, false);
+                            }
                         } else {
                             setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, true);
+                            if ('.$datetime.' === "true") {
+                                setRequired(pimReceivedBackOnFieldTime, pimReceivedBackOnGroup, true);
+                            }
                         }
                     }
                     // Prüfe, ob der Default-Wert in den Optionen enthalten ist
