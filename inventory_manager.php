@@ -476,9 +476,18 @@ foreach ($items->items as $item) {
 
         if ($imfNameIntern == 'KEEPER' && strlen($content) > 0) {
             $user->readDataById($content);
-                            $content = ($getMode == 'html') ?
+            $content = ($getMode == 'html') ?
                 '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>' :
                 $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME');
+        }
+
+        if ($imfNameIntern == 'LAST_RECEIVER' && strlen($content) > 0) {
+            if (is_numeric($content)) {
+                $user->readDataById($content);
+                $content = ($getMode == 'html') ?
+                    '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>' :
+                    $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME');
+            }
         }
 
         if ($items->getProperty($imfNameIntern, 'imf_type') == 'CHECKBOX') {
