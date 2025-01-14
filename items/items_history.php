@@ -115,8 +115,13 @@ while ($row = $fieldHistoryStatement->fetch()) {
     $imlValueNew = $items->getHtmlValue($items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern'), $row['iml_value_new']);
     if ($imlValueNew !== '') {
         if ($items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern') === 'KEEPER' || $items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern') === 'LAST_RECEIVER') {
-            $user->readDataById((int) $imlValueNew);
-            $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
+            if (is_numeric($imlValueNew)) {
+                $user->readDataById($imlValueNew);
+                $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
+            }
+            else {
+                $columnValues[] = $imlValueNew;
+            }
         }
         else {
             $columnValues[] = $imlValueNew;
@@ -129,8 +134,13 @@ while ($row = $fieldHistoryStatement->fetch()) {
     $imlValueOld = $items->getHtmlValue($items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern'), $row['iml_value_old']);
     if ($imlValueOld !== '') {
         if ($items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern') === 'KEEPER' || $items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern') === 'LAST_RECEIVER') {
-            $user->readDataById((int) $imlValueOld);
-            $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
+            if (is_numeric($imlValueOld)) {
+                $user->readDataById($imlValueOld);
+                $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
+            }
+            else {
+                $columnValues[] = $imlValueNew;
+            }
         }
         else {
             $columnValues[] = $imlValueOld;
