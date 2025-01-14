@@ -103,7 +103,11 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 	// headlines for columns
 	$columnNumber = 1;
 
-	$addinItemFields = array('ITEMNAME', $pPreferences->config['Optionen']['profile_addin'], 'LAST_RECEIVER');
+	$addinItemFields = array();
+	foreach ($pPreferences->config['Optionen']['profile_addin'] as $addinField) {
+		$addinItemFields[] = $addinField;
+	}
+
 	$itemsKeeper->readItemData($itemsKeeper->items[0]['imi_id'], $gCurrentOrgId);
 
 	foreach ($itemsKeeper->mItemFields as $itemField) {  
@@ -250,7 +254,11 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 	// headlines for columns
 	$columnNumber = 1;
 
-	$addinItemFields = array('ITEMNAME', $pPreferences->config['Optionen']['profile_addin'], 'LAST_RECEIVER');
+	$addinItemFields = array();
+	foreach ($pPreferences->config['Optionen']['profile_addin'] as $addinField) {
+		$addinItemFields[] = $addinField;
+	}
+	
 	$itemsReceiver->readItemData($itemsReceiver->items[0]['imi_id'], $gCurrentOrgId);
 
 	foreach ($itemsReceiver->mItemFields as $itemField) {  
