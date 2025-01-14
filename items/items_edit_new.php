@@ -94,108 +94,126 @@ foreach ($items->mItemFields as $itemField) {
         
         $page->addJavascript('
             document.addEventListener("DOMContentLoaded", function() {
-            var pimInInventoryField = document.querySelector("[id=\'imf-' . $pimInInventoryId . '\']");
-            var pimInInventoryGroup = document.getElementById("imf-' . $pimInInventoryId . '_group");
-            var pimLastReceiverField = document.querySelector("[id=\'imf-' . $pimLastReceiverId . '\']");
-            var pimLastReceiverGroup = document.getElementById("imf-' . $pimLastReceiverId . '_group");
-            var pimReceivedOnField = document.querySelector("[id=\'imf-' . $pimReceivedOnId . '\']");
-            if ('.$datetime.' === "true") {
-                var pimReceivedOnFieldTime = document.querySelector("[id=\'imf-' . $pimReceivedOnId . '_time\']");
-                var pimReceivedBackOnFieldTime = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '_time\']");
-            }
-            var pimReceivedOnGroup = document.getElementById("imf-' . $pimReceivedOnId . '_group");
-            var pimReceivedBackOnField = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '\']");
-            var pimReceivedBackOnGroup = document.getElementById("imf-' . $pimReceivedBackOnId . '_group");
-
-            function setRequired(field, group, required) {
-                if (required) {
-                field.setAttribute("required", "required");
-                group.classList.add("admidio-form-group-required");
+                if (document.querySelector("[id=\'imf-' . $pimReceivedOnId . '_time\']")) {
+                    var pDateTime = "true";
                 } else {
-                field.removeAttribute("required");
-                group.classList.remove("admidio-form-group-required");
+                    var pDateTime = "false";
                 }
-            }
 
-            function checkPimInInventory() {
-                var isInInventoryChecked = pimInInventoryField.checked;
-                var lastReceiverValue = pimLastReceiverField.value;
-                var receivedBackOnValue = pimReceivedBackOnField.value;
+                var pimInInventoryField = document.querySelector("[id=\'imf-' . $pimInInventoryId . '\']");
+                var pimInInventoryGroup = document.getElementById("imf-' . $pimInInventoryId . '_group");
+                var pimLastReceiverField = document.querySelector("[id=\'imf-' . $pimLastReceiverId . '\']");
+                var pimLastReceiverFieldHidden = document.querySelector("[id=\'imf-' . $pimLastReceiverId . '-hidden\']");
+                var pimLastReceiverGroup = document.getElementById("imf-' . $pimLastReceiverId . '_group");
+                var pimReceivedOnField = document.querySelector("[id=\'imf-' . $pimReceivedOnId . '\']");
 
-                setRequired(pimReceivedOnField, pimReceivedOnGroup, isInInventoryChecked && lastReceiverValue !== "");
-                if ('.$datetime.' === "true") {
-                    setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, isInInventoryChecked && lastReceiverValue !== "");
-                    setRequired(pimReceivedBackOnFieldTime, pimReceivedBackOnGroup, isInInventoryChecked && lastReceiverValue !== "");
+                if (pDateTime === "true") {
+                    var pimReceivedOnFieldTime = document.querySelector("[id=\'imf-' . $pimReceivedOnId . '_time\']");
+                    var pimReceivedBackOnFieldTime = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '_time\']");
                 }
-                setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, isInInventoryChecked && lastReceiverValue !== "");
 
-                setRequired(pimLastReceiverField, pimLastReceiverGroup, !isInInventoryChecked);
-                setRequired(pimReceivedOnField, pimReceivedOnGroup, !isInInventoryChecked);
+                var pimReceivedOnGroup = document.getElementById("imf-' . $pimReceivedOnId . '_group");
+                var pimReceivedBackOnField = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '\']");
+                var pimReceivedBackOnGroup = document.getElementById("imf-' . $pimReceivedBackOnId . '_group");
 
-                if ('.$datetime.' === "true") {
-                    setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, !isInInventoryChecked);
+                function setRequired(field, group, required) {
+                    if (required) {
+                    field.setAttribute("required", "required");
+                    group.classList.add("admidio-form-group-required");
+                    } else {
+                    field.removeAttribute("required");
+                    group.classList.remove("admidio-form-group-required");
+                    }
                 }
+
+                function checkPimInInventory() {
+                    var isInInventoryChecked = pimInInventoryField.checked;
+                    var lastReceiverValue = pimLastReceiverFieldHidden.value;
+                    var receivedBackOnValue = pimReceivedBackOnField.value;
+
+                    setRequired(pimReceivedOnField, pimReceivedOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== ""));
+                    setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== ""));
+                    if (pDateTime === "true") {
+                        setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== ""));
+                        setRequired(pimReceivedBackOnFieldTime, pimReceivedBackOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== ""));
+                    }
+
+                    setRequired(pimLastReceiverField, pimLastReceiverGroup, !isInInventoryChecked);
+                    setRequired(pimReceivedOnField, pimReceivedOnGroup, !isInInventoryChecked);
+                    if (pDateTime === "true") {
+                        setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, !isInInventoryChecked);
+                    }
+
+                    if (!isInInventoryChecked && (lastReceiverValue === "" || !lastReceiverValue)) {
+                        pimReceivedOnField.value = "";
+                        if (pDateTime === "true") {
+                            pimReceivedOnFieldTime.value = "";
+                        }
+                    }
+
+                    if (receivedBackOnValue !== "") {
+                        setRequired(pimLastReceiverField, pimLastReceiverGroup, true);
+                        setRequired(pimReceivedOnField, pimReceivedOnGroup, true);
+                        if (pDateTime === "true") {
+                            setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, true);
+                            setRequired(pimReceivedBackOnFieldTime, pimReceivedBackOnGroup, true);
+                        }
+                    }
+
+                    var previousPimInInventoryState = isInInventoryChecked;
+
+                    pimInInventoryField.addEventListener("change", function() {
+                        if (!pimInInventoryField.checked && previousPimInInventoryState) {
+                            pimReceivedBackOnField.value = "";
+                            if (pDateTime === "true") {
+                                pimReceivedBackOnFieldTime.value = "";
+                            }
+                        }
+                        previousPimInInventoryState = pimInInventoryField.checked;
+                        checkPimInInventory();
+                    });
+
+                    pimLastReceiverFieldHidden.addEventListener("input", checkPimInInventory);
+                    pimReceivedBackOnField.addEventListener("input", checkPimInInventory);
+                    pimReceivedOnField.addEventListener("input", validateReceivedOnAndBackOn);
+                    if (pDateTime === "true") {
+                        pimReceivedOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
+                        pimReceivedBackOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
+                    }
+                }
+
+                function validateReceivedOnAndBackOn() {
+                    if (pDateTime === "true") {
+                        var receivedOnDate = new Date(pimReceivedOnField.value + " " + pimReceivedOnFieldTime.value);
+                        var receivedBackOnDate = new Date(pimReceivedBackOnField.value + " " + pimReceivedBackOnFieldTime.value);
+                    } else {
+                        var receivedOnDate = new Date(pimReceivedOnField.value);
+                        var receivedBackOnDate = new Date(pimReceivedBackOnField.value);
+                    }
+
+                    if (receivedOnDate > receivedBackOnDate) {
+                        pimReceivedOnField.setCustomValidity("ReceivedOn date cannot be after ReceivedBack date.");
+                    } else {
+                        pimReceivedOnField.setCustomValidity("");
+                    }
+                }
+
+                pimInInventoryField.addEventListener("change", checkPimInInventory);
+                pimLastReceiverFieldHidden.addEventListener("input", checkPimInInventory);
+
+                pimReceivedOnField.addEventListener("input", validateReceivedOnAndBackOn);
+                pimReceivedBackOnField.addEventListener("input", checkPimInInventory);
                 
-                if (!isInInventoryChecked && lastReceiverValue === "") {
-                    pimReceivedOnField.value = "";
-                    if ('.$datetime.' === "true") {
-                        pimReceivedOnFieldTime.value = "";
-                    }
+                if (pDateTime === "true") {
+                    pimReceivedOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
+                    pimReceivedBackOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
                 }
-
-                if (receivedBackOnValue !== "") {
-                    setRequired(pimLastReceiverField, pimLastReceiverGroup, true);
-                    setRequired(pimReceivedOnField, pimReceivedOnGroup, true);
-                    if ('.$datetime.' === "true") {
-                        setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, true);
-                        setRequired(pimReceivedBackOnFieldTime, pimReceivedOnGroup, true);
-                    }
-                }
-
-                var previousPimInInventoryState = isInInventoryChecked;
-
-                pimInInventoryField.addEventListener("change", function() {
-                if (!pimInInventoryField.checked && previousPimInInventoryState) {
-                    pimReceivedBackOnField.value = "";
-                    if ('.$datetime.' === "true") {
-                        pimReceivedBackOnFieldTime.value = "";
-                    }
-                }
-                previousPimInInventoryState = pimInInventoryField.checked;
-                });
-            }
-
-            function validateReceivedOnAndBackOn() {
-                if ('.$datetime.' === "true") {
-                    var receivedOnDate = new Date(pimReceivedOnField.value + " " + pimReceivedOnFieldTime.value);
-                    var receivedBackOnDate = new Date(pimReceivedBackOnField.value + " " + pimReceivedBackOnFieldTime.value);
-                } else {
-                    var receivedOnDate = new Date(pimReceivedOnField.value);
-                    var receivedBackOnDate = new Date(pimReceivedBackOnField.value);
-                }
-
-                if (receivedOnDate > receivedBackOnDate) {
-                    pimReceivedOnField.setCustomValidity("ReceivedOn date cannot be after ReceivedBack date.");
-                } else {
-                    pimReceivedOnField.setCustomValidity("");
-                }
-            }
-
-            pimInInventoryField.addEventListener("change", checkPimInInventory);
-            pimLastReceiverField.addEventListener("input", checkPimInInventory);
-            pimReceivedBackOnField.addEventListener("input", checkPimInInventory);
-            pimReceivedOnField.addEventListener("input", validateReceivedOnAndBackOn);
-            
-            if ('.$datetime.' === "true") {
-                pimReceivedOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
-                pimReceivedBackOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
-        }
-            pimReceivedBackOnField.addEventListener("input", validateReceivedOnAndBackOn);
-            checkPimInInventory();
+                pimReceivedBackOnField.addEventListener("input", validateReceivedOnAndBackOn);
+                checkPimInInventory();
             });
         ');
     }
-    
+
     if ($itemField->getValue('imf_type') === 'DATE' && $itemField->getValue('imf_sequence') === '1') {
         $form->addInput('dummy', 'dummy', 'dummy', ['type' => $pPreferences->config['Optionen']['field_date_time_format'], 'property' => HtmlForm::FIELD_HIDDEN]);
     }
@@ -314,6 +332,16 @@ foreach ($items->mItemFields as $itemField) {
                     )
                 );
 
+                $form->addInput(
+                    'imf-' . $items->getProperty($imfNameIntern, 'imf_id') . '-hidden',
+                    '',
+                    $items->getValue($imfNameIntern),
+                    array(
+                        'type' => 'hidden',
+                        'property' => HtmlForm::FIELD_DISABLED
+                    )
+                );
+
                 if ($page instanceof HtmlPage) {
                     $page->addCssFile(ADMIDIO_URL . FOLDER_LIBS_CLIENT . '/select2/css/select2.css');
                     $page->addCssFile(ADMIDIO_URL . FOLDER_LIBS_CLIENT . '/select2-bootstrap-theme/select2-bootstrap4.css');
@@ -323,42 +351,17 @@ foreach ($items->mItemFields as $itemField) {
     
                 $page->addJavascript('
                 $(document).ready(function() {
-                    var pimInInventoryField = document.querySelector("[id=\'imf-' . $pimInInventoryId . '\']");
-                    var pimReceivedBackOnField = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '\']");
-                    if ('.$datetime.' === "true") {
-                        var pimReceivedBackOnFieldTime = document.querySelector("[id=\'imf-' . $pimReceivedBackOnId . '_time\']");
-                    }
-                    var pimReceivedBackOnGroup = document.getElementById("imf-' . $pimReceivedBackOnId . '_group");
+                    var selectId = "#imf-' . $pimLastReceiverId . '";
+                    var lastReceiverValueHidden = document.querySelector("[id=\'imf-' . $pimLastReceiverId . '-hidden\']");
 
-                    var selectId = "#imf-' . $items->getProperty($imfNameIntern, 'imf_id') . '";
                     var defaultValue = "' . htmlspecialchars($items->getValue($imfNameIntern)) . '";
                     var defaultText = "' . htmlspecialchars($items->getValue($imfNameIntern)) . '"; // Der Text für den Default-Wert
 
-                    function setRequired(field, group, required) {
-                        if (required) {
-                        field.setAttribute("required", "required");
-                        group.classList.add("admidio-form-group-required");
-                        } else {
-                        field.removeAttribute("required");
-                        group.classList.remove("admidio-form-group-required");
-                        }
-                    }
-
                     function isSelect2Empty(selectId) {
                         // Hole den aktuellen Wert des Select2-Feldes
-                        var value = $(selectId).val();
-                        
-                        // Überprüfe, ob der Wert leer ist
-                        if (!value || value.length === 0 || !pimInInventoryField.checked) {
-                            setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, false);
-                            if ('.$datetime.' === "true") {
-                                setRequired(pimReceivedBackOnFieldTime, pimReceivedBackOnGroup, false);
-                            }
-                        } else {
-                            setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, true);
-                            if ('.$datetime.' === "true") {
-                                setRequired(pimReceivedBackOnFieldTime, pimReceivedBackOnGroup, true);
-                            }
+                        var renderedElement = $("#select2-imf-' . $pimLastReceiverId .'-container");
+                        if (renderedElement.length) {
+                            lastReceiverValueHidden = renderedElement.attr("title");
                         }
                     }
                     // Prüfe, ob der Default-Wert in den Optionen enthalten ist
@@ -368,12 +371,12 @@ foreach ($items->mItemFields as $itemField) {
                         $(selectId).append(newOption).trigger("change");
                     }
 
-                    $("#imf-' . $items->getProperty($imfNameIntern, 'imf_id').'").select2({
-                    theme: "bootstrap4",
-                    allowClear: true,
-                    placeholder: "",
-                    language: "' . $gL10n->getLanguageLibs() . '",
-                    tags: true
+                    $("#imf-' . $pimLastReceiverId .'").select2({
+                        theme: "bootstrap4",
+                        allowClear: true,
+                        placeholder: "",
+                        language: "' . $gL10n->getLanguageLibs() . '",
+                        tags: true
                     });
 
                     // Überwache Änderungen im Select2-Feld
