@@ -76,7 +76,7 @@ function handleFormSubmission($form, $preferences) {
 			break;
 
 		case 'profile_addin':
-			$preferences->config['Optionen']['profile_addin'] = $_POST['profile_addin'];
+			$preferences->config['Optionen']['profile_addin'] = isset($_POST['profile_addin']) ? array_filter($_POST['profile_addin']) : array();
 			break;
 
 		case 'export':

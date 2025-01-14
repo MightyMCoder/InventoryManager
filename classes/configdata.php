@@ -29,7 +29,10 @@ class CConfigDataPIM
     const CONFIG_DEFAULT = [
         'Optionen' => [
             'interface_pff' => 0,
-            'profile_addin' => '',
+            'profile_addin' => [
+                'ITEMNAME',
+                'LAST_RECEIVER'
+            ],
             'file_name' => 'InventoryManager',
             'add_date' => 0,
             'current_user_default_keeper' => 0,

@@ -134,6 +134,7 @@ function isUserAuthorizedForPreferencesPIM()
 function isUserAuthorizedForAddinPIM()
 {
 	global $gDb;
+	
 	$sql = 'SELECT men_id, men_name, men_name_intern
 			FROM ' . TBL_MENU . '
 			WHERE men_men_id_parent IS NULL
@@ -171,7 +172,9 @@ function isUserAuthorizedForAddinPIM()
  */
 function convlanguagePIM($field_name)
 {
-	return (substr($field_name, 3, 1) === '_') ? $GLOBALS['gL10n']->get($field_name) : $field_name;
+	global $gL10n;
+
+	return (substr($field_name, 3, 1) === '_') ? $gL10n->get($field_name) : $field_name;
 }
 
 /**
@@ -182,6 +185,8 @@ function convlanguagePIM($field_name)
  */
 function getNewNameInternPIM($name, $index)
 {
+	global $gDb;
+
 	$name = umlautePIM($name);
 	$newNameIntern = strtoupper(str_replace(' ', '_', $name));
 
@@ -190,7 +195,7 @@ function getNewNameInternPIM($name, $index)
 	}
 
 	$sql = 'SELECT imf_id FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE imf_name_intern = ?;';
-	$userFieldsStatement = $GLOBALS['gDb']->queryPrepared($sql, array($newNameIntern));
+	$userFieldsStatement = $gDb->queryPrepared($sql, array($newNameIntern));
 
 	if ($userFieldsStatement->rowCount() > 0) {
 		return getNewNameInternPIM($name, ++$index);
@@ -205,8 +210,10 @@ function getNewNameInternPIM($name, $index)
  */
 function genNewSequencePIM()
 {
+	global $gDb, $gCurrentOrgId;
+
 	$sql = 'SELECT max(imf_sequence) as max_sequence FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE (imf_org_id = ? OR imf_org_id IS NULL);';
-	$statement = $GLOBALS['gDb']->queryPrepared($sql, array($GLOBALS['gCurrentOrgId']));
+	$statement = $gDb->queryPrepared($sql, array($gCurrentOrgId));
 	$row = $statement->fetch();
 
 	return $row['max_sequence'] + 1;

@@ -103,7 +103,11 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 	// headlines for columns
 	$columnNumber = 1;
 
-	$addinItemFields = array('ITEMNAME', $pPreferences->config['Optionen']['profile_addin'], 'LAST_RECEIVER');
+	$addinItemFields = array();
+	foreach ($pPreferences->config['Optionen']['profile_addin'] as $addinField) {
+		$addinItemFields[] = $addinField;
+	}
+
 	$itemsKeeper->readItemData($itemsKeeper->items[0]['imi_id'], $gCurrentOrgId);
 
 	foreach ($itemsKeeper->mItemFields as $itemField) {  
@@ -167,10 +171,12 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 			$content = $itemsKeeper->getValue($imfNameIntern, 'database');
 
 			if (($imfNameIntern == 'KEEPER' || $imfNameIntern == 'LAST_RECEIVER') && strlen($content) > 0) {
-				$user->readDataById($content);
-                if (!$user->getValue('usr_uuid') == '') {
-                    $content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>';
-                }
+				if (is_numeric($content)) {
+					$user->readDataById($content);
+					if (!$user->getValue('usr_uuid') == '') {
+						$content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>';
+					}
+				}
 			}
 
 			if ($itemsKeeper->getProperty($imfNameIntern, 'imf_type') == 'CHECKBOX') {
@@ -248,7 +254,11 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 	// headlines for columns
 	$columnNumber = 1;
 
-	$addinItemFields = array('ITEMNAME', $pPreferences->config['Optionen']['profile_addin'], 'LAST_RECEIVER');
+	$addinItemFields = array();
+	foreach ($pPreferences->config['Optionen']['profile_addin'] as $addinField) {
+		$addinItemFields[] = $addinField;
+	}
+	
 	$itemsReceiver->readItemData($itemsReceiver->items[0]['imi_id'], $gCurrentOrgId);
 
 	foreach ($itemsReceiver->mItemFields as $itemField) {  
@@ -312,10 +322,12 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 			$content = $itemsReceiver->getValue($imfNameIntern, 'database');
 
 			if (($imfNameIntern == 'KEEPER' || $imfNameIntern == 'LAST_RECEIVER') && strlen($content) > 0) {
-				$user->readDataById($content);
-                if (!$user->getValue('usr_uuid') == '') {
-                    $content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>';
-                }
+				if (is_numeric($content)) {
+					$user->readDataById($content);
+					if (!$user->getValue('usr_uuid') == '') {
+						$content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>';
+					}
+				}
 			}
 
 			if ($itemsReceiver->getProperty($imfNameIntern, 'imf_type') == 'CHECKBOX') {
