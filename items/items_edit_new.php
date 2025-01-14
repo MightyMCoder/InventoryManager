@@ -126,16 +126,16 @@ foreach ($items->mItemFields as $itemField) {
                     }
                 }
 
-                function checkPimInInventory() {
+                window.checkPimInInventory = function() {
                     var isInInventoryChecked = pimInInventoryField.checked;
                     var lastReceiverValue = pimLastReceiverFieldHidden.value;
                     var receivedBackOnValue = pimReceivedBackOnField.value;
 
-                    setRequired(pimReceivedOnField, pimReceivedOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== ""));
-                    setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== ""));
+                    setRequired(pimReceivedOnField, pimReceivedOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== "undefined"));
+                    setRequired(pimReceivedBackOnField, pimReceivedBackOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== "undefined"));
                     if (pDateTime === "true") {
-                        setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== ""));
-                        setRequired(pimReceivedBackOnFieldTime, pimReceivedBackOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== ""));
+                        setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== "undefined"));
+                        setRequired(pimReceivedBackOnFieldTime, pimReceivedBackOnGroup, isInInventoryChecked && (lastReceiverValue && lastReceiverValue !== "undefined"));
                     }
 
                     setRequired(pimLastReceiverField, pimLastReceiverGroup, !isInInventoryChecked);
@@ -144,7 +144,8 @@ foreach ($items->mItemFields as $itemField) {
                         setRequired(pimReceivedOnFieldTime, pimReceivedOnGroup, !isInInventoryChecked);
                     }
 
-                    if (!isInInventoryChecked && (lastReceiverValue === "" || !lastReceiverValue)) {
+                    console.log("Receiver: " + lastReceiverValue);
+                    if (!isInInventoryChecked && (lastReceiverValue === "undefined" || !lastReceiverValue)) {
                         pimReceivedOnField.value = "";
                         if (pDateTime === "true") {
                             pimReceivedOnFieldTime.value = "";
@@ -170,11 +171,11 @@ foreach ($items->mItemFields as $itemField) {
                             }
                         }
                         previousPimInInventoryState = pimInInventoryField.checked;
-                        checkPimInInventory();
+                        window.checkPimInInventory();
                     });
 
-                    pimLastReceiverFieldHidden.addEventListener("input", checkPimInInventory);
-                    pimReceivedBackOnField.addEventListener("input", checkPimInInventory);
+                    pimLastReceiverFieldHidden.addEventListener("change", window.checkPimInInventory);
+                    pimReceivedBackOnField.addEventListener("input", window.checkPimInInventory);
                     pimReceivedOnField.addEventListener("input", validateReceivedOnAndBackOn);
                     if (pDateTime === "true") {
                         pimReceivedOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
@@ -198,18 +199,18 @@ foreach ($items->mItemFields as $itemField) {
                     }
                 }
 
-                pimInInventoryField.addEventListener("change", checkPimInInventory);
-                pimLastReceiverFieldHidden.addEventListener("input", checkPimInInventory);
+                pimInInventoryField.addEventListener("change", window.checkPimInInventory);
+                pimLastReceiverFieldHidden.addEventListener("change", window.checkPimInInventory);
 
                 pimReceivedOnField.addEventListener("input", validateReceivedOnAndBackOn);
-                pimReceivedBackOnField.addEventListener("input", checkPimInInventory);
+                pimReceivedBackOnField.addEventListener("input", window.checkPimInInventory);
                 
                 if (pDateTime === "true") {
                     pimReceivedOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
                     pimReceivedBackOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
                 }
                 pimReceivedBackOnField.addEventListener("input", validateReceivedOnAndBackOn);
-                checkPimInInventory();
+                window.checkPimInInventory();
             });
         ');
     }
@@ -352,16 +353,18 @@ foreach ($items->mItemFields as $itemField) {
                 $page->addJavascript('
                 $(document).ready(function() {
                     var selectId = "#imf-' . $pimLastReceiverId . '";
-                    var lastReceiverValueHidden = document.querySelector("[id=\'imf-' . $pimLastReceiverId . '-hidden\']");
 
                     var defaultValue = "' . htmlspecialchars($items->getValue($imfNameIntern)) . '";
                     var defaultText = "' . htmlspecialchars($items->getValue($imfNameIntern)) . '"; // Der Text für den Default-Wert
 
                     function isSelect2Empty(selectId) {
                         // Hole den aktuellen Wert des Select2-Feldes
+                        var lastReceiverValueHidden = document.querySelector("[id=\'imf-' . $pimLastReceiverId . '-hidden\']");
                         var renderedElement = $("#select2-imf-' . $pimLastReceiverId .'-container");
                         if (renderedElement.length) {
-                            lastReceiverValueHidden = renderedElement.attr("title");
+                            lastReceiverValueHidden.value = renderedElement.attr("title");
+                            console.log("Hidden: " + lastReceiverValueHidden.value);
+                            window.checkPimInInventory();
                         }
                     }
                     // Prüfe, ob der Default-Wert in den Optionen enthalten ist
