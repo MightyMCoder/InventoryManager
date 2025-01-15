@@ -4,6 +4,8 @@
     <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Here, in addition to the role "Administrator", you can authorize additional roles for access to the "Preferences" module.</string>
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE">Append date</string>
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE_DESC">If a date in the format YYYY-MM-DD is to be added to an export file, the checkmark must be set.</string>
+    <string name="PLG_INVENTORY_MANAGER_ADDIN_KEEPER_DESC">This table shows the items managed by you:</string>    
+    <string name="PLG_INVENTORY_MANAGER_ADDIN_LAST_RECEIVER_DESC">This table shows the items lent to you:</string>    
     <string name="PLG_INVENTORY_MANAGER_BASED_ON">(based on #VAR1#)</string>
     <string name="PLG_INVENTORY_MANAGER_CATEGORY">Category</string>
     <string name="PLG_INVENTORY_MANAGER_CONFIGURATION">Configuration</string>

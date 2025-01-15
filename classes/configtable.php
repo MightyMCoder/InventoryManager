@@ -27,7 +27,7 @@ class CConfigTablePIM
 	public $config = array();        		// array with configuration-data
 	public $configPff = array();     		// array with configuration-data of (P)lugin (f)orm (f)iller
 
-	private $table_name;					// db table name *_plugin_preferences
+	private $table_preferences_name;		// db table name *_plugin_preferences
 	private $isPffInst; 					// (is) (P)lugin (f)orm (f)iller (Inst)alled
 	private $pffDir;						// (p)lugin (f)orm (f)iller (Dir)ectory 
 
@@ -41,7 +41,7 @@ class CConfigTablePIM
 		require_once(__DIR__ . '/../version.php');
 		require_once(__DIR__ . '/configdata.php');
 		
-		$this->table_name = TABLE_PREFIX .'_plugin_preferences';
+		$this->table_preferences_name = TABLE_PREFIX .'_plugin_preferences';
 
 		$this->findPff();
 		$this->checkPffInst();
@@ -56,12 +56,12 @@ class CConfigTablePIM
 		global $gDb, $gCurrentOrgId;
 
 		// check if configuration table for plugin FormFiller exists
-		$sql = 'SHOW TABLES LIKE \''.$this->table_name.'\';';
+		$sql = 'SHOW TABLES LIKE \''.$this->table_preferences_name.'\';';
 		$statement = $gDb->queryPrepared($sql);
 		
 		if ($statement->rowCount() !== 0)  
 		{
-			$sql = 'SELECT COUNT(*) AS COUNT FROM '.$this->table_name.' WHERE plp_name = ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
+			$sql = 'SELECT COUNT(*) AS COUNT FROM '.$this->table_preferences_name.' WHERE plp_name = ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
 			$statement = $gDb->queryPrepared($sql, array('PFF__Plugininformationen__version', $gCurrentOrgId));
 			
 			$this->isPffInst = ((int) $statement->fetchColumn() === 1 && $this->pffDir !== false);
@@ -134,8 +134,8 @@ class CConfigTablePIM
 	public function init()
 	{
 		$this->createTablesIfNotExist();
-		$this->initializeDefaultFields();
-		$this->initializePreferences();
+		$this->initializeDefaultFieldsByOrgId();
+		$this->initializePreferencesByOrgId();
 	}
 
 	/**
@@ -193,7 +193,7 @@ class CConfigTablePIM
 			PRIMARY KEY (iml_id)
 		');
 
-		$this->createTableIfNotExist($this->table_name, '
+		$this->createTableIfNotExist($this->table_preferences_name, '
 			plp_id integer unsigned NOT NULL AUTO_INCREMENT,
 			plp_org_id integer unsigned NOT NULL,
 			plp_name varchar(255) NOT NULL,
@@ -225,7 +225,7 @@ class CConfigTablePIM
 	 * Initializes default fields in the inventory manager database
 	 * @return void
 	 */
-	private function initializeDefaultFields()
+	private function initializeDefaultFieldsByOrgId()
 	{
 		global $gDb, $gCurrentOrgId;
 
@@ -329,8 +329,9 @@ class CConfigTablePIM
 		// Now $allFields contains the combined and updated fields
 
 		// Clear the table and reset the AUTO_INCREMENT
-		$sql = 'TRUNCATE TABLE ' . TBL_INVENTORY_MANAGER_FIELDS;
-		$gDb->query($sql);
+		//$sql = 'TRUNCATE TABLE ' . TBL_INVENTORY_MANAGER_FIELDS;
+		$sql = 'DELETE FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE imf_org_id = ?;';
+		$gDb->queryPrepared($sql, array($gCurrentOrgId));
 
 		// Insert the new array into the database and keep track of new IDs
 		$newFieldIds = array();
@@ -423,7 +424,7 @@ class CConfigTablePIM
 	 * Initializes preferences for the inventory manager
 	 * @return void
 	 */
-	private function initializePreferences()
+	private function initializePreferencesByOrgId()
 	{
 		global $gDb, $gCurrentOrgId;
 
@@ -451,7 +452,7 @@ class CConfigTablePIM
 		foreach ($configCurrent as $section => $sectiondata) {
 			foreach ($sectiondata as $item => $value) {
 				$plp_name = self::SHORTCUT . '__' . $section . '__' . $item;
-				$sql = 'DELETE FROM ' . $this->table_name . ' WHERE plp_name = ? AND plp_org_id = ?;';
+				$sql = 'DELETE FROM ' . $this->table_preferences_name . ' WHERE plp_name = ? AND plp_org_id = ?;';
 				$gDb->queryPrepared($sql, array($plp_name, $gCurrentOrgId));
 				unset($this->config[$section][$item]);
 			}
@@ -480,17 +481,17 @@ class CConfigTablePIM
 
 				$plpName = self::SHORTCUT . '__' . $section . '__' . $item;
 
-				$sql = 'SELECT plp_id FROM ' . $this->table_name . ' WHERE plp_name = ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
+				$sql = 'SELECT plp_id FROM ' . $this->table_preferences_name . ' WHERE plp_name = ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
 				$statement = $gDb->queryPrepared($sql, array($plpName, $gCurrentOrgId));
 				$row = $statement->fetchObject();
 
 				if (isset($row->plp_id) && strlen($row->plp_id) > 0) {
 					// Record exists, update it
-					$sql = 'UPDATE ' . $this->table_name . ' SET plp_value = ? WHERE plp_id = ?;';
+					$sql = 'UPDATE ' . $this->table_preferences_name . ' SET plp_value = ? WHERE plp_id = ?;';
 					$gDb->queryPrepared($sql, array($value, $row->plp_id));
 				} else {
 					// Record does not exist, insert it
-					$sql = 'INSERT INTO ' . $this->table_name . ' (plp_org_id, plp_name, plp_value) VALUES (?, ?, ?);';
+					$sql = 'INSERT INTO ' . $this->table_preferences_name . ' (plp_org_id, plp_name, plp_value) VALUES (?, ?, ?);';
 					$gDb->queryPrepared($sql, array($gCurrentOrgId, $plpName, $value));
 				}
 			}
@@ -525,7 +526,7 @@ class CConfigTablePIM
 	{
 		global $gDb, $gCurrentOrgId;
 
-		$sql = 'SELECT plp_id, plp_name, plp_value FROM '.$this->table_name.' WHERE plp_name LIKE ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
+		$sql = 'SELECT plp_id, plp_name, plp_value FROM '.$this->table_preferences_name.' WHERE plp_name LIKE ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
 		$statement = $gDb->queryPrepared($sql, array($pluginShortcut.'__%', $gCurrentOrgId)); 
 	
 		while ($row = $statement->fetch())
@@ -572,11 +573,14 @@ class CConfigTablePIM
 		$needsUpdate = false;
 
 		// Check if table *_plugin_preferences exists
-		$sql = 'SHOW TABLES LIKE \'' . $this->table_name . '\' ';
-		$tableExistStatement = $gDb->queryPrepared($sql);
+		$sql = 'SHOW TABLES LIKE \'' . $this->table_preferences_name . '\' ';
+		$tablePreferencesExistStatement = $gDb->queryPrepared($sql);
 
-		if ($tableExistStatement->rowCount()) {
-			$needsUpdate = $this->compareVersion() || $this->compareStand();
+		$sql = 'SHOW TABLES LIKE \'' . TBL_INVENTORY_MANAGER_FIELDS . '\' ';
+		$tableFieldsExistStatement = $gDb->queryPrepared($sql);
+
+		if ($tablePreferencesExistStatement->rowCount() && $tableFieldsExistStatement->rowCount()) {
+			$needsUpdate = $this->checkDefaultFieldsForCurrentOrg() || $this->compareVersion() || $this->compareStand();
 		} else {
 			// Update needed because it is not installed yet
 			$needsUpdate = true;
@@ -595,7 +599,7 @@ class CConfigTablePIM
 
 		$plp_name = self::SHORTCUT . '__Plugininformationen__version';
 
-		$sql = 'SELECT plp_value FROM ' . $this->table_name . ' WHERE plp_name = ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
+		$sql = 'SELECT plp_value FROM ' . $this->table_preferences_name . ' WHERE plp_name = ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
 		$statement = $gDb->queryPrepared($sql, array($plp_name, $gCurrentOrgId));
 		$row = $statement->fetchObject();
 
@@ -613,14 +617,32 @@ class CConfigTablePIM
 
 		$plp_name = self::SHORTCUT . '__Plugininformationen__stand';
 
-		$sql = 'SELECT plp_value FROM ' . $this->table_name . ' WHERE plp_name = ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
+		$sql = 'SELECT plp_value FROM ' . $this->table_preferences_name . ' WHERE plp_name = ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
 		$statement = $gDb->queryPrepared($sql, array($plp_name, $gCurrentOrgId));
 		$row = $statement->fetchObject();
 
 		// Compare stands
 		return !isset($row->plp_value) || strlen($row->plp_value) === 0 || $row->plp_value !== CPluginInfoPIM::getPluginStand();
 	}
-	
+
+	/**
+	 * Checks if there are default fields for all organizations.
+	 * @return bool Returns true if there are no default fields for the current organization, false otherwise.
+	 */
+	private function checkDefaultFieldsForCurrentOrg()
+	{
+		global $gDb, $gCurrentOrgId;
+
+		$sql = 'SELECT imf_name_intern FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE imf_org_id = ?;';
+		$statement = $gDb->queryPrepared($sql, array($gCurrentOrgId));
+		$row = $statement->fetchObject();
+
+		if (!$row) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Delete configuration data from the database
 	 * @param int $deinstOrgSelect 0 = only delete data from current org, 1 = delete data from every org
@@ -637,24 +659,24 @@ class CConfigTablePIM
 			$sqlWhereCondition = 'AND plp_org_id = ?';
 		}
 
-		$sql = 'DELETE FROM ' . $this->table_name . ' WHERE plp_name LIKE ? ' . $sqlWhereCondition;
+		$sql = 'DELETE FROM ' . $this->table_preferences_name . ' WHERE plp_name LIKE ? ' . $sqlWhereCondition;
 		$params = [self::SHORTCUT . '__%'];
 		if ($deinstOrgSelect == 0) {
 			$params[] = $gCurrentOrgId;
 		}
 		$result_data = $gDb->queryPrepared($sql, $params);
-		$result .= ($result_data ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', [$this->table_name]) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', [$this->table_name]));
+		$result .= ($result_data ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', [$this->table_preferences_name]) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', [$this->table_preferences_name]));
 
 		// Check if the table is empty and can be deleted
-		$sql = 'SELECT * FROM ' . $this->table_name;
+		$sql = 'SELECT * FROM ' . $this->table_preferences_name;
 		$statement = $gDb->queryPrepared($sql);
 
 		if ($statement->rowCount() == 0) {
-			$sql = 'DROP TABLE ' . $this->table_name;
+			$sql = 'DROP TABLE ' . $this->table_preferences_name;
 			$result_db = $gDb->queryPrepared($sql);
-			$result .= ($result_db ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETED', [$this->table_name]) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_ERROR', [$this->table_name]));
+			$result .= ($result_db ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETED', [$this->table_preferences_name]) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_ERROR', [$this->table_preferences_name]));
 		} else {
-			$result .= $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE', [$this->table_name]);
+			$result .= $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE', [$this->table_preferences_name]);
 		}
 
 		return $result;
