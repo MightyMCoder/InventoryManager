@@ -628,7 +628,7 @@ class CConfigTablePIM
 	 */
 	public function deleteConfigData($deinstOrgSelect)
 	{
-		global $gDb, $gCurrentOrgId, $gDb;
+		global $gDb, $gCurrentOrgId, $gL10n;
 
 		$result = '';
 		$sqlWhereCondition = '';
@@ -643,7 +643,7 @@ class CConfigTablePIM
 			$params[] = $gCurrentOrgId;
 		}
 		$result_data = $gDb->queryPrepared($sql, $params);
-		$result .= ($result_data ? $gDb->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', [$this->table_name]) : $gDb->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', [$this->table_name]));
+		$result .= ($result_data ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', [$this->table_name]) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', [$this->table_name]));
 
 		// Check if the table is empty and can be deleted
 		$sql = 'SELECT * FROM ' . $this->table_name;
@@ -652,9 +652,9 @@ class CConfigTablePIM
 		if ($statement->rowCount() == 0) {
 			$sql = 'DROP TABLE ' . $this->table_name;
 			$result_db = $gDb->queryPrepared($sql);
-			$result .= ($result_db ? $gDb->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETED', [$this->table_name]) : $gDb->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_ERROR', [$this->table_name]));
+			$result .= ($result_db ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETED', [$this->table_name]) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_ERROR', [$this->table_name]));
 		} else {
-			$result .= $gDb->get('PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE', [$this->table_name]);
+			$result .= $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE', [$this->table_name]);
 		}
 
 		return $result;
