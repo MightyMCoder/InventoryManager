@@ -30,4 +30,3 @@ If you have any questions or need further assistance, feel free to [open an issu
 ## Acknowledgements
 
 - Based on KeyManager by rmbinder (https://github.com/rmbinder/KeyManager)
-- Uses the external class XLSXWriter (https://github.com/mk-j/PHP_XLSXWriter)
