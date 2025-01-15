@@ -14,6 +14,7 @@
 require_once(__DIR__ . '/../../../adm_program/system/common.php');
 require_once(__DIR__ . '/../common_function.php');
 require_once(__DIR__ . '/../classes/items.php');
+require_once(__DIR__ . '/../classes/configtable.php');
 
 // Access only with valid login
 require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
@@ -33,6 +34,9 @@ $line = reset($_SESSION['import_data']);
 $firstRowTitle = array_key_exists('first_row', $_POST);
 $startRow = 0;
 $importedFields = array();
+
+$pPreferences = new CConfigTablePIM();
+$pPreferences->read();
 
 // create array with all profile fields that where assigned to columns of the import file
 foreach ($_POST as $formFieldId => $importFileColumn) {
@@ -172,6 +176,46 @@ foreach ($assignedFieldColumn as $row => $values) {
                     }
                     else {
                         $val = array_search($values[$imfNameIntern], $valueList);
+                    }
+                }
+            }
+        }
+        elseif($imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON') {
+            $val = $values[$imfNameIntern];
+            if ($val !== '') {
+                // date must be formatted
+                if ($pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                    //check if date is datetime or only date
+                    if (strpos($val, ' ') === false) {
+                        $val .=  '00:00';
+                    }
+                    // check if date is wrong formatted
+                    $dateObject = DateTime::createFromFormat('d.m.Y H:i', $val);
+                    if ($dateObject instanceof DateTime) {
+                        // convert date to correct format
+                        $val = $dateObject->format('Y-m-d H:i');
+                    }
+                    // check if date is right formatted
+                    $date = DateTime::createFromFormat('Y-m-d H:i', $val);
+                    if ($date instanceof DateTime) {
+                        $val = $date->format($gSettingsManager->getString('system_date').' '.$gSettingsManager->getString('system_time'));
+                    }
+                }
+                else {
+                    // check if date is date or datetime
+                    if (strpos($val, ' ') !== false) {
+                        $val = substr($val, 0, 10);
+                    }
+                    // check if date is wrong formatted
+                    $dateObject = DateTime::createFromFormat('d.m.Y', $val);
+                    if ($dateObject instanceof DateTime) {
+                        // convert date to correct format
+                        $val = $dateObject->format('Y-m-d');
+                    }
+                    // check if date is right formatted
+                    $date = DateTime::createFromFormat('Y-m-d', $val);
+                    if ($date instanceof DateTime) {
+                        $htmlValue = $date->format($gSettingsManager->getString('system_date'));
                     }
                 }
             }
