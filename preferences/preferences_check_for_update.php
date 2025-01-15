@@ -106,11 +106,11 @@ function getLatestBetaReleaseVersion($owner, $repo) {
     $data = json_decode($response, true);
     foreach ($data as $release) {
         if ($release['prerelease']) {
-            return ['version' => ltrim($data['tag_name'], 'v'), 'release' => $release['name'], 'url' => $data['html_url']];
+            return ['version' => ltrim($release['tag_name'], 'v'), 'url' => $release['html_url']];
         }
     }
 
-    return ['version' => 'n/a', 'release' => '', 'url' => ''];
+    return ['version' => 'n/a',  'url' => ''];
 }
 
 /**
@@ -125,7 +125,7 @@ function getLatestBetaReleaseVersion($owner, $repo) {
  * @param string $betaFlag The current beta version of the plugin.
  * @return int An integer value indicating the update state.
  */
-function checkVersion(string $currentVersion, string $checkStableVersion, string $checkBetaVersion, string $betaRelease, string $betaFlag): int
+function checkVersion(string $currentVersion, string $checkStableVersion, string $currentBetaVersion, string $checkBetaVersion): int
 {
     // Update state (0 = No update, 1 = New stable version, 2 = New beta version, 3 = New stable + beta version)
     $update = 0;
@@ -137,7 +137,7 @@ function checkVersion(string $currentVersion, string $checkStableVersion, string
 
     // Check for beta version now
     $status = version_compare($checkBetaVersion, $currentVersion);
-    if ($status === 1 || ($status === 0 && version_compare($betaRelease, $betaFlag, '>'))) {
+    if ($status === 1 || ($status === 0 && version_compare($checkBetaVersion, $currentBetaVersion, '>'))) {
         if ($update === 1) {
             $update = 3;
         } else {
@@ -159,7 +159,6 @@ $stableVersion = $stableInfo['version'];
 $stableURL = $stableInfo['url'];
 
 $betaVersion = $betaInfo['version'];
-$betaRelease = $betaInfo['release'];
 $betaURL = $betaInfo['url'];
 
 // No stable version available (actually impossible)
@@ -170,11 +169,10 @@ if ($stableVersion === '') {
 // No beta version available
 if ($betaVersion === '') {
     $betaVersion = 'n/a';
-    $betaRelease = '';
 }
 
 // check for update
-$versionUpdate = checkVersion($PIMVersion, $stableVersion, $betaVersion, $betaRelease, $PIMBetaVersion);
+$versionUpdate = checkVersion($PIMVersion, $stableVersion, $PIMBetaVersion, $betaVersion);
 
 
 // Only continues in display mode, otherwise the current update state can be
@@ -212,7 +210,7 @@ if ($getMode === 2) {
     if ($versionUpdate !== 99 && $betaVersion !== 'n/a') {
         echo '
             <a class="btn" href="'.$betaURL.'" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_DOWNLOAD_PAGE') . '" target="_blank">'.
-                '<i class="fas fa-link"></i>' . $betaVersion . ' Beta ' . $betaRelease . '
+                '<i class="fas fa-link"></i>' . $betaVersion . ' Beta
             </a>';
     } else {
         echo $betaVersion;
