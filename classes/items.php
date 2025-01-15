@@ -63,11 +63,11 @@ class CItems
      * @param \Database $database       Database object (should be @b $gDb)
      * @param int       $organizationId The id of the organization for which the item field structure should be read
      */
-    public function __construct($database, $organizationId)
+    public function __construct($database, $organizationId, $fieldsOrderBy = 'imf_id')
     {
         $this->organizationId = $organizationId;
         $this->setDatabase($database);
-        $this->readItemFields($this->organizationId);
+        $this->readItemFields($this->organizationId, $fieldsOrderBy);
         $this->mItemId = 0;
         $this->columnsValueChanged = false;
         $this->itemCreated = false;
@@ -534,15 +534,15 @@ class CItems
      * @param int $organizationId       The id of the organization for which the item fields
      *                                  structure should be read.
      */
-    public function readItemFields($organizationId)
+    public function readItemFields($organizationId, $orderBy = 'imf_id')
     {
         // first initialize existing data
         $this->mItemFields = array();
         $this->clearItemData();
 
         $sql = 'SELECT * FROM '.TBL_INVENTORY_MANAGER_FIELDS.'
-                WHERE imf_org_id IS NULL
-                OR imf_org_id = ?;';
+                WHERE (imf_org_id IS NULL OR imf_org_id = ?)
+                ORDER BY '. $orderBy .';';
         $statement = $this->mDb->queryPrepared($sql, array($organizationId));
 
         while ($row = $statement->fetch()) {

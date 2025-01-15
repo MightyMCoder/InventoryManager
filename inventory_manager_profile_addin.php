@@ -34,8 +34,8 @@ if ($userIsAuthorized) {
 	$user = new User($gDb, $gProfileFields);
 	$user->readDataByUuid($getUserUuid);
 
-	$itemsKeeper = new CItems($gDb, $gCurrentOrgId);
-	$itemsReceiver = new CItems($gDb, $gCurrentOrgId);
+	$itemsKeeper = new CItems($gDb, $gCurrentOrgId, 'imf_sequence');
+	$itemsReceiver = new CItems($gDb, $gCurrentOrgId, 'imf_sequence');
 
 	// first read all items the user is keeper of
 	$itemsKeeper->readItemsByUser($gCurrentOrgId, $user->getValue('usr_id'), array('KEEPER'));
@@ -88,6 +88,7 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 					</a>
 					</div>
 					<div id="inventory_manager_box_body" class="card-body">
+					<p>' . $gL10n->get('PLG_INVENTORY_MANAGER_ADDIN_KEEPER_DESC') . '</p>
 					<ul class="list-group">');
 
 	// prepare header for table
@@ -95,17 +96,12 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 	$inventoryAddinTable->setDatatablesRowsPerPage(10);
 
 	// create array with all column heading values
-
-	// initialize array parameters for table and set the first column for the counter
-	$columnAlign  = array('right');
-	$columnHeading = array($gL10n->get('SYS_ABR_NO'));
-
-	// headlines for columns
-	$columnNumber = 1;
-
 	$addinItemFields = array();
 	foreach ($pPreferences->config['Optionen']['profile_addin'] as $addinField) {
-		$addinItemFields[] = $addinField;
+		// we are in the keeper view, so we dont need the keeper field in the table
+		if ($addinField !== 'KEEPER') {
+			$addinItemFields[] = $addinField;
+		}
 	}
 
 	$itemsKeeper->readItemData($itemsKeeper->items[0]['imi_id'], $gCurrentOrgId);
@@ -135,9 +131,6 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 		}
 
 		$columnHeading[] = $columnHeader;
-
-		$columnNumber++;
-
 	}
 
 	// add column for edit and delete icons
@@ -149,20 +142,13 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 	$inventoryAddinTable->disableDatatablesColumnsSort(array(count($columnHeading))); //disable sort in last column
 	$inventoryAddinTable->setDatatablesColumnsNotHideResponsive(array(count($columnHeading)));
 
-	$listRowNumber = 1;
-
 	foreach ($itemsKeeper->items as $item) {
 		$itemsKeeper->readItemData($item['imi_id'], $gCurrentOrgId);
 		$columnValues = array();
 		$strikethrough = $item['imi_former'];
-		$columnNumber = 1;
 
 		foreach ($itemsKeeper->mItemFields as $itemField) {
 			$imfNameIntern = $itemField->getValue('imf_name_intern');
-
-			if ($columnNumber === 1) {
-				$columnValues[] = $listRowNumber;
-			}
 
 			if (!in_array($imfNameIntern, $addinItemFields, true)) {
 				continue;
@@ -191,8 +177,6 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 			}
 
 			$columnValues[] = ($strikethrough) ? '<s>' . $content . '</s>' : $content;
-
-			$columnNumber++;
 		}
 
 		$tempValue = '';
@@ -212,8 +196,6 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 		$columnValues[] = $tempValue;
 
 		$inventoryAddinTable->addRowByArray($columnValues, '', array('nobr' => 'true'));
-
-		++$listRowNumber;
 	}
 
 	$page->addHtml($inventoryAddinTable->show());
@@ -239,6 +221,7 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 					</a>
 					</div>
 					<div id="inventory_manager_box_body" class="card-body">
+					<p>' . $gL10n->get('PLG_INVENTORY_MANAGER_ADDIN_LAST_RECEIVER_DESC') . '</p>
 					<ul class="list-group">');
 
 	// prepare header for table
@@ -246,17 +229,12 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 	$inventoryAddinTable->setDatatablesRowsPerPage(10);
 
 	// create array with all column heading values
-
-	// initialize array parameters for table and set the first column for the counter
-	$columnAlign  = array('right');
-	$columnHeading = array($gL10n->get('SYS_ABR_NO'));
-
-	// headlines for columns
-	$columnNumber = 1;
-
 	$addinItemFields = array();
 	foreach ($pPreferences->config['Optionen']['profile_addin'] as $addinField) {
-		$addinItemFields[] = $addinField;
+		// we are in the last receiver view, so we dont need the last receiver field in the table
+		if ($addinField !== 'LAST_RECEIVER') {
+			$addinItemFields[] = $addinField;
+		}
 	}
 	
 	$itemsReceiver->readItemData($itemsReceiver->items[0]['imi_id'], $gCurrentOrgId);
@@ -286,9 +264,6 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 		}
 
 		$columnHeading[] = $columnHeader;
-
-		$columnNumber++;
-
 	}
 
 	// add column for edit and delete icons
@@ -300,8 +275,6 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 	$inventoryAddinTable->disableDatatablesColumnsSort(array(count($columnHeading))); //disable sort in last column
 	$inventoryAddinTable->setDatatablesColumnsNotHideResponsive(array(count($columnHeading)));
 
-	$listRowNumber = 1;
-
 	foreach ($itemsReceiver->items as $item) {
 		$itemsReceiver->readItemData($item['imi_id'], $gCurrentOrgId);
 		$columnValues = array();
@@ -310,10 +283,6 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 
 		foreach ($itemsReceiver->mItemFields as $itemField) {
 			$imfNameIntern = $itemField->getValue('imf_name_intern');
-
-			if ($columnNumber === 1) {
-				$columnValues[] = $listRowNumber;
-			}
 
 			if (!in_array($imfNameIntern, $addinItemFields, true)) {
 				continue;
@@ -342,8 +311,6 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 			}
 
 			$columnValues[] = ($strikethrough) ? '<s>' . $content . '</s>' : $content;
-
-			$columnNumber++;
 		}
 
 		$tempValue = '';
@@ -363,8 +330,6 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 		$columnValues[] = $tempValue;
 
 		$inventoryAddinTable->addRowByArray($columnValues, '', array('nobr' => 'true'));
-
-		++$listRowNumber;
 	}
 
 	$page->addHtml($inventoryAddinTable->show());

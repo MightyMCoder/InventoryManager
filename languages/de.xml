@@ -4,6 +4,8 @@
     <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Hier kannst du, zusätzlich zur Rolle "Administrator", weitere Rollen für den Zugriff auf das Modul "Einstellungen" berechtigen.</string>   
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE">Datum anfügen</string>
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE_DESC">Soll an eine Exportdatei ein Datum im Format JJJJ-MM-TT angefügt werden, so ist der Haken zu setzen.</string>    
+    <string name="PLG_INVENTORY_MANAGER_ADDIN_KEEPER_DESC">Die Tabelle zeigt die von dir verwalteten Gegenstände:</string>    
+    <string name="PLG_INVENTORY_MANAGER_ADDIN_LAST_RECEIVER_DESC">Die Tabelle zeigt die an dich ausgeliehenen Gegenstände:</string>    
     <string name="PLG_INVENTORY_MANAGER_BASED_ON">(basierend auf #VAR1#)</string>
     <string name="PLG_INVENTORY_MANAGER_CATEGORY">Kategorie</string>
     <string name="PLG_INVENTORY_MANAGER_CONFIGURATION">Konfiguration</string>
