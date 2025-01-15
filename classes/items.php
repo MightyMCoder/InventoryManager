@@ -660,24 +660,26 @@ class CItems
 
         // format of date will be local but database has stored Y-m-d format must be changed for compare
         if ($this->mItemFields[$fieldNameIntern]->getValue('imf_type') === 'DATE') {
-            if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
-                //check if date is datetime or only date
-                if (strpos($newValue, ' ') === false) {
-                    $newValue .=  ' 00:00';
-                }                
-                $date = \DateTime::createFromFormat('Y-m-d H:i', $newValue);
-                if ($date !== false) {
-                    $newValue = $date->format('Y-m-d H:i');
+            if ($newValue !== '') {
+                if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                    //check if date is datetime or only date
+                    if (strpos($newValue, ' ') === false) {
+                        $newValue .=  ' 00:00';
+                    }                
+                    $date = \DateTime::createFromFormat('Y-m-d H:i', $newValue);
+                    if ($date !== false) {
+                        $newValue = $date->format('Y-m-d H:i');
+                    }
                 }
-            }
-            else {
-                // check if date is date or datetime
-                if (strpos($newValue, ' ') !== false) {
-                    $newValue = substr($newValue, 0, 10);
-                }
-                $date = \DateTime::createFromFormat('Y-m-d', $newValue);
-                if ($date !== false) {
-                    $newValue = $date->format('Y-m-d');
+                else {
+                    // check if date is date or datetime
+                    if (strpos($newValue, ' ') !== false) {
+                        $newValue = substr($newValue, 0, 10);
+                    }
+                    $date = \DateTime::createFromFormat('Y-m-d', $newValue);
+                    if ($date !== false) {
+                        $newValue = $date->format('Y-m-d');
+                    }
                 }
             }
         }
