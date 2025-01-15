@@ -166,7 +166,7 @@ class CConfigTablePIM
 			imd_id int(10) unsigned NOT NULL AUTO_INCREMENT,
 			imd_imf_id int(10) unsigned NOT NULL,
 			imd_imi_id int(10) unsigned NOT NULL,
-			imd_value varchar(4000),
+			imd_value varchar(4000) NOT NULL DEFAULT \'\',
 			PRIMARY KEY (imd_id)
 		');
 
@@ -185,11 +185,11 @@ class CConfigTablePIM
 			iml_id int(10) unsigned NOT NULL AUTO_INCREMENT,
 			iml_imi_id int(10) unsigned NOT NULL,	
 			iml_imf_id int(10) unsigned NOT NULL,	
-			iml_value_old varchar(4000),	
-			iml_value_new varchar(4000),	
+			iml_value_old varchar(4000) NOT NULL DEFAULT \'\',	
+			iml_value_new varchar(4000) NOT NULL DEFAULT \'\',	
 			iml_usr_id_create int(10) unsigned DEFAULT NULL,
 			iml_timestamp_create timestamp NULL DEFAULT CURRENT_TIMESTAMP,	
-			iml_comment varchar(255) NULL,	
+			iml_comment varchar(255) NOT NULL DEFAULT \'\',	
 			PRIMARY KEY (iml_id)
 		');
 
