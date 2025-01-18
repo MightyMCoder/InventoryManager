@@ -652,10 +652,10 @@ class CItems
 
         // save old and new data for notification
         if (array_key_exists($imfId, $this->mItemData)) {
-            $this->mChangedItemData[] = array($this->mItemData[$imfId]->getValue('imf_name') => array('oldValue' => $oldFieldValue, 'newValue' => $newValue));
+            $this->mChangedItemData[] = array($this->mItemData[$imfId]->getValue('imf_name_intern') => array('oldValue' => $oldFieldValue, 'newValue' => $newValue));
         }
         else {
-            $this->mChangedItemData[] = array($this->mItemFields[$fieldNameIntern]->getValue('imf_name') => array('oldValue' => $oldFieldValue, 'newValue' => $newValue));
+            $this->mChangedItemData[] = array($this->mItemFields[$fieldNameIntern]->getValue('imf_name_intern') => array('oldValue' => $oldFieldValue, 'newValue' => $newValue));
         }
 
         // format of date will be local but database has stored Y-m-d format must be changed for compare
@@ -858,10 +858,10 @@ class CItems
                         foreach ($data as $key => $value) {
                             if ($value['oldValue'] != $value['newValue']) {
                                 $listValues = $this->getProperty(strtoupper(str_replace('PIM_', '', $key)), 'imf_value_list');
-                                if ($key === 'PIM_ITEMNAME') {
+                                if ($key === 'ITEMNAME') {
                                     $itemName = $value['newValue'];
                                 }
-                                elseif ($key === 'PIM_KEEPER') {
+                                elseif ($key === 'KEEPER') {
                                     $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
                                             FROM ' . TBL_USERS . '
                                             JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
@@ -888,7 +888,7 @@ class CItems
                                         isset($users[$value['newValue']]) ? $users[$value['newValue']] : $textNew
                                     );
                                 }
-                                elseif ($key === 'PIM_LAST_RECEIVER') {
+                                elseif ($key === 'LAST_RECEIVER') {
                                     $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
                                             FROM ' . TBL_USERS . '
                                             JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
@@ -909,7 +909,7 @@ class CItems
                                         isset($users[$value['newValue']]) ? $users[$value['newValue']] : $value['newValue']
                                     );
                                 }
-                                elseif ($key === 'PIM_IN_INVENTORY')  {
+                                elseif ($key === 'IN_INVENTORY')  {
                                     $changes[] = array(
                                         $key,
                                         $value['oldValue'] == 1 ? $gL10n->get('SYS_YES') : ($value['oldValue'] == 0 ? $gL10n->get('SYS_NO') : $value['oldValue']),
@@ -943,7 +943,8 @@ class CItems
                                 $gL10n->get('SYS_NEW_VALUE')
                             );
                         foreach ($changes as $c) {
-                            $message .= sprintf($format_row, (str_contains($c[0], 'PIM_') ? $gL10n->get($c[0]) : $c[0]), $c[1], $c[2]);
+                            $fieldName = convlanguagePIM($this->getProperty($c[0], 'imf_name'));
+                            $message .= sprintf($format_row, $fieldName, $c[1], $c[2]);
                         }
 
                         $message .= $table_end;
