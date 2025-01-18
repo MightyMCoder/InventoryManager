@@ -44,6 +44,10 @@ function compareArrays(array $array1, array $array2): bool {
     }, ARRAY_FILTER_USE_KEY);
 
     foreach ($array1 as $value) {
+        if ($value === '') {
+            continue;
+        }
+        
         if (!in_array($value, $array2, true)) {
             return true;
         }
