@@ -1,4 +1,3 @@
-
 <?php
 /**
  ***********************************************************************************************
@@ -41,15 +40,18 @@ if (!isUserAuthorizedForPreferencesPIM()) {
  */
 function compareArrays(array $array1, array $array2): bool {
     $array1 = array_filter($array1, function($key) {
-        return $key !== 'KEEPER' && $key !== 'LAST_RECEIVER' && $key !== 'CATEGORY';
+        return $key !== 'KEEPER' && $key !== 'LAST_RECEIVER' && $key !== 'CATEGORY' && $key !== 'IN_INVENTORY';
     }, ARRAY_FILTER_USE_KEY);
 
     foreach (['RECEIVED_ON', 'RECEIVED_BACK_ON'] as $dateField) {
-        if (isset($array1[$dateField])) {
+        if (isset($array1[$dateField]) && $array1[$dateField] !== '') {
             $date = DateTime::createFromFormat('d.m.Y', $array1[$dateField]);
             if ($date) {
                 $array1[$dateField] = $date->format('Y-m-d');
             }
+        }
+        else {
+            unset($array1[$dateField]);
         }
     }
 

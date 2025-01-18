@@ -12,7 +12,6 @@
 
 require_once(__DIR__ . '/../../../adm_program/system/common.php');
 require_once(__DIR__ . '/../common_function.php');
-require_once(__DIR__ . '/../classes/items.php');
 
 // Access only with valid login
 require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
@@ -72,12 +71,6 @@ if (strlen($importfile) === 0) {
     $gMessage->show($gL10n->get('SYS_FILE_NOT_EXIST'));
 // => EXIT
 }
-
-$items = new CItems($gDb, $gCurrentOrgId);
-$items->readItemData($getItemId, $gCurrentOrgId);
-
-// read file using the phpSpreadsheet library
-//$_SESSION['rol_id']           = (int) $items->getValue('rol_id');
 
 switch ($postImportFormat) {
     case 'XLSX':
