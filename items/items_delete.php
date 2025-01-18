@@ -107,7 +107,7 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer) {
 		$form->addCustomContent('', '<br />'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEM_MAKE_TO_FORMER'));
 	}
 
-	$page->addHtml($form->show(false));
+	$page->addHtml($form->show());
 	$page->show();
 }
 
