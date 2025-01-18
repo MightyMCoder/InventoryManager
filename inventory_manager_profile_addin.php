@@ -92,7 +92,7 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 					<ul class="list-group">');
 
 	// prepare header for table
-	$inventoryAddinTable = new HtmlTable('adm_inventory_addin_table', $page, true, true, 'table table-condensed');
+	$inventoryAddinTable = new HtmlTable('adm_inventory_addin_table_keeper', $page, true, true, 'table table-condensed');
 	$inventoryAddinTable->setDatatablesRowsPerPage(10);
 
 	// create array with all column heading values
@@ -158,8 +158,8 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 
 			if (($imfNameIntern == 'KEEPER' || $imfNameIntern == 'LAST_RECEIVER') && strlen($content) > 0) {
 				if (is_numeric($content)) {
-					$user->readDataById($content);
-					if (!$user->getValue('usr_uuid') == '') {
+					$found = $user->readDataById($content);
+					if ($found) {
 						$content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>';
 					}
 				}
@@ -225,7 +225,7 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 					<ul class="list-group">');
 
 	// prepare header for table
-	$inventoryAddinTable = new HtmlTable('adm_inventory_addin_table', $page, true, true, 'table table-condensed');
+	$inventoryAddinTable = new HtmlTable('adm_inventory_addin_table_receiver', $page, true, true, 'table table-condensed');
 	$inventoryAddinTable->setDatatablesRowsPerPage(10);
 
 	// create array with all column heading values
@@ -292,8 +292,8 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 
 			if (($imfNameIntern == 'KEEPER' || $imfNameIntern == 'LAST_RECEIVER') && strlen($content) > 0) {
 				if (is_numeric($content)) {
-					$user->readDataById($content);
-					if (!$user->getValue('usr_uuid') == '') {
+					$found = $user->readDataById($content);
+					if ($found) {
 						$content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>';
 					}
 				}

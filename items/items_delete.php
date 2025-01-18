@@ -78,8 +78,13 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer) {
 
 		if ($imfNameIntern === 'KEEPER'|| $imfNameIntern == 'LAST_RECEIVER'&& strlen($content) > 0) {
             if (is_numeric($content)) {
-                $user->readDataById($content);
-				$content = $user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME');
+                $found = $user->readDataById($content);
+                if ($found) {
+					$content = $user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME');
+                }
+                else {
+                    $content = $gL10n->get('SYS_NO_USER_FOUND');
+                }
 			}
 		} elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'DATE') {
 			$content = $items->getHtmlValue($imfNameIntern, $content);

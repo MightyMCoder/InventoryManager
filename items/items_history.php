@@ -116,8 +116,13 @@ while ($row = $fieldHistoryStatement->fetch()) {
     if ($imlValueNew !== '') {
         if ($items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern') === 'KEEPER' || $items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern') === 'LAST_RECEIVER') {
             if (is_numeric($imlValueNew)) {
-                $user->readDataById($imlValueNew);
-                $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
+                $found = $user->readDataById($imlValueNew);
+                if ($found) {
+                    $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
+                }
+                else {
+                    $columnValues[] = $gL10n->get('SYS_NO_USER_FOUND');
+                }
             }
             else {
                 $columnValues[] = $imlValueNew;
@@ -135,8 +140,13 @@ while ($row = $fieldHistoryStatement->fetch()) {
     if ($imlValueOld !== '') {
         if ($items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern') === 'KEEPER' || $items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern') === 'LAST_RECEIVER') {
             if (is_numeric($imlValueOld)) {
-                $user->readDataById($imlValueOld);
-                $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
+                $found = $user->readDataById($imlValueNew);
+                if ($found) {
+                    $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
+                }
+                else {
+                    $columnValues[] = $gL10n->get('SYS_NO_USER_FOUND');
+                }
             }
             else {
                 $columnValues[] = $imlValueNew;

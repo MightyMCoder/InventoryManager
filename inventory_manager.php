@@ -486,9 +486,9 @@ foreach ($items->items as $item) {
         $content = $items->getValue($imfNameIntern, 'database');
 
         if ($imfNameIntern == 'KEEPER' && strlen($content) > 0) {
-            $user->readDataById($content);
-            if ($user->getValue('usr_uuid') == '') {
-                $content = $gL10n->get('SYS_DELETED_USER');
+            $found = $user->readDataById($content);
+            if (!$found) {
+                $content = $gL10n->get('SYS_NO_USER_FOUND');
             }
             else {
                 if ($getMode == 'html') {
@@ -518,8 +518,8 @@ foreach ($items->items as $item) {
 
         if ($imfNameIntern == 'LAST_RECEIVER' && strlen($content) > 0) {
             if (is_numeric($content)) {
-                $user->readDataById($content);
-                if (!$user->getValue('usr_uuid') == '') {
+                $found = $user->readDataById($content);
+                if ($found) {
                     if ($getMode == 'html') {
                         $content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>';
                     }
