@@ -86,7 +86,7 @@ $form = new HtmlForm('item_fields_edit_form', SecurityUtils::encodeUrl(ADMIDIO_U
 
 $form->addInput('imf_name', $gL10n->get('SYS_NAME'), $itemField->getValue('imf_name', 'database'), array(
     'maxLength' => 100,
-    'property' => $itemField->getValue('imf_system') == 1 ? HtmlForm::FIELD_DISABLED : HtmlForm::FIELD_REQUIRED
+    'property' => $itemField->getValue('imf_system') == 1 ? HtmlForm::FIELD_DEFAULT : HtmlForm::FIELD_REQUIRED
     )
 );
 
