@@ -72,6 +72,7 @@
     <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">Die Authorisierungsprüfung des Plugins ist fehlgeschlagen. Es ist mehr als ein Menüpunkt mit derselben URL definiert.\n\n=> #VAR1_BOLD#</string>    
     <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_NEW">Neu</string>
+    <string name="PLG_INVENTORY_MANAGER_NO_NEW_IMPORT_DATA">In der Importdatei waren keine neuen Daten vorhanden!</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# geändert:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# angelegt:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">Ein Gegenstand im Inventar wurde gelöscht:</string>

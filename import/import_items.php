@@ -2,12 +2,16 @@
 <?php
 /**
  ***********************************************************************************************
- * Import items from a csv file
+ * Import items from a file
  *
  * @see         https://github.com/MightyMCoder/InventoryManager/ The InventoryManager GitHub project
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
+ * 
+ * methods:
+ * 
+ * compareArrays(array $array1, array $array2)      : Compares two arrays to determine if they are different based on specific criteria.
  ***********************************************************************************************
  */
 
@@ -24,6 +28,39 @@ if (!isUserAuthorizedForPreferencesPIM()) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 
+/**
+ * Compares two arrays to determine if they are different based on specific criteria.
+ *
+ * This function filters out certain keys ('KEEPER', 'LAST_RECEIVER', 'CATEGORY') from the first array,
+ * converts date fields ('RECEIVED_ON', 'RECEIVED_BACK_ON') from 'd.m.Y' format to 'Y-m-d' format,
+ * and then checks if any value in the filtered and transformed first array is not present in the second array.
+ *
+ * @param array $array1 The first array to compare.
+ * @param array $array2 The second array to compare.
+ * @return bool Returns true if the arrays are different based on the criteria, otherwise false.
+ */
+function compareArrays(array $array1, array $array2): bool {
+    $array1 = array_filter($array1, function($key) {
+        return $key !== 'KEEPER' && $key !== 'LAST_RECEIVER' && $key !== 'CATEGORY';
+    }, ARRAY_FILTER_USE_KEY);
+
+    foreach (['RECEIVED_ON', 'RECEIVED_BACK_ON'] as $dateField) {
+        if (isset($array1[$dateField])) {
+            $date = DateTime::createFromFormat('d.m.Y', $array1[$dateField]);
+            if ($date) {
+                $array1[$dateField] = $date->format('Y-m-d');
+            }
+        }
+    }
+
+    foreach ($array1 as $value) {
+        if (!in_array($value, $array2, true)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 $_SESSION['import_csv_request'] = $_POST;
 
 // check the CSRF token of the form against the session token
@@ -37,6 +74,8 @@ $importedFields = array();
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
+
+$user = new User($gDb, $gProfileFields);
 
 // create array with all profile fields that where assigned to columns of the import file
 foreach ($_POST as $formFieldId => $importFileColumn) {
@@ -74,16 +113,30 @@ $items = new CItems($gDb, $gCurrentOrgId);
 $items->readItems($gCurrentOrgId);
 $importSuccess = false;
 
+// check if the item already exists
 foreach ($items->items as $fieldId => $value) {
     $items->readItemData($value['imi_id'], $gCurrentOrgId);
-    $i = 0;
+    $itemValues = array();
+    foreach ($items->mItemData as $key => $itemData) {
+        $itemValue = $itemData->getValue('imd_value');
+        if ($itemData->getValue('imf_name_intern')  === 'KEEPER' || $itemData->getValue('imf_name_intern') === 'LAST_RECEIVER' || $itemData->getValue('imf_name_intern') === 'CATEGORY')
+        {
+            continue;
+        }
+        
+        $itemValues[] = array($itemData->getValue('imf_name_intern') => $itemValue);
+    }
+    $itemValues = array_merge_recursive(...$itemValues);
 
-    foreach ($items->mItemData as $itemData) {
-        foreach ($assignedFieldColumn as $row => $values) {
-            if ($itemData->getValue('imd_value') == $values['ITEMNAME']) {
-                unset($assignedFieldColumn[$row]);
-                continue;
-            }
+    if (count($assignedFieldColumn) === 0) {
+        break;
+    }
+
+    foreach($assignedFieldColumn as $key => $value) {
+        $ret = compareArrays($value, $itemValues);
+        if (!$ret) {
+            unset($assignedFieldColumn[$key]);
+            continue;
         }
     }
 }
@@ -282,6 +335,6 @@ if ($gNavigation->count() > 2) {
     $gMessage->show($gL10n->get('SYS_SAVE_DATA'));
 }
 else {
-    $gMessage->setForwardUrl($gNavigation->getUrl(), 1000);
-    $gMessage->show($gL10n->get('SYS_REDIRECT'));
+    $gMessage->setForwardUrl($gNavigation->getUrl());
+    $gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_NO_NEW_IMPORT_DATA'));
 }

@@ -72,6 +72,7 @@
     <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">Le contrôle d\'autorisation du plug-in a échoué. Plus d\'un élément de menu est défini avec la même URL.\n\n=> #VAR1_BOLD#</string>    
     <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_NEW">Nouveau</string>
+    <string name="PLG_INVENTORY_MANAGER_NO_NEW_IMPORT_DATA">Aucune nouvelle donnée n'était présente dans le fichier d'importation!</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">L'objet #VAR1_BOLD# a été modifié par #VAR2_BOLD#:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">L'objet #VAR1_BOLD# a été créé par #VAR2_BOLD#:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_DELETED">Un objet dans l'inventaire a été supprimé:</string>
