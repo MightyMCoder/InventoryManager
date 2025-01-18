@@ -434,5 +434,5 @@ $form->addHtml(admFuncShowCreateChangeInfoById(
     (int) $infoItem->getValue('imi_usr_id_change'), $infoItem->getValue('imi_timestamp_change')
 ));
 
-$page->addHtml($form->show(false));
+$page->addHtml($form->show());
 $page->show();

@@ -91,7 +91,7 @@ $form->addInput('filter_date_from', $gL10n->get('SYS_START'), $dateFromHtml, arr
 $form->addInput('filter_date_to', $gL10n->get('SYS_END'), $dateToHtml, array('type' => 'date', 'maxLength' => 10));
 $form->addInput('item_id', '', $getItemId, array('property' => HtmlForm::FIELD_HIDDEN));
 $form->addSubmitButton('btn_send', $gL10n->get('SYS_OK'));
-$FilterNavbar->addForm($form->show(false));
+$FilterNavbar->addForm($form->show());
 $page->addHtml($FilterNavbar->show());
 
 $table = new HtmlTable('profile_field_history_table', $page, true, true);

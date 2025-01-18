@@ -125,7 +125,7 @@ $form->addMultilineTextInput('imf_value_list', $gL10n->get('ORG_VALUE_LIST'), (s
 );
 
 $form->addCheckbox('imf_mandatory', $gL10n->get('SYS_REQUIRED_INPUT'), (bool)$itemField->getValue('imf_mandatory'), array(
-    'property' => $itemField->getValue('imf_system') == 1 ? HtmlForm::FIELD_DISABLED : HtmlForm::FIELD_DEFAULT,
+    'property' => HtmlForm::FIELD_DEFAULT,
     'icon' => 'fa-asterisk'
     )
 );
@@ -144,5 +144,5 @@ $form->addHtml(admFuncShowCreateChangeInfoById(
 ));
 
 // add form to html page and show page
-$page->addHtml($form->show(false));
+$page->addHtml($form->show());
 $page->show();

@@ -124,7 +124,7 @@ function showDeinstallationDialog() {
 	$form->addSubmitButton('btn_deinstall', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), array('icon' => 'fa-trash-alt', 'class' => 'offset-sm-3'));
 
 	// add form to html page and show page
-	$page->addHtml($form->show(false));
+	$page->addHtml($form->show());
 	$page->show();
 }
 

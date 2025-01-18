@@ -91,15 +91,12 @@ function getColumnAssignmentHtml(array $arrayColumnList, array $arrayCsvColumns)
     return $html;
 }
 
-$items = new CItems($gDb, $gCurrentOrgId);
-$items->readItems($gCurrentOrgId);
-
 // create html page object
 $page = new HtmlPage('admidio-items-import-csv', $headline);
 $page->addHtml('<p class="lead">'.$gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_ASSIGN_FIELDS').'</p>');
 
 // show form
-$form = new HtmlForm('import_assign_fields_form', ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_items.php', $page, array('type' => 'vertical'));
+$form = new HtmlForm('import_assign_fields_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_items.php'), $page, array('type' => 'vertical'));
 $form->addCheckbox('first_row', $gL10n->get('SYS_FIRST_LINE_COLUMN_NAME'), $formValues['first_row']);
 $form->addHtml('<div class="alert alert-warning alert-small" id="admidio-import-unused"><i class="fas fa-exclamation-triangle"></i>'.$gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_UNUSED_HEAD').'<div id="admidio-import-unused-fields">-</div></div>');
 
@@ -147,31 +144,31 @@ $htmlFieldTable = '
             </tr>
         </thead>';
 
-        $arrayCsvColumns = $_SESSION['import_data'][0];
-        // Remove only null values
-        $arrayCsvColumns = array_filter($arrayCsvColumns, function ($value) {
-            return !is_null($value);
-        });
+$arrayCsvColumns = $_SESSION['import_data'][0];
+// Remove only null values
+$arrayCsvColumns = array_filter($arrayCsvColumns, function ($value) {
+    return !is_null($value);
+});
 
-        $categoryId = null;
-        $arrayImportableFields = array();
-        
-        $items = new CItems($gDb, $gCurrentOrgId);
-        $row = array();
-        foreach ($items->mItemFields as $columnKey => $columnValue) {
-            $imfName = $columnValue->GetValue('imf_name');
-            
-            // If the field name starts with 'PIM_', it is a language key
-            if (strpos($imfName, 'PIM_') !== false) {
-                $row = array($columnValue->GetValue('imf_name_intern') => $gL10n->get($imfName));
-            } else {
-                $row = array($columnValue->GetValue('imf_name_intern') => $imfName);
-            }
-            
-            $arrayImportableFields[] = $row;
-        }
+$categoryId = null;
+$arrayImportableFields = array();
 
-        $htmlFieldTable .= getColumnAssignmentHtml($arrayImportableFields, $arrayCsvColumns) .'
+$items = new CItems($gDb, $gCurrentOrgId);
+$row = array();
+foreach ($items->mItemFields as $columnKey => $columnValue) {
+    $imfName = $columnValue->GetValue('imf_name');
+    
+    // If the field name starts with 'PIM_', it is a language key
+    if (strpos($imfName, 'PIM_') !== false) {
+        $row = array($columnValue->GetValue('imf_name_intern') => $gL10n->get($imfName));
+    } else {
+        $row = array($columnValue->GetValue('imf_name_intern') => $imfName);
+    }
+    
+    $arrayImportableFields[] = $row;
+}
+
+$htmlFieldTable .= getColumnAssignmentHtml($arrayImportableFields, $arrayCsvColumns) .'
         </tbody>
     </table>';
 $form->addHtml($htmlFieldTable);
