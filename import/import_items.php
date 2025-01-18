@@ -40,20 +40,8 @@ if (!isUserAuthorizedForPreferencesPIM()) {
  */
 function compareArrays(array $array1, array $array2): bool {
     $array1 = array_filter($array1, function($key) {
-        return $key !== 'KEEPER' && $key !== 'LAST_RECEIVER' && $key !== 'CATEGORY' && $key !== 'IN_INVENTORY';
+        return $key !== 'KEEPER' && $key !== 'LAST_RECEIVER' && $key !== 'CATEGORY' && $key !== 'IN_INVENTORY' && $key !== 'RECEIVED_ON' && $key !== 'RECEIVED_BACK_ON';
     }, ARRAY_FILTER_USE_KEY);
-
-    foreach (['RECEIVED_ON', 'RECEIVED_BACK_ON'] as $dateField) {
-        if (isset($array1[$dateField]) && $array1[$dateField] !== '') {
-            $date = DateTime::createFromFormat('d.m.Y', $array1[$dateField]);
-            if ($date) {
-                $array1[$dateField] = $date->format('Y-m-d');
-            }
-        }
-        else {
-            unset($array1[$dateField]);
-        }
-    }
 
     foreach ($array1 as $value) {
         if (!in_array($value, $array2, true)) {
@@ -121,7 +109,7 @@ foreach ($items->items as $fieldId => $value) {
     $itemValues = array();
     foreach ($items->mItemData as $key => $itemData) {
         $itemValue = $itemData->getValue('imd_value');
-        if ($itemData->getValue('imf_name_intern')  === 'KEEPER' || $itemData->getValue('imf_name_intern') === 'LAST_RECEIVER' || $itemData->getValue('imf_name_intern') === 'CATEGORY')
+        if ($itemData->getValue('imf_name_intern')  === 'KEEPER' || $itemData->getValue('imf_name_intern') === 'LAST_RECEIVER' || $itemData->getValue('imf_name_intern') === 'CATEGORY' || $itemData->getValue('imf_name_intern') === 'IN_INVENTORY' || $itemData->getValue('imf_name_intern') === 'RECEIVED_ON' || $itemData->getValue('imf_name_intern') === 'RECEIVED_BACK_ON')
         {
             continue;
         }
