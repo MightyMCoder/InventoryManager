@@ -875,11 +875,17 @@ class CItems
                                     foreach ($statement->fetchAll() as $user) {
                                         $users[$user['usr_id']] = $user['name'];
                                     }
+                                    
+                                    $textOld = $gL10n->get('SYS_NO_USER_FOUND');
+                                    if ($this->itemImported) {
+                                        $textOld = '';
+                                        $textNew = $gL10n->get('SYS_NO_USER_FOUND');
+                                    }
 
                                     $changes[] = array(
                                         $key,
-                                        isset($users[$value['oldValue']]) ? $users[$value['oldValue']] : $gL10n->get('SYS_DELETED_USER'),
-                                        isset($users[$value['newValue']]) ? $users[$value['newValue']] : $gL10n->get('SYS_DELETED_USER')
+                                        isset($users[$value['oldValue']]) ? $users[$value['oldValue']] : $textOld,
+                                        isset($users[$value['newValue']]) ? $users[$value['newValue']] : $textNew
                                     );
                                 }
                                 elseif ($key === 'PIM_LAST_RECEIVER') {

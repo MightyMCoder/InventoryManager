@@ -94,154 +94,161 @@ $importedItemData = array();
 foreach ($assignedFieldColumn as $row => $values) {
     foreach ($items->mItemFields as $fields){
         $imfNameIntern = $fields->getValue('imf_name_intern');
-        if ($fields->getValue('imf_type')=='CHECKBOX') {
-            if ($values[$imfNameIntern] === $gL10n->get('SYS_YES')) {
-                $values[$imfNameIntern] = 1;
-            }
-            else {
-                $values[$imfNameIntern] = 0;
-            }
-        }
 
-        if($imfNameIntern === 'ITEMNAME') {
-            if ($values[$imfNameIntern] === '') {
-                break;
-            }
-            $val = $values[$imfNameIntern];
-        }
-        elseif($imfNameIntern === 'KEEPER') {
-            if (substr_count($values[$imfNameIntern], ',') === 1) {
-                $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value) as name
-                    FROM ' . TBL_USERS . '
-                    JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
-                    JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
-                    WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
-            }
-            else {
-                $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
-                FROM ' . TBL_USERS . '
-                JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
-                JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
-                LEFT JOIN ' . TBL_USER_DATA . ' as postcode ON postcode.usd_usr_id = usr_id AND postcode.usd_usf_id = ' . $gProfileFields->getProperty('POSTCODE', 'usf_id') . '
-                LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
-                LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
-                WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
-            }
-
-            $result = $gDb->queryPrepared($sql);
-
-            while ($row = $result->fetch()) {
-                if ($row['name'] == $values[$imfNameIntern]) {
-                    $val = $row['usr_id'];
-                    break;
+        if (isset($values[$imfNameIntern]))
+        {
+            if ($fields->getValue('imf_type')=='CHECKBOX') {
+                if ($values[$imfNameIntern] === $gL10n->get('SYS_YES')) {
+                    $values[$imfNameIntern] = 1;
                 }
-                $val = '';
-            }
-        }
-        elseif($imfNameIntern === 'LAST_RECEIVER') {
-            if (substr_count($values[$imfNameIntern], ',') === 1) {
-                $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value) as name
-                    FROM ' . TBL_USERS . '
-                    JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
-                    JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
-                    WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
-            }
-            else {
-                $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
-                FROM ' . TBL_USERS . '
-                JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
-                JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
-                LEFT JOIN ' . TBL_USER_DATA . ' as postcode ON postcode.usd_usr_id = usr_id AND postcode.usd_usf_id = ' . $gProfileFields->getProperty('POSTCODE', 'usf_id') . '
-                LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
-                LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
-                WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
+                else {
+                    $values[$imfNameIntern] = 0;
+                }
             }
 
-            $result = $gDb->queryPrepared($sql);
-
-            while ($row = $result->fetch()) {
-                if ($row['name'] == $values[$imfNameIntern]) {
-                    $val = $row['usr_id'];
+            if($imfNameIntern === 'ITEMNAME') {
+                if ($values[$imfNameIntern] === '') {
                     break;
                 }
                 $val = $values[$imfNameIntern];
             }
-        }
-        elseif($imfNameIntern === 'CATEGORY') {
-            // Merge the arrays
-            $valueList = array_merge($items->getProperty($imfNameIntern, 'imf_value_list'), $valueList);
-            // Remove duplicates
-            $valueList = array_unique($valueList);
-            // Re-index the array starting from 1
-            $valueList = array_combine(range(1, count($valueList)), array_values($valueList));
-
-            $val = array_search($values[$imfNameIntern], $valueList);
-
-            if ($val === false) {
-                if ($values[$imfNameIntern] == '') {
-                    $val = array_search($valueList[1], $valueList);
+            elseif($imfNameIntern === 'KEEPER') {
+                if (substr_count($values[$imfNameIntern], ',') === 1) {
+                    $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value) as name
+                        FROM ' . TBL_USERS . '
+                        JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
+                        JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
+                        WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
                 }
                 else {
-                    $itemField = new TableAccess($gDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf');
-                    $itemField->readDataById($items->mItemFields[$imfNameIntern]->getValue('imf_id'));
-                    $valueList[] = $values[$imfNameIntern];
-                    $itemField->setValue("imf_value_list", $string = implode("\n", $valueList));
+                    $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
+                    FROM ' . TBL_USERS . '
+                    JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
+                    JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
+                    LEFT JOIN ' . TBL_USER_DATA . ' as postcode ON postcode.usd_usr_id = usr_id AND postcode.usd_usf_id = ' . $gProfileFields->getProperty('POSTCODE', 'usf_id') . '
+                    LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
+                    LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
+                    WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
+                }
 
-                    // Save data to the database
-                    $returnCode = $itemField->save();
+                $result = $gDb->queryPrepared($sql);
 
-                    if ($returnCode < 0) {
-                        $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
-                        // => EXIT
+                while ($row = $result->fetch()) {
+                    if ($row['name'] == $values[$imfNameIntern]) {
+                        $val = $row['usr_id'];
+                        break;
+                    }
+                    $val = '-1';
+                }
+            }
+            elseif($imfNameIntern === 'LAST_RECEIVER') {
+                if (substr_count($values[$imfNameIntern], ',') === 1) {
+                    $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value) as name
+                        FROM ' . TBL_USERS . '
+                        JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
+                        JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
+                        WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
+                }
+                else {
+                    $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
+                    FROM ' . TBL_USERS . '
+                    JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
+                    JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
+                    LEFT JOIN ' . TBL_USER_DATA . ' as postcode ON postcode.usd_usr_id = usr_id AND postcode.usd_usf_id = ' . $gProfileFields->getProperty('POSTCODE', 'usf_id') . '
+                    LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
+                    LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
+                    WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
+                }
+
+                $result = $gDb->queryPrepared($sql);
+
+                while ($row = $result->fetch()) {
+                    if ($row['name'] == $values[$imfNameIntern]) {
+                        $val = $row['usr_id'];
+                        break;
+                    }
+                    $val = $values[$imfNameIntern];
+                }
+            }
+            elseif($imfNameIntern === 'CATEGORY') {
+                // Merge the arrays
+                $valueList = array_merge($items->getProperty($imfNameIntern, 'imf_value_list'), $valueList);
+                // Remove duplicates
+                $valueList = array_unique($valueList);
+                // Re-index the array starting from 1
+                $valueList = array_combine(range(1, count($valueList)), array_values($valueList));
+
+                $val = array_search($values[$imfNameIntern], $valueList);
+
+                if ($val === false) {
+                    if ($values[$imfNameIntern] == '') {
+                        $val = array_search($valueList[1], $valueList);
                     }
                     else {
-                        $val = array_search($values[$imfNameIntern], $valueList);
+                        $itemField = new TableAccess($gDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf');
+                        $itemField->readDataById($items->mItemFields[$imfNameIntern]->getValue('imf_id'));
+                        $valueList[] = $values[$imfNameIntern];
+                        $itemField->setValue("imf_value_list", $string = implode("\n", $valueList));
+
+                        // Save data to the database
+                        $returnCode = $itemField->save();
+
+                        if ($returnCode < 0) {
+                            $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
+                            // => EXIT
+                        }
+                        else {
+                            $val = array_search($values[$imfNameIntern], $valueList);
+                        }
                     }
                 }
             }
-        }
-        elseif($imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON') {
-            $val = $values[$imfNameIntern];
-            if ($val !== '') {
-                // date must be formatted
-                if ($pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
-                    //check if date is datetime or only date
-                    if (strpos($val, ' ') === false) {
-                        $val .=  '00:00';
+            elseif($imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON') {
+                $val = $values[$imfNameIntern];
+                if ($val !== '') {
+                    // date must be formatted
+                    if ($pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                        //check if date is datetime or only date
+                        if (strpos($val, ' ') === false) {
+                            $val .=  '00:00';
+                        }
+                        // check if date is wrong formatted
+                        $dateObject = DateTime::createFromFormat('d.m.Y H:i', $val);
+                        if ($dateObject instanceof DateTime) {
+                            // convert date to correct format
+                            $val = $dateObject->format('Y-m-d H:i');
+                        }
+                        // check if date is right formatted
+                        $date = DateTime::createFromFormat('Y-m-d H:i', $val);
+                        if ($date instanceof DateTime) {
+                            $val = $date->format($gSettingsManager->getString('system_date').' '.$gSettingsManager->getString('system_time'));
+                        }
                     }
-                    // check if date is wrong formatted
-                    $dateObject = DateTime::createFromFormat('d.m.Y H:i', $val);
-                    if ($dateObject instanceof DateTime) {
-                        // convert date to correct format
-                        $val = $dateObject->format('Y-m-d H:i');
-                    }
-                    // check if date is right formatted
-                    $date = DateTime::createFromFormat('Y-m-d H:i', $val);
-                    if ($date instanceof DateTime) {
-                        $val = $date->format($gSettingsManager->getString('system_date').' '.$gSettingsManager->getString('system_time'));
+                    else {
+                        // check if date is date or datetime
+                        if (strpos($val, ' ') !== false) {
+                            $val = substr($val, 0, 10);
+                        }
+                        // check if date is wrong formatted
+                        $dateObject = DateTime::createFromFormat('d.m.Y', $val);
+                        if ($dateObject instanceof DateTime) {
+                            // convert date to correct format
+                            $val = $dateObject->format('Y-m-d');
+                        }
+                        // check if date is right formatted
+                        $date = DateTime::createFromFormat('Y-m-d', $val);
+                        if ($date instanceof DateTime) {
+                            $htmlValue = $date->format($gSettingsManager->getString('system_date'));
+                        }
                     }
                 }
-                else {
-                    // check if date is date or datetime
-                    if (strpos($val, ' ') !== false) {
-                        $val = substr($val, 0, 10);
-                    }
-                    // check if date is wrong formatted
-                    $dateObject = DateTime::createFromFormat('d.m.Y', $val);
-                    if ($dateObject instanceof DateTime) {
-                        // convert date to correct format
-                        $val = $dateObject->format('Y-m-d');
-                    }
-                    // check if date is right formatted
-                    $date = DateTime::createFromFormat('Y-m-d', $val);
-                    if ($date instanceof DateTime) {
-                        $htmlValue = $date->format($gSettingsManager->getString('system_date'));
-                    }
-                }
+            }
+            else {
+                $val = $values[$imfNameIntern];
             }
         }
         else {
-            $val = $values[$imfNameIntern];
+            $val = '';
         }
         $_POST['imf-' . $fields->getValue('imf_id')] = '' . $val . '';
         $ItemData[] = array($items->mItemFields[$imfNameIntern]->getValue('imf_name') => array('oldValue' => "", 'newValue' => $val));
