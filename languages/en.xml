@@ -6,6 +6,8 @@
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE_DESC">If a date in the format YYYY-MM-DD is to be added to an export file, the checkmark must be set.</string>
     <string name="PLG_INVENTORY_MANAGER_ADDIN_KEEPER_DESC">This table shows the items managed by you:</string>    
     <string name="PLG_INVENTORY_MANAGER_ADDIN_LAST_RECEIVER_DESC">This table shows the items lent to you:</string>    
+    <string name="PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS">Allow negative numbers</string>
+    <string name="PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS_DESC">If it should be possible to enter negative numbers for fields of type "Number" or "Decimal number", the checkbox must be checked.</string>
     <string name="PLG_INVENTORY_MANAGER_BASED_ON">(based on #VAR1#)</string>
     <string name="PLG_INVENTORY_MANAGER_CATEGORY">Category</string>
     <string name="PLG_INVENTORY_MANAGER_CONFIGURATION">Configuration</string>
@@ -13,6 +15,8 @@
     <string name="PLG_INVENTORY_MANAGER_COPY_PREFERENCES">Settings for copying a item:</string>
     <string name="PLG_INVENTORY_MANAGER_CREATED_WITH">created with the Plugin InventoryManager of the online member administration Admidio</string>
     <string name="PLG_INVENTORY_MANAGER_DATETIME_FORMAT">Date representation</string>
+    <string name="PLG_INVENTORY_MANAGER_DECIMAL_STEP">Decimal steps</string>
+    <string name="PLG_INVENTORY_MANAGER_DECIMAL_STEP_DESC">The specification of the decimal steps for fields of type "Decimal number".</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY">Delete only data of the current organization.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ALLORG">Delete data in all organizations.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE">- The table #VAR1_BOLD# could not be deleted because it still contains data from another organization or another plug-in.\n</string>

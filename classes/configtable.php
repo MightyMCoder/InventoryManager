@@ -542,7 +542,11 @@ class CConfigTablePIM
 			else 
 			{
 				if (is_numeric($row['plp_value'])) {
-					$configArray[$array[1]] [$array[2]] = (int)$row['plp_value'];
+					if (strpos($row['plp_value'], '.') !== false) {
+						$configArray[$array[1]] [$array[2]] = (float)$row['plp_value'];
+					} else {
+						$configArray[$array[1]] [$array[2]] = (int)$row['plp_value'];
+					}
 				} else {
 					$configArray[$array[1]] [$array[2]] = $row['plp_value'];
 				}

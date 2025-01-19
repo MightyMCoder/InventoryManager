@@ -395,16 +395,23 @@ foreach ($items->mItemFields as $itemField) {
                 }
                 elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'NUMBER') {
                     $fieldType = 'number';
-                    $maxlength = [0, 9999999999, 1];
+                    $minNumber = $pPreferences->config['Optionen']['allow_negative_numbers'] ? null : '0';
+                    $step = '1';
                 }
-
+                elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'DECIMAL') {
+                    $fieldType = 'number';
+                    $minNumber = $pPreferences->config['Optionen']['allow_negative_numbers'] ? null : '0';
+                    $step = $pPreferences->config['Optionen']['decimal_step'];
+                }
                 $form->addInput(
                     'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
                     convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
                     $items->getValue($imfNameIntern),
                     array(
                         'type' => $fieldType,
-                        'maxLength' => $maxlength,
+                        'maxLength' => isset($maxlength) ? $maxlength : null,
+                        'minNumber' => isset($minNumber) ? $minNumber : null,
+                        'step' => isset($step) ? $step : null,
                         'property' => $fieldProperty,
                         'helpTextIdLabel' => $helpId,
                         'icon' => $items->getProperty($imfNameIntern, 'imf_icon', 'database')
