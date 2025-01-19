@@ -630,7 +630,7 @@ class CConfigTablePIM
 	}
 
 	/**
-	 * Checks if there are default fields for all organizations.
+	 * Checks if there are default fields for the current organization.
 	 * @return bool Returns true if there are no default fields for the current organization, false otherwise.
 	 */
 	private function checkDefaultFieldsForCurrentOrg()
