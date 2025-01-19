@@ -40,7 +40,7 @@ if (!isUserAuthorizedForPreferencesPIM()) {
  */
 function compareArrays(array $array1, array $array2): bool {
     $array1 = array_filter($array1, function($key) {
-        return $key !== 'KEEPER' && $key !== 'LAST_RECEIVER' && $key !== 'CATEGORY' && $key !== 'IN_INVENTORY' && $key !== 'RECEIVED_ON' && $key !== 'RECEIVED_BACK_ON';
+        return $key !== 'KEEPER' && $key !== 'LAST_RECEIVER' && $key !== 'IN_INVENTORY' && $key !== 'RECEIVED_ON' && $key !== 'RECEIVED_BACK_ON';
     }, ARRAY_FILTER_USE_KEY);
 
     foreach ($array1 as $value) {
@@ -113,11 +113,23 @@ foreach ($items->items as $fieldId => $value) {
     $itemValues = array();
     foreach ($items->mItemData as $key => $itemData) {
         $itemValue = $itemData->getValue('imd_value');
-        if ($itemData->getValue('imf_name_intern')  === 'KEEPER' || $itemData->getValue('imf_name_intern') === 'LAST_RECEIVER' || $itemData->getValue('imf_name_intern') === 'CATEGORY' || $itemData->getValue('imf_name_intern') === 'IN_INVENTORY' || $itemData->getValue('imf_name_intern') === 'RECEIVED_ON' || $itemData->getValue('imf_name_intern') === 'RECEIVED_BACK_ON')
+        if ($itemData->getValue('imf_name_intern') === 'KEEPER' || $itemData->getValue('imf_name_intern') === 'LAST_RECEIVER' || $itemData->getValue('imf_name_intern') === 'IN_INVENTORY' || $itemData->getValue('imf_name_intern') === 'RECEIVED_ON' || $itemData->getValue('imf_name_intern') === 'RECEIVED_BACK_ON')
         {
             continue;
         }
         
+        if ($itemData->getValue('imf_name_intern') === 'CATEGORY') {
+            $imfNameIntern = $itemData->getValue('imf_name_intern');
+            // get value list of the item field
+            $valueList = $items->getProperty($imfNameIntern, 'imf_value_list');
+
+            // select the value from the value list
+            $val = $valueList[$itemValue];
+
+            $itemValues[] = array($itemData->getValue('imf_name_intern') => $val);
+            continue;
+        }
+
         $itemValues[] = array($itemData->getValue('imf_name_intern') => $itemValue);
     }
     $itemValues = array_merge_recursive(...$itemValues);
@@ -169,13 +181,13 @@ foreach ($assignedFieldColumn as $row => $values) {
                 }
                 else {
                     $sql = 'SELECT usr_id, CONCAT(last_name.usd_value, \', \', first_name.usd_value, IFNULL(CONCAT(\', \', postcode.usd_value),\'\'), IFNULL(CONCAT(\' \', city.usd_value),\'\'), IFNULL(CONCAT(\', \', street.usd_value),\'\') ) as name
-                    FROM ' . TBL_USERS . '
-                    JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
-                    JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
-                    LEFT JOIN ' . TBL_USER_DATA . ' as postcode ON postcode.usd_usr_id = usr_id AND postcode.usd_usf_id = ' . $gProfileFields->getProperty('POSTCODE', 'usf_id') . '
-                    LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
-                    LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
-                    WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
+                        FROM ' . TBL_USERS . '
+                        JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
+                        JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
+                        LEFT JOIN ' . TBL_USER_DATA . ' as postcode ON postcode.usd_usr_id = usr_id AND postcode.usd_usf_id = ' . $gProfileFields->getProperty('POSTCODE', 'usf_id') . '
+                        LEFT JOIN ' . TBL_USER_DATA . ' as city ON city.usd_usr_id = usr_id AND city.usd_usf_id = ' . $gProfileFields->getProperty('CITY', 'usf_id') . '
+                        LEFT JOIN ' . TBL_USER_DATA . ' as street ON street.usd_usr_id = usr_id AND street.usd_usf_id = ' . $gProfileFields->getProperty('ADDRESS', 'usf_id') . '
+                        WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
                 }
 
                 $result = $gDb->queryPrepared($sql);
