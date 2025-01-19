@@ -52,7 +52,7 @@ require_once(__DIR__ . '/classes/configtable.php');
 // Access only with valid login
 require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
 
-//$scriptName ist der Name wie er im Menue eingetragen werden muss, also ohne evtl. vorgelagerte Ordner wie z.B. /playground/adm_plugins/inventory_manager...
+//$scriptName is the name as it must be entered in the menu, without any preceding folders such as /playground/adm_plugins/InventoryManager...
 $scriptName = substr($_SERVER['SCRIPT_NAME'], strpos($_SERVER['SCRIPT_NAME'], FOLDER_PLUGINS));
 
 // only authorized user are allowed to start this module
@@ -154,7 +154,7 @@ $headline = $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER');
 // if html mode and last url was not a list view then save this url to navigation stack
 if ($gNavigation->count() === 0 || ($getMode == 'html' && strpos($gNavigation->getUrl(), 'inventory_manager.php') === false))             
 {
-    $gNavigation->addStartUrl(CURRENT_URL, $headline, 'fa-key');
+    $gNavigation->addStartUrl(CURRENT_URL, $headline, 'fa-warehouse');
 }
 
 $datatable = false;
