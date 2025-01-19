@@ -140,7 +140,7 @@ while ($row = $fieldHistoryStatement->fetch()) {
     if ($imlValueOld !== '') {
         if ($items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern') === 'KEEPER' || $items->getPropertyById((int) $row['iml_imf_id'], 'imf_name_intern') === 'LAST_RECEIVER') {
             if (is_numeric($imlValueOld)) {
-                $found = $user->readDataById($imlValueNew);
+                $found = $user->readDataById($imlValueOld);
                 if ($found) {
                     $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
                 }
@@ -149,7 +149,7 @@ while ($row = $fieldHistoryStatement->fetch()) {
                 }
             }
             else {
-                $columnValues[] = $imlValueNew;
+                $columnValues[] = $imlValueOld;
             }
         }
         else {
