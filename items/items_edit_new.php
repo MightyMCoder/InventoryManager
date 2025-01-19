@@ -228,7 +228,7 @@ foreach ($items->mItemFields as $itemField) {
             $form->addCheckbox(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
                 convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
-                (bool) $items->getValue($imfNameIntern),
+                ($getItemId === 0) ? true : (bool) $items->getValue($imfNameIntern),
                 array(
                     'property' => $fieldProperty,
                     'helpTextIdLabel' => $helpId,

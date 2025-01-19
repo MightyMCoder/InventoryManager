@@ -40,16 +40,16 @@ function defineConstantsPIM()
 		define('PLUGIN_FOLDER_IM', '/' . basename(__DIR__));
 	}
 	if (!defined('TBL_INVENTORY_MANAGER_FIELDS')) {
-		define('TBL_INVENTORY_MANAGER_FIELDS', $g_tbl_praefix . '_inventory_manager_fields');
+		define('TBL_INVENTORY_MANAGER_FIELDS', TABLE_PREFIX . '_inventory_manager_fields');
 	}
 	if (!defined('TBL_INVENTORY_MANAGER_DATA')) {
-		define('TBL_INVENTORY_MANAGER_DATA', $g_tbl_praefix . '_inventory_manager_data');
+		define('TBL_INVENTORY_MANAGER_DATA', TABLE_PREFIX . '_inventory_manager_data');
 	}
 	if (!defined('TBL_INVENTORY_MANAGER_ITEMS')) {
-		define('TBL_INVENTORY_MANAGER_ITEMS', $g_tbl_praefix . '_inventory_manager_items');
+		define('TBL_INVENTORY_MANAGER_ITEMS', TABLE_PREFIX . '_inventory_manager_items');
 	}
 	if (!defined('TBL_INVENTORY_MANAGER_LOG')) {
-		define('TBL_INVENTORY_MANAGER_LOG', $g_tbl_praefix . '_inventory_manager_log');
+		define('TBL_INVENTORY_MANAGER_LOG', TABLE_PREFIX . '_inventory_manager_log');
 	}
 }
 
