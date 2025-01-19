@@ -36,6 +36,8 @@ class CConfigDataPIM
             'file_name' => 'InventoryManager',
             'add_date' => 0,
             'current_user_default_keeper' => 0,
+            'allow_negative_numbers' => 1,
+            'decimal_step' => 0.1,
             'field_date_time_format' => 'date',
         ],
         'Plugininformationen' => [

@@ -6,6 +6,8 @@
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE_DESC">Soll an eine Exportdatei ein Datum im Format JJJJ-MM-TT angefügt werden, so ist der Haken zu setzen.</string>    
     <string name="PLG_INVENTORY_MANAGER_ADDIN_KEEPER_DESC">Die Tabelle zeigt die von Ihnen verwalteten Gegenstände:</string>    
     <string name="PLG_INVENTORY_MANAGER_ADDIN_LAST_RECEIVER_DESC">Die Tabelle zeigt die an Sie ausgeliehenen Gegenstände:</string>
+    <string name="PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS">Negative Zahlen erlauben</string>
+    <string name="PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS_DESC">Soll es möglich sein, negative Zahlen für Felder des Types "Zahl" oder "Dezimalzahl" einzugeben, so ist der Haken zu setzen. </string>
     <string name="PLG_INVENTORY_MANAGER_BASED_ON">(basierend auf #VAR1#)</string>
     <string name="PLG_INVENTORY_MANAGER_CATEGORY">Kategorie</string>
     <string name="PLG_INVENTORY_MANAGER_CONFIGURATION">Konfiguration</string>
@@ -13,6 +15,8 @@
     <string name="PLG_INVENTORY_MANAGER_COPY_PREFERENCES">Einstellungen für das Kopieren eines Gegenstandes:</string>
     <string name="PLG_INVENTORY_MANAGER_CREATED_WITH">erstellt mit dem Plugin InventoryManager der Online-Mitgliederverwaltung Admidio</string> 
     <string name="PLG_INVENTORY_MANAGER_DATETIME_FORMAT">Datumsdarstellung</string>
+    <string name="PLG_INVENTORY_MANAGER_DECIMAL_STEP">Dezimalschritte</string>
+    <string name="PLG_INVENTORY_MANAGER_DECIMAL_STEP_DESC">Die Angabe der Dezimalschritte für Felder des Typs "Dezimalzahl".</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY">Nur Daten der aktuellen Organisation löschen.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ALLORG">Daten in allen Organisationen löschen.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE">- Die Tabelle #VAR1_BOLD# konnte nicht gelöscht werden, da sich darin noch Daten einer weiteren Organisation oder eines anderen Plugins befinden.\n</string> 

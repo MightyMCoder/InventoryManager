@@ -6,6 +6,8 @@
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE_DESC">Si une date au format AAAA-MM-JJ doit être ajoutée à un fichier d'exportation, la coche doit être cochée.</string> 
     <string name="PLG_INVENTORY_MANAGER_ADDIN_KEEPER_DESC">Le tableau montre les objets que vous gérez:</string>    
     <string name="PLG_INVENTORY_MANAGER_ADDIN_LAST_RECEIVER_DESC">Le tableau montre les objets qui vous ont été prêtés:</string>    
+    <string name="PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS">Autoriser les nombres négatifs</string>
+    <string name="PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS_DESC">Si vous souhaitez autoriser les nombres négatifs pour les champs de type "Nombre" ou "Décimale", cochez cette case.</string>
     <string name="PLG_INVENTORY_MANAGER_BASED_ON">(basé sur #VAR1#)</string>
     <string name="PLG_INVENTORY_MANAGER_CATEGORY">Catégorie</string>
     <string name="PLG_INVENTORY_MANAGER_CONFIGURATION">Configuration</string>
@@ -13,6 +15,8 @@
     <string name="PLG_INVENTORY_MANAGER_COPY_PREFERENCES">Paramètres de copie d'une objet:</string>
     <string name="PLG_INVENTORY_MANAGER_CREATED_WITH">créé avec le Plugin InventoryManager de l'administration des membres en ligne Admidio</string> 
     <string name="PLG_INVENTORY_MANAGER_DATETIME_FORMAT">Représentation de la date</string>
+    <string name="PLG_INVENTORY_MANAGER_DECIMAL_STEP">Pas décimal</string>
+    <string name="PLG_INVENTORY_MANAGER_DECIMAL_STEP_DESC">La spécification des pas décimaux pour les champs de type "Décimale".</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY">Supprimer uniquement les données de l\'organisation actuelle.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_ALLORG">Supprimer les données de toutes les organisations.</string>
     <string name="PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE">- La table #VAR1_BOLD# n\'a pas pu être supprimé parce qu\'il contient encore des données d\'une autre organisation ou d\'un autre plugin. \n</string> 
