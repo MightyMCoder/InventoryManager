@@ -877,6 +877,7 @@ class CItems
                                     }
                                     
                                     $textOld = $gL10n->get('SYS_NO_USER_FOUND');
+                                    $textNew = '';
                                     if ($this->itemImported) {
                                         $textOld = '';
                                         $textNew = $gL10n->get('SYS_NO_USER_FOUND');
