@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES">Access permission for preferences</string>
-    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Here, in addition to the role "Administrator", you can authorize additional roles for access to the "Preferences" module.</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES">Access permission for plugin preferences</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Here, in addition to the role "Administrator", you can authorize additional roles for access to the plugin preferences.</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT">Edit permission for the keeper</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_DESC">Here you can allow the keeper to edit specific property fields of an item.</string>   
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_FIELDS">editable fields by the keeper</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_FIELDS_DESC">Here you can specify the specific property fields that can be edited by the keeper of the item.</string>   
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE">Append date</string>
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE_DESC">If a date in the format YYYY-MM-DD is to be added to an export file, the checkmark must be set.</string>
     <string name="PLG_INVENTORY_MANAGER_ADDIN_KEEPER_DESC">This table shows the items managed by you:</string>    
@@ -41,8 +45,10 @@
     <string name="PLG_INVENTORY_MANAGER_FILE_NAME">Filename</string>
     <string name="PLG_INVENTORY_MANAGER_FILE_NAME_DESC">The file name of the export file (without extension).</string>
     <string name="PLG_INVENTORY_MANAGER_FORMER">Make to former</string>
+    <string name="PLG_INVENTORY_MANAGER_FORMER_DESC">You can make the item to former. This has the advantage that the data is preserved and you can later always see who has borrowed this item.\n\nIf you select Delete, the record is irrevocably removed from the database and it is no longer possible to view the data of this item.</string>
     <string name="PLG_INVENTORY_MANAGER_GENERAL">General filter - Multiple filter terms are to be separated by commas. To exclude words, a - must be placed in front of them. Example: Meier, Huber, -Item case</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT">Import</string>
+    <string name="PLG_INVENTORY_MANAGER_IMPORT_DESC">Here you can import items from a previous export file or your own file.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ASSIGN_FIELDS">In the left column of the following table all item fields are displayed. In the right column the columns from the file to be imported are displayed in a selection list. You should now assign all columns from the file you want to import to a item field.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ITEMS">Import items</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_PROGRESS">The item #VAR1_BOLD# was imported #VAR2_BOLD#.</string>
@@ -58,9 +64,10 @@
     <string name="PLG_INVENTORY_MANAGER_ITEM_DELETE_DESC">Should this item be deleted?</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_DELETED">Item deleted</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_EDIT">Change the item</string>
-    <string name="PLG_INVENTORY_MANAGER_ITEM_MADE_TO_FORMER">Item is made to the former</string>
-    <string name="PLG_INVENTORY_MANAGER_ITEM_MAKE_TO_FORMER">You can make the item to the former. This has the advantage that the data is preserved and you can see again later who has borrowed this item. If you select Delete, the record is irrevocably removed from the database, and it is no longer possible to view the data of this item.</string>
+    <string name="PLG_INVENTORY_MANAGER_ITEM_MADE_TO_FORMER">Item was made to former</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_PRINT">Print the item</string>
+    <string name="PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER">Undo item made to former</string>    
+    <string name="PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER_DESC">You can reintegrate the item into the inventory management.\n\nIf you select Delete, the record will be irrevocably removed from the database and it will no longer be possible to view the data of this item.</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD">Item field</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE">Create a item field</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD_DELETE">Delete the item field</string>
@@ -73,6 +80,8 @@
     <string name="PLG_INVENTORY_MANAGER_ITEMLIST">Item list</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMNAME">Item name</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER">Keeper</string>
+    <string name="PLG_INVENTORY_MANAGER_KEEPER_FORMER_DESC">You can reintegrate the item into the inventory management. This has the advantage that the data is preserved and you can later always see who has borrowed this item.\n\nIf you want to delete the item, please contact an administrator or the manager of the inventory management!</string>
+    <string name="PLG_INVENTORY_MANAGER_KEEPER_ITEM_UNDO_FORMER_DESC">You can reintegrate the item into the inventory management.\n\nIf you want to delete the item, please contact an administrator or the manager of the inventory management!</string>
     <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">The authorization check of the plugin failed. There is more than one menu item with the same URL defined.\n\n=> #VAR1_BOLD#</string>
     <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_NEW">New</string>
@@ -108,6 +117,7 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">All users are recipients of a item, no reconciliation can be performed.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">This is just an overview of the comparison, nothing has been saved yet.\n\n Users can only be made to a former if the number of items is 0 and they are not administrator or the current user.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">The listed users are now former.</string>
+    <string name="PLG_INVENTORY_MANAGER_UNDO_FORMER">Undo made to former</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">Current user as default selection</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">If the current user is to be preset as the keeper when adding new items, the checkbox must be checked.</string>
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">You are using the current #VAR1# version of InventoryManager!</string>
