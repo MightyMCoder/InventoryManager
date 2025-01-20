@@ -71,24 +71,26 @@ switch ($getMode) {
  */
 function handleFormSubmission($form, $preferences) {
 	switch ($form) {
-		case 'interface_pff':
+		case 'interface_pff_preferences':
 			$preferences->config['Optionen']['interface_pff'] = $_POST['interface_pff'];
 			break;
 
-		case 'profile_addin':
-			$preferences->config['Optionen']['profile_addin'] = isset($_POST['profile_addin']) ? array_filter($_POST['profile_addin']) : array();
+		case 'profile_addin_preferences':
+			$preferences->config['Optionen']['profile_addin'] = isset($_POST['profile_addin']) ? array_filter($_POST['profile_addin']) : array(0);
 			break;
 
-		case 'export':
+		case 'export_preferences':
 			$preferences->config['Optionen']['file_name'] = $_POST['file_name'];
 			$preferences->config['Optionen']['add_date'] = isset($_POST['add_date']) ? 1 : 0;
 			break;
 
 		case 'access_preferences':
-			$preferences->config['access']['preferences'] = isset($_POST['access_preferences']) ? array_filter($_POST['access_preferences']) : array();
+			$preferences->config['access']['preferences'] = isset($_POST['access_preferences']) ? array_map('intval', array_filter($_POST['access_preferences'])) : array(0);
 			break;
 
-		case 'general_settings':
+		case 'general_preferences':
+			$preferences->config['Optionen']['allow_keeper_edit'] = isset($_POST['allow_keeper_edit']) ? 1 : 0;
+			$preferences->config['Optionen']['allowed_keeper_edit_fields'] = isset($_POST['allowed_keeper_edit_fields']) ? array_filter($_POST['allowed_keeper_edit_fields']) : array(0);
 			$preferences->config['Optionen']['current_user_default_keeper'] = isset($_POST['current_user_default_keeper']) ? 1 : 0;
 			$preferences->config['Optionen']['allow_negative_numbers'] = isset($_POST['allow_negative_numbers']) ? 1 : 0;
 			$preferences->config['Optionen']['decimal_step'] = sprintf('%.7f', (float)$_POST['decimal_step']);

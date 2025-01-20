@@ -127,6 +127,27 @@ function isUserAuthorizedForPreferencesPIM()
 	return false;
 }
 
+
+/**
+ * Check if the keeper is authorized to edit spezific item data
+ *
+ * @param int|null $keeper The user ID of the keeper.
+ * @return bool Returns true if the current user is authorized, otherwise false.
+ */
+function isKeeperAuthorizedToEdit(int $keeper = null)
+{
+	global $pPreferences, $gCurrentUser;
+	$gCurrentUser = $GLOBALS['gCurrentUser'];
+
+	if ($pPreferences->config['Optionen']['allow_keeper_edit'] === 1) {
+		if (isset($keeper) && $keeper === $gCurrentUser->getValue('usr_id')) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 /**
  * Check if the user is authorized to see the Inventory Manager Addin on the profile page
  * @return bool 					true if the user is authorized

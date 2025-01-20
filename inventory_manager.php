@@ -72,6 +72,17 @@ $sessionDefaults = array(
     'show_all' => false
 );
 
+$pPreferences = new CConfigTablePIM();
+$pPreferences->read();
+
+// check if user is authorized for preferences panel
+if (isUserAuthorizedForPreferencesPIM()) {
+    $authorizedForPreferences = true;
+}
+else {
+    $authorizedForPreferences = false;
+}
+
 foreach ($sessionDefaults as $key => $default) {
     if (!isset($_SESSION['pInventoryManager'][$key])) {
         $_SESSION['pInventoryManager'][$key] = $default;
@@ -103,7 +114,6 @@ else {
     $getShowAll = $_SESSION['pInventoryManager']['show_all'];
 }
 
-$pPreferences = new CConfigTablePIM();
 $pPreferences->checkForUpdate() ? $pPreferences->init() : $pPreferences->read();
 
 // initialize some special mode parameters
@@ -141,11 +151,17 @@ $header         = array();              //'xlsx'
 $rows           = array();              //'xlsx'
 $strikethroughs = array();              //'xlsx'
 
-$items = new CItems($gDb, $gCurrentOrgId);
-$items->showFormerItems($getShowAll);
-$items->readItems($gCurrentOrgId);
-
-$user = new User($gDb, $gProfileFields);
+// we are in keeper edit mode
+if (!$authorizedForPreferences) {
+    $keeperItems = new CItems($gDb, $gCurrentOrgId);
+    $keeperItems->showFormerItems(true);
+    $keeperItems->readItemsByUser($gCurrentOrgId, $gCurrentUser->getValue('usr_id'));
+    
+    if (count($keeperItems->items) > 0 && !$getSameSide) {
+        $getShowAll = true;
+        $getFilterKeeper = (int)$gCurrentUser->getValue('usr_id');
+    }
+}
 
 // define title (html) and headline
 $title = $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER');
@@ -311,7 +327,7 @@ switch ($getMode) {
                 'mode'              => 'pdfl')),
             'fa-file-pdf', 'menu_item_lists_export');
         
-        if (isUserAuthorizedForPreferencesPIM()) {
+        if ($authorizedForPreferences) {
             $page->addPageFunctionsMenuItem('menu_preferences', $gL10n->get('SYS_SETTINGS'), SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences.php'),  'fa-cog');
             $page->addPageFunctionsMenuItem('itemcreate_form_btn', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE'), SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_edit_new.php', array('item_id' => 0)), 'fas fa-plus-circle');
         } 
@@ -324,6 +340,7 @@ switch ($getMode) {
           
         $getItemId = admFuncVariableIsValid($_GET, 'item_id', 'int');
         $items2 = new CItems($gDb, $gCurrentOrgId);
+        $items2->showFormerItems($getShowAll);
         $items2->readItemData($getItemId, $gCurrentOrgId);
         foreach ($items2->mItemFields as $itemField) {  
             $imfNameIntern = $itemField->getValue('imf_name_intern');
@@ -381,6 +398,10 @@ switch ($getMode) {
 // initialize array parameters for table and set the first column for the counter
 $columnAlign  = ($getMode == 'html') ? array('left') : array('center');
 $columnValues = array($gL10n->get('SYS_ABR_NO'));
+
+$items = new CItems($gDb, $gCurrentOrgId);
+$items->showFormerItems($getShowAll);
+$items->readItems($gCurrentOrgId);
 
 // headlines for columns
 $columnNumber = 1;
@@ -459,6 +480,9 @@ elseif ($getMode == 'pdf') {
         $table->addColumn($column, array('style' => 'text-align:center;font-size:10;font-weight:bold;background-color:#C7C7C7;'), 'th');
     }
 }
+
+// create user object
+$user = new User($gDb, $gProfileFields);
 
 $listRowNumber = 1;
 
@@ -559,18 +583,40 @@ foreach ($items->items as $item) {
 
     if ($getMode == 'html') {
         $tempValue = '';
+
+        // show link to view profile field change history
+        if ($gSettingsManager->getBool('profile_log_edit_fields')) {
+            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_history.php', array('item_id' => $item['imi_id'])) . '">
+                               <i class="fas fa-history" title="' . $gL10n->get('SYS_CHANGE_HISTORY') . '"></i>
+                           </a>';
+        }
+
+        // show link to print item with PFF
         if ($pPreferences->isPffInst()) {
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER_IM . '/items/items_export_to_pff.php', array('item_id' => $item['imi_id'])) . '">
+            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_export_to_pff.php', array('item_id' => $item['imi_id'])) . '">
                                <i class="fas fa-print" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT') . '"></i>
                            </a>';
         }
-        if (isUserAuthorizedForPreferencesPIM()) {
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
+
+        // show link to edit, make former or undo former and delete item (if authorized)
+        if ($authorizedForPreferences || isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database'))) {
+            if ($authorizedForPreferences || (isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database')) && !$item['imi_former'])) {
+                $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
                                 <i class="fas fa-edit" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_EDIT') . '"></i>
                             </a>';
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
-                               <i class="fas fa-trash-alt" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE') . '"></i>
-                           </a>';
+            }
+
+            if ($item['imi_former']) {
+                $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'], 'mode' => 4)) . '">
+                                <i class="fas fa-eye" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_UNDO_FORMER') . '"></i>
+                            </a>';
+            }
+
+            if ($authorizedForPreferences || (isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database')) && !$item['imi_former'])) {
+                $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
+                                <i class="fas fa-trash-alt" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE') . '"></i>
+                            </a>';
+            }
         }
         $columnValues[] = $tempValue;
     }
