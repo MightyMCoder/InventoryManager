@@ -781,6 +781,18 @@ class CItems
     }
 
     /**
+     * Marks an item as no longer former.
+     * @param int $itemId               The ID of the item to be marked as no longer former.
+     * @param int $organizationId       The id of the organization from which the items should be marked as no longer former.
+     */
+    public function undoItemFormer($itemId, $organizationId) {
+    	$sql = 'UPDATE '.TBL_INVENTORY_MANAGER_ITEMS.' SET imi_former = 0 WHERE imi_id = ? AND (imi_org_id = ? OR imi_org_id IS NULL);';
+        $this->mDb->queryPrepared($sql, array($itemId, $organizationId));
+
+        $this->itemMadeFormer = false;
+    }
+
+    /**
      * Marks an item as imported.
      */
     public function setImportedItem() {
