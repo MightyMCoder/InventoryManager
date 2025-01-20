@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES">Autorisation d'accès pour les paramétrages</string>
-    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Ici, en plus du rôle "Administrateur", vous pouvez autoriser d'autres rôles pour accéder au module "Paramétrages".</string>     
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES">Autorisation d'accès pour les plug-in paramétrages</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Ici, en plus du rôle "Administrateur", vous pouvez autoriser d'autres rôles pour accéder aux préférences du plugin.</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT">Autorisation de modification pour le propriétaire</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_DESC">Ici, vous pouvez autoriser la modification de champs de propriétés spécifiques d'un objet par le propriétaire.</string>   
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_FIELDS">Champs modifiables par le propriétaire</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_FIELDS_DESC">Ici, vous pouvez définir les champs de propriétés spécifiques qui peuvent être modifiés par le propriétaire de l'objet.</string>   
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE">Ajouter la date</string>
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE_DESC">Si une date au format AAAA-MM-JJ doit être ajoutée à un fichier d'exportation, la coche doit être cochée.</string> 
     <string name="PLG_INVENTORY_MANAGER_ADDIN_KEEPER_DESC">Le tableau montre les objets que vous gérez:</string>    
@@ -41,8 +45,10 @@
     <string name="PLG_INVENTORY_MANAGER_FILE_NAME">Nom de fichier</string>
     <string name="PLG_INVENTORY_MANAGER_FILE_NAME_DESC">Le nom de fichier du fichier d'exportation (sans extension).</string>
     <string name="PLG_INVENTORY_MANAGER_FORMER">Retirer</string>
+    <string name="PLG_INVENTORY_MANAGER_FORMER_DESC">Vous pouvez marquer l'objet comme retiré. Cela a l'avantage de conserver les données et vous pouvez toujours voir plus tard qui a emprunté cet objet.\n\nSi vous sélectionnez Supprimer, l'enregistrement sera définitivement supprimé de la base de données et il ne sera plus possible de consulter les données de cet objet ultérieurement.</string>
     <string name="PLG_INVENTORY_MANAGER_GENERAL">Filtre général - Plusieurs termes de filtre doivent être séparés par des virgules. Pour exclure des mots, un - doit être placé devant eux. Exemple : Meier, Huber, -Porte-objets</string>           
     <string name="PLG_INVENTORY_MANAGER_IMPORT">Importer</string>
+    <string name="PLG_INVENTORY_MANAGER_IMPORT_DESC">Ici, vous pouvez importer des objets à partir d'un fichier d'exportation précédent ou d'un fichier personnalisé.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ASSIGN_FIELDS">Dans la colonne de gauche du tableau suivant, tous les champs de propriétés sont affichés. Dans la colonne de droite, les colonnes du fichier à importer sont affichées dans une liste déroulante. Toutes les colonnes du fichier que vous souhaitez importer doivent maintenant être associées à un champ de propriété.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ITEMS">Importer des objets</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_PROGRESS">L'objet #VAR1_BOLD# a été importé #VAR2_BOLD#.</string>
@@ -59,8 +65,9 @@
     <string name="PLG_INVENTORY_MANAGER_ITEM_DELETED">Objet effacée</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_EDIT">Modifier l'objet</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_MADE_TO_FORMER">Objet retirée</string>    
-    <string name="PLG_INVENTORY_MANAGER_ITEM_MAKE_TO_FORMER">Tu peux marquer l'objet comme retirée. Cela présente l\'avantage que les données sont conservées et tu peux voir plus tard encore qui a emprunté cette objet. Si tu sélectionne Supprimer, les données sont irrévocablement supprimé de la base de données et il n\'est pas possible de consulter les données de cette objet ultérieurement.</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_PRINT">Imprimer l'objet</string>
+    <string name="PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER">Annuler le retrait de l'objet</string>    
+    <string name="PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER_DESC">Vous pouvez réintégrer l'objet dans la gestion de l'inventaire.\n\nSi vous sélectionnez Supprimer, l'enregistrement sera définitivement supprimé de la base de données et il ne sera plus possible de consulter les données de cet objet ultérieurement.</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD">Champ objet</string>   
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE">Générer le champ objet</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD_DELETE">Supprimer le champ objet</string>
@@ -73,6 +80,8 @@
     <string name="PLG_INVENTORY_MANAGER_ITEMLIST">Liste des objets</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMNAME">Nom objet</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER">Propriétaire</string>     
+    <string name="PLG_INVENTORY_MANAGER_KEEPER_FORMER_DESC">Vous pouvez marquer l'objet comme retiré. Cela a l'avantage de conserver les données et vous pouvez toujours voir plus tard qui a emprunté cet objet.\n\nSi vous souhaitez supprimer l'objet, veuillez contacter un administrateur ou le gestionnaire de l'inventaire!</string>
+    <string name="PLG_INVENTORY_MANAGER_KEEPER_ITEM_UNDO_FORMER_DESC">Vous pouvez réintégrer l'objet dans la gestion de l'inventaire.\n\nSi vous souhaitez supprimer l'objet, veuillez contacter un administrateur ou le gestionnaire de l'inventaire!</string>
     <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">Le contrôle d\'autorisation du plug-in a échoué. Plus d\'un élément de menu est défini avec la même URL.\n\n=> #VAR1_BOLD#</string>    
     <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_NEW">Nouveau</string>
@@ -108,6 +117,7 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">Tous les utilisateurs sont les destinataires d'une objet, aucune réconciliation ne peut être effectuée.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">Ceci est juste un aperçu de la comparaison, rien n'a encore été enregistré.\n\n Les utilisateurs ne peuvent devenir des anciens que si le nombre de objets est 0 et qu'il ne s'agit ni de l'administrateur ni de l'utilisateur actuel.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">Les utilisateurs listés sont maintenant des anciens.</string>
+    <string name="PLG_INVENTORY_MANAGER_UNDO_FORMER">Annuler le retrait de l'objet</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">Utilisateur actuel comme sélection par défaut</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">Si l'utilisateur actuel doit être défini par défaut comme gestionnaire lors de l'ajout de nouveaux objets, cochez cette case.</string>    
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">Vous utilisez une #VAR1#version actuelle  d'InventoryManager!</string>

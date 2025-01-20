@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES">Zugriffsberechtigung für Einstellungen</string>
-    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Hier kannst du, zusätzlich zur Rolle "Administrator", weitere Rollen für den Zugriff auf das Modul "Einstellungen" berechtigen.</string>   
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES">Zugriffsberechtigung für Plugin-Einstellungen</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Hier kannst du, zusätzlich zur Rolle "Administrator", weitere Rollen für den Zugriff auf die Plugin-Einstellungen berechtigen.</string>   
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT">Editierberichtigung für den Verwalter</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_DESC">Hier kannst du die Bearbeitung von spezifischen Eigenschaftsfelden eines Gegenstandes durch den Verwalter zulassen.</string>   
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_FIELDS">editierbare Felder durch den Verwalter</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_FIELDS_DESC">Hier kannst du die spezifischen Eigenschaftsfelder festlegen, die durch den Verwalter des Gegenstandes editiert werden dürfen.</string>   
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE">Datum anfügen</string>
     <string name="PLG_INVENTORY_MANAGER_ADD_DATE_DESC">Soll an eine Exportdatei ein Datum im Format JJJJ-MM-TT angefügt werden, so ist der Haken zu setzen.</string>    
     <string name="PLG_INVENTORY_MANAGER_ADDIN_KEEPER_DESC">Die Tabelle zeigt die von dir verwalteten Gegenstände:</string>    
@@ -41,8 +45,10 @@
     <string name="PLG_INVENTORY_MANAGER_FILE_NAME">Dateiname</string>
     <string name="PLG_INVENTORY_MANAGER_FILE_NAME_DESC">Der Dateiname der Exportdatei (ohne Endung).</string>
     <string name="PLG_INVENTORY_MANAGER_FORMER">Aussondern</string>
+    <string name="PLG_INVENTORY_MANAGER_FORMER_DESC">Du kannst den Gegenstand als ausgesondert markieren. Dies hat den Vorteil, dass die Daten erhalten bleiben und du später immer wieder sehen kannst, wer diesen Gegenstand ausgeliehen hat.\n\nWenn du Löschen auswählst, wird der Datensatz unwiderruflich aus der Datenbank entfernt und es ist später nicht mehr möglich Daten dieses Gegenstandes einzusehen.</string>
     <string name="PLG_INVENTORY_MANAGER_GENERAL">Allgemeiner Filter - Mehrere Filterbegriffe sind durch Kommas zu trennen. Um Wörter auszuschließen muss ein - davorgesetzt werden. Beispiel: Meier, Huber, -Notenschrank</string>           
     <string name="PLG_INVENTORY_MANAGER_IMPORT">Import</string>
+    <string name="PLG_INVENTORY_MANAGER_IMPORT_DESC">Hier kannst du Gegenstände aus einer vorherigen Exportdatei oder einer eigenen Datei importieren.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ASSIGN_FIELDS">In der linken Spalte der nachfolgenden Tabelle werden alle Eigenschaftsfelder angezeigt. In der rechten Spalte werden in einer Auswahlliste die Spalten aus der zu importierenden Datei angezeigt. Alle Spalten aus der Datei, die du importieren möchtest, solltest du nun einem Eigenschaftsfeld zuordnen.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ITEMS">Gegenstände importieren</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_PROGRESS">Der Gegenstand #VAR1_BOLD# wurde #VAR2_BOLD# importiert.</string>
@@ -59,8 +65,9 @@
     <string name="PLG_INVENTORY_MANAGER_ITEM_DELETED">Gegenstand gelöscht</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_EDIT">Gegenstand ändern</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_MADE_TO_FORMER">Gegenstand ausgesondert</string>    
-    <string name="PLG_INVENTORY_MANAGER_ITEM_MAKE_TO_FORMER">Du kannst den Gegenstand als ausgesondert markieren. Dies hat den Vorteil, dass die Daten erhalten bleiben und du später immer wieder sehen kannst, wer diesen Gegenstand ausgeliehen hat. Wenn du Löschen auswählst, wird der Datensatz unwiderruflich aus der Datenbank entfernt und es ist später nicht mehr möglich Daten dieses Gegenstandes einzusehen.</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_PRINT">Gegenstandsdaten drucken</string>
+    <string name="PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER">Aussonderung des Gegenstandes rückgängig gemacht</string>    
+    <string name="PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER_DESC">Du kannst den Gegenstand wieder in die Inventarverwaltung aufnehmen.\n\nWenn du Löschen auswählst, wird der Datensatz unwiderruflich aus der Datenbank entfernt und es ist später nicht mehr möglich Daten dieses Gegenstandes einzusehen.</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD">Eigenschaftsfeld</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD_CREATE">Eigenschaftsfeld erzeugen</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD_DELETE">Eigenschaftsfeld löschen</string>
@@ -73,6 +80,8 @@
     <string name="PLG_INVENTORY_MANAGER_ITEMLIST">Gegenstandsliste</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMNAME">Gegenstandsname</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER">Verwalter</string>
+    <string name="PLG_INVENTORY_MANAGER_KEEPER_FORMER_DESC">Du kannst den Gegenstand als ausgesondert markieren. Dies hat den Vorteil, dass die Daten erhalten bleiben und du später immer wieder sehen kannst, wer diesen Gegenstand ausgeliehen hat.\n\nWenn du den Gegenstand löschen möchtest, wende dich an einen Administrator oder den Verwalter der Inventarverwaltung!</string>
+    <string name="PLG_INVENTORY_MANAGER_KEEPER_ITEM_UNDO_FORMER_DESC">Du kannst den Gegenstand wieder in die Inventarverwaltung aufnehmen.\n\nWenn du den Gegenstand löschen möchtest, wende dich an einen Administrator oder den Verwalter der Inventarverwaltung!</string>
     <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">Die Authorisierungsprüfung des Plugins ist fehlgeschlagen. Es ist mehr als ein Menüpunkt mit derselben URL definiert.\n\n=> #VAR1_BOLD#</string>    
     <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_NEW">Neu</string>
@@ -108,6 +117,7 @@
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">Alle Benutzer sind Empfänger eines Gegenstandes, es kann kein Abgleich durchgeführt werden.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">Dies ist nur eine Übersicht des Abgleichs, es wurde noch nichts gespeichert.\n\n Benutzer können nur zu Ehemaligen gemacht werden, wenn die Anzahl der Gegenstände 0 beträgt und sie nicht Administrator oder der aktuelle Benutzer sind.</string>
     <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">Die aufgelisteten Benutzer sind jetzt Ehemalige.</string>
+    <string name="PLG_INVENTORY_MANAGER_UNDO_FORMER">Aussondern rückgängig machen</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">aktueller Benutzer als Standardauswahl</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">Soll der aktuelle Benutzer beim Hinzufügen neuer Gegenstände standardmäßig als Verwalter voreingestellt werden, so ist der Haken zu setzen.</string>    
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">Du benutzt eine aktuelle #VAR1#Version von InventoryManager!</string>
