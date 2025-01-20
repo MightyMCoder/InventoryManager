@@ -96,10 +96,10 @@ function insertKeeperView($page, $user, $itemsKeeper) {
 	$inventoryAddinTable->setDatatablesRowsPerPage(10);
 
 	// create array with all column heading values
-	$addinItemFields = array();
+	$addinItemFields = array('ITEMNAME');
 	foreach ($pPreferences->config['Optionen']['profile_addin'] as $addinField) {
 		// we are in the keeper view, so we dont need the keeper field in the table
-		if ($addinField !== 'KEEPER') {
+		if ($addinField !== 'KEEPER' && $addinField !== "0") {
 			$addinItemFields[] = $addinField;
 		}
 	}
@@ -229,10 +229,10 @@ function insertReceiverView($page, $user, $itemsReceiver) {
 	$inventoryAddinTable->setDatatablesRowsPerPage(10);
 
 	// create array with all column heading values
-	$addinItemFields = array();
+	$addinItemFields = array('ITEMNAME');
 	foreach ($pPreferences->config['Optionen']['profile_addin'] as $addinField) {
 		// we are in the last receiver view, so we dont need the last receiver field in the table
-		if ($addinField !== 'LAST_RECEIVER') {
+		if ($addinField !== 'LAST_RECEIVER' && $addinField !== "0") {
 			$addinItemFields[] = $addinField;
 		}
 	}
