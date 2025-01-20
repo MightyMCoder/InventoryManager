@@ -35,6 +35,13 @@ class CConfigDataPIM
             ],
             'file_name' => 'InventoryManager',
             'add_date' => 0,
+            'allow_keeper_edit' => 0,
+            'allowed_keeper_edit_fields' => [
+                'IN_INVENTORY',
+                'LAST_RECEIVER',
+                'RECEIVED_ON',
+                'RECEIVED_BACK_ON'
+            ],
             'current_user_default_keeper' => 0,
             'allow_negative_numbers' => 1,
             'decimal_step' => 0.1,

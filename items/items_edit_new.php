@@ -35,6 +35,19 @@ $pPreferences->read();
 $items = new CItems($gDb, $gCurrentOrgId);
 $items->readItemData($getItemId, $gCurrentOrgId);
 
+$authorizedPreferences = false;
+$keeperEditFields = array();
+
+if (!isUserAuthorizedForPreferencesPIM()) {
+	if (!isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database'))) {
+		$gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
+	}
+    $keeperEditFields = $pPreferences->config['Optionen']['allowed_keeper_edit_fields'];
+}
+else {
+	$authorizedPreferences = true;
+}
+
 // Set headline of the script
 $headline = $getItemId === 0 ? $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE') : $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_EDIT');
 if ($getCopy) {
@@ -55,12 +68,12 @@ if ($getItemId != 0) {
             SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_history.php', array('item_id' => $getItemId)), 'fa-history');
     }
 
-    if (isUserAuthorizedForPreferencesPIM()) {
+    if ($authorizedPreferences) {
         $page->addPageFunctionsMenuItem('menu_copy_item', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_COPY'),
             SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => $getItemId, 'copy' => 1)), 'fa-clone');
-        $page->addPageFunctionsMenuItem('menu_delete_item', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE'),
-            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $getItemId, 'item_former' => $getItemFormer)), 'fa-trash');
-   }
+    }
+    $page->addPageFunctionsMenuItem('menu_delete_item', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE'),
+    SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $getItemId, 'item_former' => $getItemFormer)), 'fa-trash');
 }
 
 // Create HTML form
@@ -83,9 +96,19 @@ foreach ($items->mItemFields as $itemField) {
 }
 
 foreach ($items->mItemFields as $itemField) {
-    $fieldProperty = isUserAuthorizedForPreferencesPIM() ? HtmlForm::FIELD_DEFAULT : HtmlForm::FIELD_DISABLED;
     $helpId = '';
     $imfNameIntern = $itemField->getValue('imf_name_intern');
+
+    if ($items->getProperty($imfNameIntern, 'imf_mandatory') == 1) {
+        $fieldProperty = HtmlForm::FIELD_REQUIRED;
+    }
+    else {
+        $fieldProperty = HtmlForm::FIELD_DEFAULT;
+    }
+
+    if (!$authorizedPreferences && !in_array($itemField->getValue('imf_name_intern'), $keeperEditFields)) {
+        $fieldProperty = HtmlForm::FIELD_DISABLED;
+    }
     
     if (isset($pimInInventoryId, $pimLastReceiverId, $pimReceivedOnId, $pimReceivedBackOnId) && $imfNameIntern === 'IN_INVENTORY') {
         // Add JavaScript to check the PIM_LAST_RECEIVER field and set the required attribute for pimReceivedOnId
@@ -217,10 +240,6 @@ foreach ($items->mItemFields as $itemField) {
 
     if ($itemField->getValue('imf_type') === 'DATE' && $itemField->getValue('imf_sequence') === '1') {
         $form->addInput('dummy', 'dummy', 'dummy', ['type' => $pPreferences->config['Optionen']['field_date_time_format'], 'property' => HtmlForm::FIELD_HIDDEN]);
-    }
-
-    if ($items->getProperty($imfNameIntern, 'imf_mandatory') == 1 && isUserAuthorizedForPreferencesPIM()) {
-        $fieldProperty = HtmlForm::FIELD_REQUIRED;
     }
 
     switch ($items->getProperty($imfNameIntern, 'imf_type')) {

@@ -113,70 +113,84 @@ $page->addHtml('
     <div class="tab-pane fade" id="tabs-preferences" role="tabpanel">
         <div class="accordion" id="accordion_preferences">');
 
-// PANEL: GENERAL
-$formGeneralSettings = new HtmlForm('default_configurations_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'general_settings')), $page, array('class' => 'form-preferences'));
-$formGeneralSettings->addCheckbox('current_user_default_keeper', $gL10n->get('PLG_INVENTORY_MANAGER_USE_CURRENT_USER'), $pPreferences->config['Optionen']['current_user_default_keeper'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC'));
-$formGeneralSettings->addCheckbox('allow_negative_numbers', $gL10n->get('PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS'), $pPreferences->config['Optionen']['allow_negative_numbers'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS_DESC'));
-$formGeneralSettings->addInput('decimal_step', $gL10n->get('PLG_INVENTORY_MANAGER_DECIMAL_STEP'), $pPreferences->config['Optionen']['decimal_step'], array('type' => 'number','minNumber' => 0, 'step' => '0.0000001', 'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_DECIMAL_STEP_DESC', 'property' => HtmlForm::FIELD_REQUIRED));
-$formGeneralSettings->addSelectBox('field_date_time_format', $gL10n->get('PLG_INVENTORY_MANAGER_DATETIME_FORMAT'), array($gL10n->get('SYS_DATE'), $gL10n->get('SYS_DATE') .' & ' .$gL10n->get('SYS_TIME')), array('defaultValue' => (($pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') ? 1 : 0), 'showContextDependentFirstEntry' => false));
-$formGeneralSettings->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
-addPreferencePanel($page, 'field_settings', $gL10n->get('SYS_COMMON'), 'fas fa-cog fa-fw', $formGeneralSettings->show());
-
-// PANEL: ITEMFIELDS
-$formItemFields = new HtmlForm('itemfields_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/fields/fields.php'), $page);
-$formItemFields->addSubmitButton('btn_save_itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE'), array('icon' => 'fa-edit', 'class' => 'offset-sm-3'));
-$formItemFields->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE_DESC'));
-addPreferencePanel($page, 'itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE'), 'fas fa-edit', $formItemFields->show());
-
-// PANEL: INTERFACE_PFF
-if ($pPreferences->isPffInst()) {
-    $formInterfacePFF = new HtmlForm('interface_pff_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'interface_pff')), $page, array('class' => 'form-preferences'));
-    $formInterfacePFF->addSelectBox('interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_CONFIGURATION'), $pPreferences->configPff['Formular']['desc'], array('defaultValue' => $pPreferences->config['Optionen']['interface_pff'], 'showContextDependentFirstEntry' => false));
-    $formInterfacePFF->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_INTERFACE_PFF_DESC'));
-    $formInterfacePFF->addSubmitButton('btn_save_interface_pff', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
-    addPreferencePanel($page, 'interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_INTERFACE_PFF'), 'fas fa-file-pdf', $formInterfacePFF->show());
-}
-
-// PANEL: PROFILE ADDIN
-$formProfileAddin = new HtmlForm('profile_addin_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'profile_addin')), $page, array('class' => 'form-preferences'));
 $items = new CItems($gDb, $gCurrentOrgId);
 $valueList = array();
 foreach ($items->mItemFields as $itemField) {
     $valueList[$itemField->getValue('imf_name_intern')] = $itemField->getValue('imf_name');
 }
+
+// PANEL: GENERAL PREFERENCES
+$formGeneralSettings = new HtmlForm('general_preferences_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'general_preferences')), $page, array('class' => 'form-preferences'));
+$formGeneralSettings->addCheckbox('allow_keeper_edit', $gL10n->get('PLG_INVENTORY_MANAGER_ACCESS_EDIT'), $pPreferences->config['Optionen']['allow_keeper_edit'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ACCESS_EDIT_DESC'));
+$formGeneralSettings->addSelectBox('allowed_keeper_edit_fields', $gL10n->get('PLG_INVENTORY_MANAGER_ACCESS_EDIT_FIELDS'), $valueList, array('defaultValue' => $pPreferences->config['Optionen']['allowed_keeper_edit_fields'], 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ACCESS_EDIT_FIELDS_DESC', 'multiselect' => true));
+$formGeneralSettings->addCheckbox('current_user_default_keeper', $gL10n->get('PLG_INVENTORY_MANAGER_USE_CURRENT_USER'), $pPreferences->config['Optionen']['current_user_default_keeper'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC'));
+$formGeneralSettings->addCheckbox('allow_negative_numbers', $gL10n->get('PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS'), $pPreferences->config['Optionen']['allow_negative_numbers'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS_DESC'));
+$formGeneralSettings->addInput('decimal_step', $gL10n->get('PLG_INVENTORY_MANAGER_DECIMAL_STEP'), $pPreferences->config['Optionen']['decimal_step'], array('type' => 'number','minNumber' => 0, 'step' => '0.0000001', 'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_DECIMAL_STEP_DESC', 'property' => HtmlForm::FIELD_REQUIRED));
+$formGeneralSettings->addSelectBox('field_date_time_format', $gL10n->get('PLG_INVENTORY_MANAGER_DATETIME_FORMAT'), array($gL10n->get('SYS_DATE'), $gL10n->get('SYS_DATE') .' & ' .$gL10n->get('SYS_TIME')), array('defaultValue' => (($pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') ? 1 : 0), 'showContextDependentFirstEntry' => false));
+$formGeneralSettings->addSubmitButton('btn_save_general_preferences', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
+addPreferencePanel($page, 'field_settings', $gL10n->get('SYS_COMMON'), 'fas fa-cog fa-fw', $formGeneralSettings->show());
+
+// PANEL: ITEMFIELDS
+$formItemFields = new HtmlForm('itemfields_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/fields/fields.php'), $page);
+$formItemFields->addSubmitButton('btn_edit_itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE'), array('icon' => 'fa-edit', 'class' => 'offset-sm-3'));
+$formItemFields->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE_DESC'));
+addPreferencePanel($page, 'itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE'), 'fas fa-edit', $formItemFields->show());
+
+// PANEL: INTERFACE_PFF
+if ($pPreferences->isPffInst()) {
+    $formInterfacePFF = new HtmlForm('interface_pff_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'interface_pff_preferences')), $page, array('class' => 'form-preferences'));
+    $formInterfacePFF->addSelectBox('interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_CONFIGURATION'), $pPreferences->configPff['Formular']['desc'], array('defaultValue' => $pPreferences->config['Optionen']['interface_pff'], 'showContextDependentFirstEntry' => false));
+    $formInterfacePFF->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_INTERFACE_PFF_DESC'));
+    $formInterfacePFF->addSubmitButton('btn_save_interface_pff_preferences', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
+    addPreferencePanel($page, 'interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_INTERFACE_PFF'), 'fas fa-file-pdf', $formInterfacePFF->show());
+}
+
+// PANEL: PROFILE ADDIN
+$formProfileAddin = new HtmlForm('profile_addin_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'profile_addin_preferences')), $page, array('class' => 'form-preferences'));
+
+$valueList = array();
+foreach ($items->mItemFields as $itemField) {
+    if ($itemField->getValue('imf_name_intern') == 'ITEMNAME') {
+        continue;
+    }
+    $valueList[$itemField->getValue('imf_name_intern')] = $itemField->getValue('imf_name');
+}
+
 $helpTextIdLabelLink = '<a href="https://github.com/MightyMCoder/InventoryManager/wiki/Profile-View-AddIn" target="_blank">GitHub Wiki</a>';
 $helpTextIdLabel = $gL10n->get('PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2', array($helpTextIdLabelLink));
 $formProfileAddin->addSelectBox('profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD'), $valueList, array('defaultValue' => $pPreferences->config['Optionen']['profile_addin'], 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC', 'multiselect' => true, 'helpTextIdLabel' => $helpTextIdLabel));
-$formProfileAddin->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
+$formProfileAddin->addSubmitButton('btn_save_profile_addin_preferences', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 addPreferencePanel($page, 'profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_PROFILE_ADDIN'), 'fas fa-users-cog', $formProfileAddin->show());
 
 // PANEL: EXPORT
-$formExport = new HtmlForm('export_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'export')), $page, array('class' => 'form-preferences'));
+$formExport = new HtmlForm('export_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'export_preferences')), $page, array('class' => 'form-preferences'));
 $formExport->addInput('file_name', $gL10n->get('PLG_INVENTORY_MANAGER_FILE_NAME'), $pPreferences->config['Optionen']['file_name'], array('helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_FILE_NAME_DESC', 'property' => HtmlForm::FIELD_REQUIRED));
 $formExport->addCheckbox('add_date', $gL10n->get('PLG_INVENTORY_MANAGER_ADD_DATE'), $pPreferences->config['Optionen']['add_date'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ADD_DATE_DESC'));
-$formExport->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
+$formExport->addSubmitButton('btn_save_export_preferences', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 addPreferencePanel($page, 'export', $gL10n->get('PLG_INVENTORY_MANAGER_EXPORT'), 'fas fa-file-export', $formExport->show());
 
 // PANEL: IMPORT
-$formImport = new HtmlForm('import_form',null, $page, array('class' => 'form-preferences'));
-$formImport->addButton('btn_save_configurations', $gL10n->get('SYS_IMPORT'),array('icon' => 'fa-arrow-circle-right', 'class' => 'offset-sm-3', 'link' => '' . ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import.php'));
+$formImport = new HtmlForm('import_form',SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/import/import.php'), $page);
+$formImport->addSubmitButton('btn_import_data', $gL10n->get('SYS_IMPORT'),array('icon' => 'fa-arrow-circle-right', 'class' => 'offset-sm-3'));
+$formImport->addCustomContent('', ''.$gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_DESC'));
 addPreferencePanel($page, 'import', $gL10n->get('PLG_INVENTORY_MANAGER_IMPORT'), 'fas fa-file-import', $formImport->show());
 
 // PANEL: DEINSTALLATION
-$formDeinstallation = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('mode' => 2)), $page);
-$formDeinstallation->addSubmitButton('btn_save_deinstallation', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), array('icon' => 'fa-trash-alt', 'class' => 'offset-sm-3'));
+$formDeinstallation = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('mode' => 2)), $page);
+$formDeinstallation->addSubmitButton('btn_perform_deinstallation', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), array('icon' => 'fa-trash-alt', 'class' => 'offset-sm-3'));
 $formDeinstallation->addCustomContent('', ''.$gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION_DESC'));
 addPreferencePanel($page, 'deinstallation', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), 'fas fa-trash-alt', $formDeinstallation->show());
 
 // PANEL: ACCESS_PREFERENCES
 $formAccessPreferences = new HtmlForm('access_preferences_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'access_preferences')), $page, array('class' => 'form-preferences'));
 $sql = 'SELECT rol.rol_id, rol.rol_name, cat.cat_name FROM '.TBL_CATEGORIES.' AS cat, '.TBL_ROLES.' AS rol
-        WHERE cat.cat_id = rol.rol_cat_id
-        AND (cat.cat_org_id = '.$gCurrentOrgId.'
-            OR cat.cat_org_id IS NULL)
-        ORDER BY cat_sequence, rol.rol_name ASC;';
+    WHERE cat.cat_id = rol.rol_cat_id
+    AND rol.rol_id != 1 ' //remove admin role
+    . 'AND (cat.cat_org_id = '.$gCurrentOrgId.'
+        OR cat.cat_org_id IS NULL)
+    ORDER BY cat_sequence, rol.rol_name ASC;';
 $formAccessPreferences->addSelectBoxFromSql('access_preferences', '', $gDb, $sql, array('defaultValue' => $pPreferences->config['access']['preferences'], 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC', 'multiselect' => true));
-$formAccessPreferences->addSubmitButton('btn_save_configurations', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
+$formAccessPreferences->addSubmitButton('btn_save_access_preferences', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 addPreferencePanel($page, 'access_preferences', $gL10n->get('PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES'), 'fas fa-key', $formAccessPreferences->show());
 
 // PANEL: PLUGIN INFORMATIONS
