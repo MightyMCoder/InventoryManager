@@ -13,6 +13,7 @@
  * mode       : 1 - Display form to delete or mark item as former
  *              2 - Delete an item
  *              3 - Mark an item as former
+ * 				4 - Undo marking an item as former
  * item_id    : ID of the item to be deleted or marked as former
  * item_former: 0 - Item is active
  *              1 - Item is already marked as former
@@ -35,24 +36,42 @@ $getItemFormer = admFuncVariableIsValid($_GET, 'item_former', 'bool');
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
 
-// only authorized user are allowed to start this module
-if (!isUserAuthorizedForPreferencesPIM()) {
-	$gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
-}
-
 $items = new CItems($gDb, $gCurrentOrgId);
 $items->readItemData($getItemId, $gCurrentOrgId);
+
+$authorizedForDelete = false;
+
+// only authorized user are allowed to start this module
+// Check if the user is authorized to edit the item (cannot delete items, only mark them as former)
+if (!isUserAuthorizedForPreferencesPIM()) {
+	if (!isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database'))) {
+		$gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
+	}	
+}
+else {
+	$authorizedForDelete = true;
+}
+
+
 $user = new User($gDb, $gProfileFields);
 
 switch ($getMode) {
 	case 1:
-		displayItemDeleteForm($items, $user, $getItemId, $getItemFormer);
+		displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $authorizedForDelete);
 		break;
 	case 2:
-		deleteItem($items, $getItemId, $gCurrentOrgId);
+		if ($authorizedForDelete) {
+			deleteItem($items, $getItemId, $gCurrentOrgId);
+		}
+		else {
+			$gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
+		}
 		break;
 	case 3:
 		makeItemFormer($items, $getItemId, $gCurrentOrgId);
+		break;
+	case 4:
+		undoItemFormer($items, $getItemId, $gCurrentOrgId);
 		break;
 }
 
@@ -63,7 +82,7 @@ switch ($getMode) {
  * @param int $getItemId 		The ID of the item to be deleted.
  * @param bool $getItemFormer 	Indicates if the item is already marked as former.
  */
-function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer) {
+function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $authorizedForDelete) {
 	global $gL10n, $gNavigation;
 
 	$headline = $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE');
@@ -101,10 +120,18 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer) {
 		);
 	}
 
-	$form->addButton('btn_delete', $gL10n->get('SYS_DELETE'), array('icon' => 'fa-trash-alt', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 2)), 'class' => 'btn-primary offset-sm-3'));
+	// keepers are only allowed to mark items as former
+	if ($authorizedForDelete) {
+		$form->addButton('btn_delete', $gL10n->get('SYS_DELETE'), array('icon' => 'fa-trash-alt', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 2)), 'class' => 'btn-primary offset-sm-3'));
+	}
+
 	if (!$getItemFormer) {
 		$form->addButton('btn_former', $gL10n->get('PLG_INVENTORY_MANAGER_FORMER'), array('icon' => 'fa-eye-slash', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 3)), 'class' => 'btn-primary offset-sm-3'));
-		$form->addCustomContent('', '<br />'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEM_MAKE_TO_FORMER'));
+		$form->addCustomContent('', '<br />'. (($authorizedForDelete) ? $gL10n->get('PLG_INVENTORY_MANAGER_FORMER_DESC') : $gL10n->get('PLG_INVENTORY_MANAGER_KEEPER_FORMER_DESC')));
+	}
+	else {
+		$form->addButton('btn_undo_former', $gL10n->get('PLG_INVENTORY_MANAGER_UNDO_FORMER'), array('icon' => 'fa-eye', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 4)), 'class' => 'btn-primary offset-sm-3'));
+		$form->addCustomContent('', '<br />'.(($authorizedForDelete) ? $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER_DESC') : $gL10n->get('PLG_INVENTORY_MANAGER_KEEPER_ITEM_UNDO_FORMER_DESC')));
 	}
 
 	$page->addHtml($form->show());
@@ -150,4 +177,22 @@ function makeItemFormer($items, $getItemId, $gCurrentOrgId) {
 
 	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
 	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEM_MADE_TO_FORMER'));
+}
+
+/**
+ * Marks an item as no longer former.
+ * @param CItems $items 		The items object containing item data.
+ * @param int $getItemId 		The ID of the item to be marked as former.
+ * @param int $gCurrentOrgId 	The ID of the current organization.
+ */
+function undoItemFormer($items, $getItemId, $gCurrentOrgId) {
+	global $gMessage, $gNavigation, $gL10n;
+
+	$items->undoItemFormer($getItemId, $gCurrentOrgId);
+
+	// Send notification to all users
+	$items->sendNotification($gCurrentOrgId);
+
+	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
+	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER'));
 }
