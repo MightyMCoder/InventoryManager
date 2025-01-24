@@ -8,11 +8,12 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * Parameters:
  * 
- * item_id    : >0 - ID of the item to be saved, 0 - a new item will be added
- * copy_number: number of new items to be created
- * copy_field : field for the current number
+ * Parameters:
+ * item_id    	: >0 - ID of the item to be saved
+ * 				  =0 - a new item will be added
+ * copy_number	: number of new items to be created
+ * copy_field 	: field for the current number
  ***********************************************************************************************
  */
 
@@ -26,10 +27,10 @@ require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
 $getItemId = admFuncVariableIsValid($_GET, 'item_id', 'int');
-$postCopyNumber = admFuncVariableIsValid($_POST, 'copy_number', 'numeric', ['defaultValue' => 1]);
+$postCopyNumber = admFuncVariableIsValid($_POST, 'copy_number', 'numeric', array('defaultValue' => 1));
 $postCopyField = admFuncVariableIsValid($_POST, 'copy_field', 'int');
-$postRedirect = admFuncVariableIsValid($_POST, 'redirect', 'numeric', ['defaultValue' => 1]);
-$postImported = admFuncVariableIsValid($_POST, 'imported', 'numeric', ['defaultValue' => 0]);
+$postRedirect = admFuncVariableIsValid($_POST, 'redirect', 'numeric', array('defaultValue' => 1));
+$postImported = admFuncVariableIsValid($_POST, 'imported', 'numeric', array('defaultValue' => 0));
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
@@ -54,7 +55,6 @@ for ($i = $startIdx; $i < $stopIdx; ++$i) {
 	// check all item fields
 	foreach ($items->mItemFields as $itemField) {
 		$postId = 'imf-' . $itemField->getValue('imf_id');
-
 
 		if (isset($_POST[$postId])) {
 			if (strlen($_POST[$postId]) === 0 && $itemField->getValue('imf_mandatory') == 1) {

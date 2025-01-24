@@ -8,9 +8,10 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * methods:
  * 
- * compareArrays(array $array1, array $array2)      : Compares two arrays to determine if they are different based on specific criteria.
+ * Methods:
+ * compareArrays(array $array1, array $array2)      : Compares two arrays to determine if they are
+ *                                                    different based on specific criteria
  ***********************************************************************************************
  */
 
@@ -25,34 +26,6 @@ require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 // only authorized user are allowed to start this module
 if (!isUserAuthorizedForPreferencesPIM()) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
-}
-
-/**
- * Compares two arrays to determine if they are different based on specific criteria.
- *
- * This function filters out certain keys ('KEEPER', 'LAST_RECEIVER', 'CATEGORY') from the first array,
- * converts date fields ('RECEIVED_ON', 'RECEIVED_BACK_ON') from 'd.m.Y' format to 'Y-m-d' format,
- * and then checks if any value in the filtered and transformed first array is not present in the second array.
- *
- * @param array $array1 The first array to compare.
- * @param array $array2 The second array to compare.
- * @return bool Returns true if the arrays are different based on the criteria, otherwise false.
- */
-function compareArrays(array $array1, array $array2): bool {
-    $array1 = array_filter($array1, function($key) {
-        return $key !== 'KEEPER' && $key !== 'LAST_RECEIVER' && $key !== 'IN_INVENTORY' && $key !== 'RECEIVED_ON' && $key !== 'RECEIVED_BACK_ON';
-    }, ARRAY_FILTER_USE_KEY);
-
-    foreach ($array1 as $value) {
-        if ($value === '') {
-            continue;
-        }
-        
-        if (!in_array($value, $array2, true)) {
-            return true;
-        }
-    }
-    return false;
 }
 
 $_SESSION['import_csv_request'] = $_POST;
@@ -113,8 +86,9 @@ foreach ($items->items as $fieldId => $value) {
     $itemValues = array();
     foreach ($items->mItemData as $key => $itemData) {
         $itemValue = $itemData->getValue('imd_value');
-        if ($itemData->getValue('imf_name_intern') === 'KEEPER' || $itemData->getValue('imf_name_intern') === 'LAST_RECEIVER' || $itemData->getValue('imf_name_intern') === 'IN_INVENTORY' || $itemData->getValue('imf_name_intern') === 'RECEIVED_ON' || $itemData->getValue('imf_name_intern') === 'RECEIVED_BACK_ON')
-        {
+        if ($itemData->getValue('imf_name_intern') === 'KEEPER' || $itemData->getValue('imf_name_intern') === 'LAST_RECEIVER' ||
+                $itemData->getValue('imf_name_intern') === 'IN_INVENTORY' || $itemData->getValue('imf_name_intern') === 'RECEIVED_ON' ||
+                $itemData->getValue('imf_name_intern') === 'RECEIVED_BACK_ON') {
             continue;
         }
         
@@ -147,6 +121,7 @@ foreach ($items->items as $fieldId => $value) {
     }
 }
 
+// get all values of the item fields
 $valueList = array();
 $importedItemData = array();
 
@@ -305,7 +280,7 @@ foreach ($assignedFieldColumn as $row => $values) {
 }
 
 // Send notification to all users
-$items->sendNotification($gCurrentOrgId, $importedItemData);
+$items->sendNotification($importedItemData);
 
 $gNavigation->deleteLastUrl();
 
@@ -321,4 +296,29 @@ if ($gNavigation->count() > 2) {
 else {
     $gMessage->setForwardUrl($gNavigation->getUrl());
     $gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_NO_NEW_IMPORT_DATA'));
+}
+
+/**
+ * Compares two arrays to determine if they are different based on specific criteria
+ *
+ * @param array             $array1 The first array to compare
+ * @param array             $array2 The second array to compare
+ * @return bool             true if the arrays are different based on the criteria, otherwise false
+ */
+function compareArrays(array $array1, array $array2) : bool
+{
+    $array1 = array_filter($array1, function($key) {
+        return $key !== 'KEEPER' && $key !== 'LAST_RECEIVER' && $key !== 'IN_INVENTORY' && $key !== 'RECEIVED_ON' && $key !== 'RECEIVED_BACK_ON';
+    }, ARRAY_FILTER_USE_KEY);
+
+    foreach ($array1 as $value) {
+        if ($value === '') {
+            continue;
+        }
+        
+        if (!in_array($value, $array2, true)) {
+            return true;
+        }
+    }
+    return false;
 }

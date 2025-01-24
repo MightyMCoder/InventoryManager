@@ -8,17 +8,33 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * methods:
  * 
+ * Methods:
+ * __construct()						: constructor
+ * checkPffInst()                       : used to check if the plugin FormFiller is installed
  * isPffInst()							: used to check if plugin FormFiller is installed; if yes returns true otherwise false
+ * findPff()                            : used to check if a FormFiller directory exists
  * pffDir()								: used to get the installation directory of the Plugin FormFiller; returns false if it doesn't exists or if it exists multiple times
  * init()								: used to check if the configuration table exists, if not creates it and sets default values
+ * createTablesIfNotExist()             : used to create the necessary tables if they do not exist
+ * createTableIfNotExist($tableName,
+ * 		$tableDefinition) 				: used to create a table if it does not exist
+ * initializeDefaultFieldsByOrgId()     : used to initialize default fields in the inventory manager database
+ * createField($name, $internalName, $type, $description,
+ * 		$sequence, $system, $mandatory,
+ * 		$valueList = '') 				: used to create a field in the inventory manager database
+ * initializePreferencesByOrgId()       : used to initialize preferences for the inventory manager
  * write()								: used to write the configuration data to database
  * read()						        : used to read the configuration data from database
+ * readPff()                            : used to read the configuration data of plugin FormFiller from database
+ * readConfigData($pluginShortcut,
+ * 		&$configArray) 					: used to read the configuration data of a plugin from the database
  * checkForUpdate()						: used to compare version and stand of file "/../version.php" with data from database
+ * compareVersion()                     : used to compare plugin version with the current version from the database
+ * compareStand()                       : used to compare plugin stand with the current stand from the database
+ * checkDefaultFieldsForCurrentOrg()    : used to check if there are default fields for the current organization
  * deleteConfigData($deinstOrgSelect)	: used to delete configuration data in database
  * deleteItemData($deinstOrgSelect)		: used to delete item data in database
- * 
  ***********************************************************************************************
  */
 
@@ -49,9 +65,10 @@ class CConfigTablePIM
 	
 	/**
 	 * Checks if the plugin FormFiller is installed
+	 * 
 	 * @return void
 	 */
-	private function checkPffInst()
+	private function checkPffInst() : void
 	{
 		global $gDb, $gCurrentOrgId;
 
@@ -75,18 +92,20 @@ class CConfigTablePIM
 	/**
 	 * If the plugin FormFiller is installed
 	 * then this method will return true otherwise false
-	 * @return bool Returns @b true if plugin FormFiller is installed
+	 * 
+	 * @return bool 					Returns @b true if plugin FormFiller is installed
 	 */
-	public function isPffInst()
+	public function isPffInst() : bool
 	{
 		return $this->isPffInst;
 	}
 	
 	/**
 	 * Checks if a FormFiller directory exists
+	 * 
 	 * @return void
 	 */
-	private function findPff()
+	private function findPff() : void
 	{
 		$location = ADMIDIO_PATH . FOLDER_PLUGINS;
 		$searchedFile = 'formfiller.php';
@@ -120,7 +139,8 @@ class CConfigTablePIM
 	
 	/**
 	 * Returns the Plugin FormFiller directory
-	 * @return bool/string Returns the FormFiller directory otherwise false 
+	 * 
+	 * @return bool/string 				Returns the FormFiller directory otherwise false 
 	 */
 	public function pffDir()
 	{
@@ -129,9 +149,10 @@ class CConfigTablePIM
 	
     /**
      * checks if the configuration table exists, if necessarry creats it and fills it with default configuration data
+	 * 
      * @return void
      */
-	public function init()
+	public function init() : void
 	{
 		$this->createTablesIfNotExist();
 		$this->initializeDefaultFieldsByOrgId();
@@ -140,9 +161,10 @@ class CConfigTablePIM
 
 	/**
 	 * Creates the necessary tables if they do not exist
+	 * 
 	 * @return void
 	 */
-	private function createTablesIfNotExist()
+	private function createTablesIfNotExist() : void
 	{
 		$this->createTableIfNotExist(TBL_INVENTORY_MANAGER_FIELDS, '
 			imf_id int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -204,11 +226,12 @@ class CConfigTablePIM
 
 	/**
 	 * Creates a table if it does not exist
-	 * @param string $tableName The name of the table
-	 * @param string $tableDefinition The SQL definition of the table
+	 * 
+	 * @param string $tableName 		The name of the table
+	 * @param string $tableDefinition 	The SQL definition of the table
 	 * @return void
 	 */
-	private function createTableIfNotExist($tableName, $tableDefinition)
+	private function createTableIfNotExist($tableName, $tableDefinition) : void
 	{
 		global $gDb;
 
@@ -223,9 +246,10 @@ class CConfigTablePIM
 
 	/**
 	 * Initializes default fields in the inventory manager database
+	 * 
 	 * @return void
 	 */
-	private function initializeDefaultFieldsByOrgId()
+	private function initializeDefaultFieldsByOrgId() : void
 	{
 		global $gDb, $gCurrentOrgId;
 
@@ -393,17 +417,18 @@ class CConfigTablePIM
 
 	/**
 	 * Creates a field in the inventory manager database
-	 * @param string $name The name of the field
-	 * @param string $internalName The internal name of the field
-	 * @param string $type The type of the field
-	 * @param string $description The description of the field
-	 * @param int $sequence The sequence order of the field
-	 * @param bool $system Whether the field is a system field
-	 * @param bool $mandatory Whether the field is mandatory
-	 * @param string $valueList The value list for dropdown fields
+	 * 
+	 * @param string $name 				The name of the field
+	 * @param string $internalName 		The internal name of the field
+	 * @param string $type 				The type of the field
+	 * @param string $description		The description of the field
+	 * @param int $sequence 			The sequence order of the field
+	 * @param bool $system 				Whether the field is a system field
+	 * @param bool $mandatory 			Whether the field is mandatory
+	 * @param string $valueList 		The value list for dropdown fields
 	 * @return void
 	 */
-	private function createField($name, $internalName, $type, $description, $sequence, $system, $mandatory, $valueList = '')
+	private function createField($name, $internalName, $type, $description, $sequence, $system, $mandatory, $valueList = '') : void
 	{
 		global $gDb, $gCurrentOrgId;
 
@@ -422,9 +447,10 @@ class CConfigTablePIM
 
 	/**
 	 * Initializes preferences for the inventory manager
+	 * 
 	 * @return void
 	 */
-	private function initializePreferencesByOrgId()
+	private function initializePreferencesByOrgId() : void
 	{
 		global $gDb, $gCurrentOrgId;
 
@@ -466,9 +492,10 @@ class CConfigTablePIM
 
 	/**
 	 * Writes the configuration data of plugin InventoryManager to the database
+	 * 
 	 * @return void
 	 */
-	public function write()
+	public function write() : void
 	{
 		global $gDb, $gCurrentOrgId;
 
@@ -489,7 +516,8 @@ class CConfigTablePIM
 					// Record exists, update it
 					$sql = 'UPDATE ' . $this->table_preferences_name . ' SET plp_value = ? WHERE plp_id = ?;';
 					$gDb->queryPrepared($sql, array($value, $row->plp_id));
-				} else {
+				}
+				else {
 					// Record does not exist, insert it
 					$sql = 'INSERT INTO ' . $this->table_preferences_name . ' (plp_org_id, plp_name, plp_value) VALUES (?, ?, ?);';
 					$gDb->queryPrepared($sql, array($gCurrentOrgId, $plpName, $value));
@@ -500,31 +528,42 @@ class CConfigTablePIM
 
 	/**
 	 * Reads the configuration data of plugin InventoryManager from the database
-	 * @return void
+	 * 
+	 * @return bool
 	 */
-	public function read()
+	public function read() : bool
 	{
-		$this->readConfigData(self::SHORTCUT, $this->config);
+		return $this->readConfigData(self::SHORTCUT, $this->config);
 	}
 
 	/**
 	 * Reads the configuration data of plugin FormFiller (PFF) from the database
-	 * @return void
+	 * 
+	 * @return bool
 	 */
-	public function readPff()
+	public function readPff() : bool
 	{
-		$this->readConfigData('PFF', $this->configPff);
+		return $this->readConfigData('PFF', $this->configPff);
 	}
 
 	/**
 	 * Reads the configuration data of a plugin from the database
-	 * @param string $pluginShortcut The shortcut of the plugin
-	 * @param array &$configArray The array to store the configuration data
-	 * @return void
+	 * 
+	 * @param string $pluginShortcut 	The shortcut of the plugin
+	 * @param array &$configArray 		The array to store the configuration data
+	 * @return bool
 	 */
-	private function readConfigData($pluginShortcut, &$configArray)
+	private function readConfigData($pluginShortcut, &$configArray) : bool
 	{
 		global $gDb, $gCurrentOrgId;
+
+		// Check if table *_plugin_preferences exists
+		$sql = 'SHOW TABLES LIKE \'' . $this->table_preferences_name . '\' ';
+		$tablePreferencesExistStatement = $gDb->queryPrepared($sql);
+		
+		if ($tablePreferencesExistStatement->rowCount() === 0) {
+			return false;
+		}
 
 		$sql = 'SELECT plp_id, plp_name, plp_value FROM '.$this->table_preferences_name.' WHERE plp_name LIKE ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
 		$statement = $gDb->queryPrepared($sql, array($pluginShortcut.'__%', $gCurrentOrgId)); 
@@ -564,13 +603,15 @@ class CConfigTablePIM
 				}
 			}
 		}
+		return true;
 	}
 	
 	/**
 	 * Compare plugin version and stand with current version and stand from database
+	 * 
 	 * @return bool
 	 */
-	public function checkForUpdate()
+	public function checkForUpdate() : bool
 	{
 		global $gDb;
 
@@ -595,9 +636,10 @@ class CConfigTablePIM
 
 	/**
 	 * Compare plugin version with the current version from the database
+	 * 
 	 * @return bool
 	 */
-	private function compareVersion()
+	private function compareVersion() : bool
 	{
 		global $gDb, $gCurrentOrgId;
 
@@ -613,9 +655,10 @@ class CConfigTablePIM
 
 	/**
 	 * Compare plugin stand with the current stand from the database
+	 * 
 	 * @return bool
 	 */
-	private function compareStand()
+	private function compareStand() : bool
 	{
 		global $gDb, $gCurrentOrgId;
 
@@ -631,9 +674,10 @@ class CConfigTablePIM
 
 	/**
 	 * Checks if there are default fields for the current organization.
-	 * @return bool Returns true if there are no default fields for the current organization, false otherwise.
+	 * 
+	 * @return bool 					Returns true if there are no default fields for the current organization, false otherwise.
 	 */
-	private function checkDefaultFieldsForCurrentOrg()
+	private function checkDefaultFieldsForCurrentOrg() : bool
 	{
 		global $gDb, $gCurrentOrgId;
 
@@ -649,10 +693,12 @@ class CConfigTablePIM
 
 	/**
 	 * Delete configuration data from the database
-	 * @param int $deinstOrgSelect 0 = only delete data from current org, 1 = delete data from every org
-	 * @return string $result Result message
+	 * 
+	 * @param int $deinstOrgSelect 		0 = only delete data from current org,
+	 * 									1 = delete data from every org
+	 * @return string		 			Result message
 	 */
-	public function deleteConfigData($deinstOrgSelect)
+	public function deleteConfigData($deinstOrgSelect) : string
 	{
 		global $gDb, $gCurrentOrgId, $gL10n;
 
@@ -669,7 +715,7 @@ class CConfigTablePIM
 			$params[] = $gCurrentOrgId;
 		}
 		$result_data = $gDb->queryPrepared($sql, $params);
-		$result .= ($result_data ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', [$this->table_preferences_name]) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', [$this->table_preferences_name]));
+		$result .= ($result_data ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array($this->table_preferences_name)) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array($this->table_preferences_name)));
 
 		// Check if the table is empty and can be deleted
 		$sql = 'SELECT * FROM ' . $this->table_preferences_name;
@@ -678,9 +724,9 @@ class CConfigTablePIM
 		if ($statement->rowCount() == 0) {
 			$sql = 'DROP TABLE ' . $this->table_preferences_name;
 			$result_db = $gDb->queryPrepared($sql);
-			$result .= ($result_db ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETED', [$this->table_preferences_name]) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_ERROR', [$this->table_preferences_name]));
+			$result .= ($result_db ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETED', array($this->table_preferences_name)) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_ERROR', array($this->table_preferences_name)));
 		} else {
-			$result .= $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE', [$this->table_preferences_name]);
+			$result .= $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_CONFIGTABLE_DELETE_NOTPOSSIBLE', array($this->table_preferences_name));
 		}
 
 		return $result;
@@ -688,39 +734,40 @@ class CConfigTablePIM
 
 	/**
 	 * Delete the item data from the database
+	 * 
 	 * @param int $deinstOrgSelect 0 = only delete data from current org, 1 = delete data from every org
 	 * @return string $result Result message
 	 */
-	public function deleteItemData($deinstOrgSelect)
+	public function deleteItemData($deinstOrgSelect) : string
 	{
 		global $gDb, $gCurrentOrgId, $gL10n;
 		$result = '';
 
 		if ($deinstOrgSelect == 0) {
 			$sql = 'DELETE FROM ' . TBL_INVENTORY_MANAGER_DATA . ' WHERE imd_imi_id IN (SELECT imi_id FROM ' . TBL_INVENTORY_MANAGER_ITEMS . ' WHERE imi_org_id = ?)';
-			$result_data = $gDb->queryPrepared($sql, [$gCurrentOrgId]);
-			$result .= ($result_data ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', [TABLE_PREFIX . '_inventory_manager_data']) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', [TABLE_PREFIX . '_inventory_manager_data']));
+			$result_data = $gDb->queryPrepared($sql, array($gCurrentOrgId));
+			$result .= ($result_data ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_data')) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_data')));
 
 			$sql = 'DELETE FROM ' . TBL_INVENTORY_MANAGER_LOG . ' WHERE iml_imi_id IN (SELECT imi_id FROM ' . TBL_INVENTORY_MANAGER_ITEMS . ' WHERE imi_org_id = ?)';
-			$result_log = $gDb->queryPrepared($sql, [$gCurrentOrgId]);
-			$result .= ($result_log ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', [TABLE_PREFIX . '_inventory_manager_log']) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', [TABLE_PREFIX . '_inventory_manager_log']));
+			$result_log = $gDb->queryPrepared($sql, array($gCurrentOrgId));
+			$result .= ($result_log ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_log')) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_log')));
 
 			$sql = 'DELETE FROM ' . TBL_INVENTORY_MANAGER_ITEMS . ' WHERE imi_org_id = ?';
-			$result_items = $gDb->queryPrepared($sql, [$gCurrentOrgId]);
-			$result .= ($result_items ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', [TABLE_PREFIX . '_inventory_manager_items']) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', [TABLE_PREFIX . '_inventory_manager_items']));
+			$result_items = $gDb->queryPrepared($sql, array($gCurrentOrgId));
+			$result .= ($result_items ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_items')) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_items')));
 
 			$sql = 'DELETE FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE imf_org_id = ?';
-			$result_fields = $gDb->queryPrepared($sql, [$gCurrentOrgId]);
-			$result .= ($result_fields ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', [TABLE_PREFIX . '_inventory_manager_fields']) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', [TABLE_PREFIX . '_inventory_manager_fields']));
+			$result_fields = $gDb->queryPrepared($sql, array($gCurrentOrgId));
+			$result .= ($result_fields ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN', array(TABLE_PREFIX . '_inventory_manager_fields')) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_DATA_DELETED_IN_ERROR', array(TABLE_PREFIX . '_inventory_manager_fields')));
 		}
 
 		// Drop tables if they are empty or if data should be deleted from every org
-		$table_array = [
+		$table_array = array(
 			TBL_INVENTORY_MANAGER_FIELDS,
 			TBL_INVENTORY_MANAGER_DATA,
 			TBL_INVENTORY_MANAGER_ITEMS,
 			TBL_INVENTORY_MANAGER_LOG
-		];
+		);
 
 		foreach ($table_array as $table_name) {
 			$sql = 'SELECT * FROM ' . $table_name;
@@ -729,9 +776,9 @@ class CConfigTablePIM
 			if ($statement->rowCount() == 0 || $deinstOrgSelect == 1) {
 				$sql = 'DROP TABLE ' . $table_name;
 				$result_db = $gDb->queryPrepared($sql);
-				$result .= ($result_db ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETED', [$table_name]) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_ERROR', [$table_name]));
+				$result .= ($result_db ? $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETED', array($table_name)) : $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_ERROR', array($table_name)));
 			} else {
-				$result .= $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_NOTPOSSIBLE', [$table_name]);
+				$result .= $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_TABLE_DELETE_NOTPOSSIBLE', array($table_name));
 			}
 		}
 

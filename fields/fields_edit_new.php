@@ -8,12 +8,11 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * Parameters:
  * 
+ * Parameters:
  * imf_id               : ID of the item field that should be edited
  * field_name           : Name of the field that should be set
  * redirect_to_import   : If true, the user will be redirected to the import page after saving the field
- * 
  ***********************************************************************************************
  */
 
@@ -78,23 +77,24 @@ $page->addJavascript('
     }
 
     setValueList();
-    $("#imf_type").click(function() { setValueList(); });
-', true);
+    $("#imf_type").click(function() { setValueList(); });',
+    true
+);
 
 // show form
-$form = new HtmlForm('item_fields_edit_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/fields/fields_function.php', ['imf_id' => $getimfId, 'mode' => 1, 'redirect_to_import' => $getRedirectToImport]), $page);
+$form = new HtmlForm('item_fields_edit_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/fields/fields_function.php', array('imf_id' => $getimfId, 'mode' => 1, 'redirect_to_import' => $getRedirectToImport)), $page);
 
 $form->addInput('imf_name', $gL10n->get('SYS_NAME'), $itemField->getValue('imf_name', 'database'), array(
-    'maxLength' => 100,
-    'property' => $itemField->getValue('imf_system') == 1 ? HtmlForm::FIELD_DEFAULT : HtmlForm::FIELD_REQUIRED
+        'maxLength' => 100,
+        'property' => $itemField->getValue('imf_system') == 1 ? HtmlForm::FIELD_DEFAULT : HtmlForm::FIELD_REQUIRED
     )
 );
 
 if ($getimfId > 0) {
     $form->addInput('imf_name_intern', $gL10n->get('SYS_INTERNAL_NAME'), $itemField->getValue('imf_name_intern'), array(
-        'maxLength' => 100,
-        'property' => HtmlForm::FIELD_DISABLED,
-        'helpTextIdLabel' => 'SYS_INTERNAL_NAME_DESC'
+            'maxLength' => 100,
+            'property' => HtmlForm::FIELD_DISABLED,
+            'helpTextIdLabel' => 'SYS_INTERNAL_NAME_DESC'
         )
     );
 }
@@ -113,28 +113,28 @@ asort($itemFieldText);
 
 //bei Systemfeldern darf der Datentyp nicht mehr veraendert werden
 $form->addSelectBox('imf_type', $gL10n->get('ORG_DATATYPE'), $itemFieldText, array(
-    'property' => $itemField->getValue('imf_system') == 1 ? HtmlForm::FIELD_DISABLED : HtmlForm::FIELD_REQUIRED,
-    'defaultValue' => $itemField->getValue('imf_type')
+        'property' => $itemField->getValue('imf_system') == 1 ? HtmlForm::FIELD_DISABLED : HtmlForm::FIELD_REQUIRED,
+        'defaultValue' => $itemField->getValue('imf_type')
     )
 );
 
 $form->addMultilineTextInput('imf_value_list', $gL10n->get('ORG_VALUE_LIST'), (string)$itemField->getValue('imf_value_list', 'database'), 6, array(
-    'property' => HtmlForm::FIELD_REQUIRED,
-    'helpTextIdLabel' => 'ORG_VALUE_LIST_DESC'
+        'property' => HtmlForm::FIELD_REQUIRED,
+        'helpTextIdLabel' => 'ORG_VALUE_LIST_DESC'
     )
 );
 
 $form->addCheckbox('imf_mandatory', $gL10n->get('SYS_REQUIRED_INPUT'), (bool)$itemField->getValue('imf_mandatory'), array(
-    'property' => HtmlForm::FIELD_DEFAULT,
-    'icon' => 'fa-asterisk'
+        'property' => HtmlForm::FIELD_DEFAULT,
+        'icon' => 'fa-asterisk'
     )
 );
 
 $form->addMultilineTextInput('imf_description', $gL10n->get('SYS_DESCRIPTION'), $itemField->getValue('imf_description'), 3);
 
 $form->addSubmitButton('btn_save', $gL10n->get('SYS_SAVE'), array(
-    'icon' => 'fa-check',
-    'class' => 'offset-sm-3'
+        'icon' => 'fa-check',
+        'class' => 'offset-sm-3'
     )
 );
 

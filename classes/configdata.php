@@ -26,36 +26,36 @@ class CConfigDataPIM
     /**
      * Default configuration data for plugin InventoryManager
      */
-    const CONFIG_DEFAULT = [
-        'Optionen' => [
+    const CONFIG_DEFAULT = array(
+        'Optionen' => array(
             'interface_pff' => 0,
-            'profile_addin' => [
+            'profile_addin' => array(
                 'ITEMNAME',
                 'LAST_RECEIVER'
-            ],
+            ),
             'file_name' => 'InventoryManager',
             'add_date' => 0,
             'allow_keeper_edit' => 0,
-            'allowed_keeper_edit_fields' => [
+            'allowed_keeper_edit_fields' => array(
                 'IN_INVENTORY',
                 'LAST_RECEIVER',
                 'RECEIVED_ON',
                 'RECEIVED_BACK_ON'
-            ],
+            ),
             'current_user_default_keeper' => 0,
             'allow_negative_numbers' => 1,
             'decimal_step' => 0.1,
             'field_date_time_format' => 'date',
-        ],
-        'Plugininformationen' => [
+        ),
+        'Plugininformationen' => array(
             'version' => '',
             'beta-version' => '',
             'stand' => '',
-        ],
-        'access' => [
-            'preferences' => []
-        ]
-    ];
+        ),
+        'access' => array(
+            'preferences' => array(0)
+        )
+    );
 
     /**
      * Database token for plugin InventoryManager

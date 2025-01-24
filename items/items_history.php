@@ -8,11 +8,11 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * Parameters:
  * 
- * item_id         : If set, only show the item field history of that item
- * filter_date_from: Set to the actual date if no date information is delivered
- * filter_date_to  : Set to 31.12.9999 if no date information is delivered
+ * Parameters:
+ * item_id          : If set, only show the item field history of that item
+ * filter_date_from : Set to the actual date if no date information is delivered
+ * filter_date_to   : Set to the actual date if no date information is delivered
  ***********************************************************************************************
  */
 
@@ -29,8 +29,8 @@ $filterDateFrom = DateTime::createFromFormat('Y-m-d', DATE_NOW);
 $filterDateFrom->modify('-'.$gSettingsManager->getInt('contacts_field_history_days').' day');
 
 $getItemId    = admFuncVariableIsValid($_GET, 'item_id', 'int');
-$getDateFrom  = admFuncVariableIsValid($_GET, 'filter_date_from', 'date', ['defaultValue' => $filterDateFrom->format($gSettingsManager->getString('system_date'))]);
-$getDateTo    = admFuncVariableIsValid($_GET, 'filter_date_to', 'date', ['defaultValue' => DATE_NOW]);
+$getDateFrom  = admFuncVariableIsValid($_GET, 'filter_date_from', 'date', array('defaultValue' => $filterDateFrom->format($gSettingsManager->getString('system_date'))));
+$getDateTo    = admFuncVariableIsValid($_GET, 'filter_date_to', 'date', array('defaultValue' => DATE_NOW));
 
 $items = new CItems($gDb, $gCurrentOrgId);
 $items->readItemData($getItemId, $gCurrentOrgId);

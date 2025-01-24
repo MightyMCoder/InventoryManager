@@ -3,7 +3,7 @@
  ***********************************************************************************************
  * InventoryManager
  *
- * Version 1.1.3
+ * Version 1.1.4
  *
  * InventoryManager is an Admidio plugin for managing the inventory of an organisation.
  * 
@@ -32,17 +32,26 @@
  * 
  * 
  * Parameters:
+ * mode             : Output(html, print, csv-ms, csv-oo, pdf, pdfl, xlsx, ods)
+ * filter_string    : general filter string
+ * filter_category  : filter for category
+ * filter_keeper    : filter for keeper
+ * show_all         : 0 - (Default) show active items only
+ *                    1 - show all items (also made to former)
+ * same_side        : 0 - (Default) side was called by another side
+ *                    1 - internal call of the side
  * 
- * mode              : Output(html, print, csv-ms, csv-oo, pdf, pdfl, xlsx, ods)
- * filter_string     : general filter string
- * filter_category   : filter for category
- * filter_keeper   : filter for keeper
- * show_all          : 0 - (Default) show active items only
- *                     1 - show all items (also made to former)
- * same_side         : 0 - (Default) side was called by another side
- *                     1 - internal call of the side
+ * 
+ * Methods:
+ * formatSpreadsheet($spreadsheet, $data, $containsHeadline)    : Format the spreadsheet
  ***********************************************************************************************
  */
+
+// PhpSpreadsheet namespaces
+ use PhpOffice\PhpSpreadsheet\Spreadsheet;
+ use PhpOffice\PhpSpreadsheet\Writer\Csv;
+ use PhpOffice\PhpSpreadsheet\Writer\Ods;
+ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/common_function.php');
@@ -60,11 +69,6 @@ if (!isUserAuthorizedForPIM($scriptName)) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
-use PhpOffice\PhpSpreadsheet\Writer\Ods;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
 $sessionDefaults = array(
     'filter_string' => '',
     'filter_category' => '',
@@ -72,8 +76,9 @@ $sessionDefaults = array(
     'show_all' => false
 );
 
+// check if plugin need to be updated
 $pPreferences = new CConfigTablePIM();
-$pPreferences->read();
+$pPreferences->checkForUpdate() ? $pPreferences->init() : $pPreferences->read();
 
 // check if user is authorized for preferences panel
 if (isUserAuthorizedForPreferencesPIM()) {
@@ -90,9 +95,10 @@ foreach ($sessionDefaults as $key => $default) {
 }
 
 $getMode = admFuncVariableIsValid($_GET, 'mode', 'string', array(
-    'defaultValue' => 'html',
-    'validValues' => ['csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx', 'ods']
-));
+        'defaultValue' => 'html',
+        'validValues' => ['csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx', 'ods']
+    )
+);
 $getFilterString = admFuncVariableIsValid($_GET, 'filter_string', 'string');
 $getFilterCategory = admFuncVariableIsValid($_GET, 'filter_category', 'string');
 $getFilterKeeper = admFuncVariableIsValid($_GET, 'filter_keeper', 'int');
@@ -113,8 +119,6 @@ else {
     $getFilterKeeper = $_SESSION['pInventoryManager']['filter_keeper'];
     $getShowAll = $_SESSION['pInventoryManager']['show_all'];
 }
-
-$pPreferences->checkForUpdate() ? $pPreferences->init() : $pPreferences->read();
 
 // initialize some special mode parameters
 $separator = '';
@@ -168,8 +172,7 @@ $title = $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER');
 $headline = $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER');
 
 // if html mode and last url was not a list view then save this url to navigation stack
-if ($gNavigation->count() === 0 || ($getMode == 'html' && strpos($gNavigation->getUrl(), 'inventory_manager.php') === false))             
-{
+if ($gNavigation->count() === 0 || ($getMode == 'html' && strpos($gNavigation->getUrl(), 'inventory_manager.php') === false)) {
     $gNavigation->addStartUrl(CURRENT_URL, $headline, 'fa-warehouse');
 }
 
@@ -181,6 +184,7 @@ switch ($getMode) {
     case 'ods':
     case 'xlsx':
         break;  // don't show HtmlTable
+
     case 'print':
         // create html page object without the custom theme files
         $page = new HtmlPage('plg-inventory-manager-main-print');
@@ -189,6 +193,7 @@ switch ($getMode) {
         $page->setHeadline($headline);
         $table = new HtmlTable('adm_inventory_table', $page, $hoverRows, $datatable, $classTable);
         break;
+
     case 'pdf':
         $pdf = new TCPDF($orientation, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
@@ -226,6 +231,7 @@ switch ($getMode) {
         $table->addAttribute('border', '1');
         $table->addAttribute('cellpadding', '1');
         break;
+
     case 'html':
         $datatable = true;
         $hoverRows = true;
@@ -242,90 +248,113 @@ switch ($getMode) {
         $page->addJavascript('
             $("#filter_category").change(function () {
                 self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                    'mode'              => 'html',
-                    'filter_string'     => $getFilterString,
-                    'filter_keeper'   => $getFilterKeeper,
-                    'same_side'         => true,
-                    'show_all'          => $getShowAll
-                )) . '&filter_category=" + $(this).val();
+                            'mode'              => 'html',
+                            'filter_string'     => $getFilterString,
+                            'filter_keeper'   => $getFilterKeeper,
+                            'same_side'         => true,
+                            'show_all'          => $getShowAll
+                        )
+                    ) . '&filter_category=" + $(this).val();
             });
             $("#filter_keeper").change(function () {
                 self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                    'mode'              => 'html',
-                    'filter_string'     => $getFilterString,
-                    'filter_category'   => $getFilterCategory,
-                    'same_side'         => true,
-                    'show_all'          => $getShowAll
-                )) . '&filter_keeper=" + $(this).val();
+                            'mode'              => 'html',
+                            'filter_string'     => $getFilterString,
+                            'filter_category'   => $getFilterCategory,
+                            'same_side'         => true,
+                            'show_all'          => $getShowAll
+                        )
+                    ) . '&filter_keeper=" + $(this).val();
             });
             $("#menu_item_lists_print_view").click(function() {
                 window.open("'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                    'filter_string'     => $getFilterString,
-                    'filter_category'   => $getFilterCategory, 
-                    'filter_keeper'   => $getFilterKeeper,
-                    'show_all'          => $getShowAll,  
-                    'mode'              => 'print'
-                )) . '", "_blank");
+                            'filter_string'     => $getFilterString,
+                            'filter_category'   => $getFilterCategory, 
+                            'filter_keeper'   => $getFilterKeeper,
+                            'show_all'          => $getShowAll,  
+                            'mode'              => 'print'
+                        )
+                    ) . '", "_blank"
+                );
             });
             $("#show_all").change(function() {
                 $("#navbar_inventorylist_form").submit();
             });
             $("#filter_string").change(function() {
                 $("#navbar_inventorylist_form").submit();
-            });
-        ', true);
+            });',
+            true
+        );
 
         // links to print and exports
         $page->addPageFunctionsMenuItem('menu_item_lists_print_view', $gL10n->get('SYS_PRINT_PREVIEW'), 'javascript:void(0);', 'fa-print');
         $page->addPageFunctionsMenuItem('menu_item_lists_export', $gL10n->get('SYS_EXPORT_TO'), '#', 'fa-file-download');
         $page->addPageFunctionsMenuItem('menu_item_lists_xlsx', $gL10n->get('SYS_MICROSOFT_EXCEL').' (*.xlsx)',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                'filter_string'     => $getFilterString,
-                'filter_category'   => $getFilterCategory,
-                'filter_keeper'   => $getFilterKeeper,
-                'show_all'          => $getShowAll,
-                'mode'              => 'xlsx')),
-            'fa-file-excel', 'menu_item_lists_export');
+                    'filter_string'     => $getFilterString,
+                    'filter_category'   => $getFilterCategory,
+                    'filter_keeper'   => $getFilterKeeper,
+                    'show_all'          => $getShowAll,
+                    'mode'              => 'xlsx'
+                )
+            ),
+            'fa-file-excel', 'menu_item_lists_export'
+        );
         $page->addPageFunctionsMenuItem('menu_item_lists_ods', $gL10n->get('SYS_ODF_SPREADSHEET'),
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                'filter_string'     => $getFilterString,
-                'filter_category'   => $getFilterCategory,
-                'filter_keeper'   => $getFilterKeeper,
-                'show_all'          => $getShowAll,
-                'mode'              => 'ods')),
-            'fa-file-alt', 'menu_item_lists_export');    
+                    'filter_string'     => $getFilterString,
+                    'filter_category'   => $getFilterCategory,
+                    'filter_keeper'   => $getFilterKeeper,
+                    'show_all'          => $getShowAll,
+                    'mode'              => 'ods'
+                )
+            ),
+            'fa-file-alt', 'menu_item_lists_export'
+        );    
         $page->addPageFunctionsMenuItem('menu_item_lists_csv_ms', $gL10n->get('SYS_COMMA_SEPARATED_FILE'),
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                'filter_string'     => $getFilterString,
-                'filter_category'   => $getFilterCategory,
-                'filter_keeper'   => $getFilterKeeper,
-                'show_all'          => $getShowAll,
-                'mode'              => 'csv-ms')),
-            'fa-file-excel', 'menu_item_lists_export');
+                    'filter_string'     => $getFilterString,
+                    'filter_category'   => $getFilterCategory,
+                    'filter_keeper'   => $getFilterKeeper,
+                    'show_all'          => $getShowAll,
+                    'mode'              => 'csv-ms'
+                )
+            ),
+            'fa-file-excel', 'menu_item_lists_export'
+        );
         $page->addPageFunctionsMenuItem('menu_item_lists_csv', $gL10n->get('SYS_COMMA_SEPARATED_FILE').' ('.$gL10n->get('SYS_UTF8').')',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                'filter_string'     => $getFilterString,
-                'filter_category'   => $getFilterCategory,
-                'filter_keeper'   => $getFilterKeeper,
-                'show_all'          => $getShowAll,
-                'mode'              => 'csv-oo')),
-            'fa-file-csv', 'menu_item_lists_export');
+                    'filter_string'     => $getFilterString,
+                    'filter_category'   => $getFilterCategory,
+                    'filter_keeper'   => $getFilterKeeper,
+                    'show_all'          => $getShowAll,
+                    'mode'              => 'csv-oo'
+                )
+            ),
+            'fa-file-csv', 'menu_item_lists_export'
+        );
         $page->addPageFunctionsMenuItem('menu_item_lists_pdf', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_PORTRAIT').')',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                'filter_string'     => $getFilterString,
-                'filter_category'   => $getFilterCategory,
-                'filter_keeper'   => $getFilterKeeper,
-                'show_all'          => $getShowAll,
-                'mode'              => 'pdf')),
-            'fa-file-pdf', 'menu_item_lists_export');
+                    'filter_string'     => $getFilterString,
+                    'filter_category'   => $getFilterCategory,
+                    'filter_keeper'   => $getFilterKeeper,
+                    'show_all'          => $getShowAll,
+                    'mode'              => 'pdf'
+                )
+            ),
+            'fa-file-pdf', 'menu_item_lists_export'
+        );
         $page->addPageFunctionsMenuItem('menu_item_lists_pdfl', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_LANDSCAPE').')',
             SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                'filter_string'     => $getFilterString,
-                'filter_category'   => $getFilterCategory,
-                'filter_keeper'   => $getFilterKeeper,
-                'show_all'          => $getShowAll,
-                'mode'              => 'pdfl')),
-            'fa-file-pdf', 'menu_item_lists_export');
+                    'filter_string'     => $getFilterString,
+                    'filter_category'   => $getFilterCategory,
+                    'filter_keeper'   => $getFilterKeeper,
+                    'show_all'          => $getShowAll,
+                    'mode'              => 'pdfl'
+                )
+            ),
+            'fa-file-pdf', 'menu_item_lists_export'
+        );
         
         if ($authorizedForPreferences) {
             $page->addPageFunctionsMenuItem('menu_preferences', $gL10n->get('SYS_SETTINGS'), SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences.php'),  'fa-cog');
@@ -390,6 +419,7 @@ switch ($getMode) {
             $table->setDatatablesRowsPerPage($gSettingsManager->getInt('groups_roles_members_per_page'));
         }
         break;
+
     default:
         $table = new HtmlTable('adm_inventory_table', $page, $hoverRows, $datatable, $classTable);
         break;
@@ -416,10 +446,12 @@ foreach ($items->mItemFields as $itemField) {
         case 'GENDER':
             $columnAlign[] = 'center';
             break;
+
         case 'NUMBER':
         case 'DECIMAL':
             $columnAlign[] = 'right';
             break;
+
         default:
             $columnAlign[] = 'left';
             break;
@@ -441,13 +473,16 @@ foreach ($items->mItemFields as $itemField) {
         case 'csv':
             $csvStr .= $separator . $valueQuotes . $columnHeader . $valueQuotes;
             break;
+
         case "ods":
         case 'xlsx':
             $header[$columnHeader] = 'string';
             break;
+
         case 'pdf':
             $arrValidColumns[] = $columnHeader;
             break;
+
         case 'html':
         case 'print':
             $columnValues[] = $columnHeader;
@@ -497,8 +532,7 @@ foreach ($items->items as $item) {
         $imfNameIntern = $itemField->getValue('imf_name_intern');
 
         if (($getFilterCategory !== '' && $imfNameIntern == 'CATEGORY' && $getFilterCategory != $items->getValue($imfNameIntern, 'database')) ||
-            ($getFilterKeeper !== 0 && $imfNameIntern == 'KEEPER' && $getFilterKeeper != $items->getValue($imfNameIntern))
-        ) {
+                ($getFilterKeeper !== 0 && $imfNameIntern == 'KEEPER' && $getFilterKeeper != $items->getValue($imfNameIntern))) {
             continue 2;
         }
 
@@ -648,11 +682,13 @@ foreach ($items->items as $item) {
             case 'csv':
                 $csvStr .= $tmp_csv . "\n";
                 break;
+
             case 'ods':
             case 'xlsx':
                 $rows[] = $columnValues;
                 $strikethroughs[] = $strikethrough;
                 break;
+
             default:
                 $table->addRowByArray($columnValues, '', array('nobr' => 'true'));
                 break;
@@ -688,6 +724,7 @@ switch ($getMode) {
         
         $writer->save('php://output');
         break;
+
     case 'pdf':
         $pdf->writeHTML($table->getHtmlTable(), true, false, true);
         $file = ADMIDIO_PATH . FOLDER_DATA . '/temp/' . $filename;
@@ -697,10 +734,12 @@ switch ($getMode) {
         ignore_user_abort(true);
         try {
             FileSystemUtils::deleteFileIfExists($file);
-        } catch (\RuntimeException $exception) {
+        }
+        catch (\RuntimeException $exception) {
             $gLogger->error('Could not delete file!', array('filePath' => $file));
         }
         break;
+
     case 'ods':
     case 'xlsx':
         $contentType = ($getMode == 'xlsx') ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/vnd.oasis.opendocument.spreadsheet";
@@ -737,17 +776,26 @@ switch ($getMode) {
         $writer = new $writerClass($spreadsheet);
         $writer->save('php://output');
         break;
+
     case 'html':
         $page->addHtml($table->show());
         $page->show();
         break;
+        
     case 'print':
         $page->addHtml($table->show());
         $page->show();
         break;
 }
 
-function formatSpreadsheet($spreadsheet, $data, $containsHeadline)
+/**
+ * Formats the spreadsheet
+ *
+ * @param PhpOffice\PhpSpreadsheet\Spreadsheet $spreadsheet
+ * @param array $data
+ * @param bool $containsHeadline
+ */
+function formatSpreadsheet($spreadsheet, $data, $containsHeadline) : void
 {
     $alphabet = range('A', 'Z');
     $column = $alphabet[count($data[0])-1];

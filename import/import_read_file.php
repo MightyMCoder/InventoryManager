@@ -48,7 +48,8 @@ $postWorksheet      = admFuncVariableIsValid($_POST, 'import_sheet', 'string');
 try {
     // check the CSRF token of the form against the session token
     SecurityUtils::validateCsrfToken($_POST['admidio-csrf-token']);
-} catch (AdmException $exception) {
+}
+catch (AdmException $exception) {
     $exception->showHtml();
     // => EXIT
 }
