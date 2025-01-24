@@ -8,11 +8,11 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
+ * 
  * Parameters:
- *
- * item_id    : ID of the item who should be edited
- * copy      : true - The item of the item_id will be copied and the base for this new item
- *
+ * item_id      : ID of the item who should be edited
+ * item_former  : indicates that the item was made to former item
+ * copy         : true - The item of the item_id will be copied and the base for this new item
  ***********************************************************************************************
  */
 
@@ -77,7 +77,7 @@ if ($getItemId != 0) {
 }
 
 // Create HTML form
-$form = new HtmlForm('edit_item_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_save.php', ['item_id' => $getItemId]), $page);
+$form = new HtmlForm('edit_item_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_save.php', array('item_id' => $getItemId)), $page);
 
 foreach ($items->mItemFields as $itemField) {
     $imfNameIntern = $itemField->getValue('imf_name_intern');
@@ -111,10 +111,9 @@ foreach ($items->mItemFields as $itemField) {
     }
     
     if (isset($pimInInventoryId, $pimLastReceiverId, $pimReceivedOnId, $pimReceivedBackOnId) && $imfNameIntern === 'IN_INVENTORY') {
-        // Add JavaScript to check the PIM_LAST_RECEIVER field and set the required attribute for pimReceivedOnId
-
         $pPreferences->config['Optionen']['field_date_time_format'] === 'datetime' ? $datetime = 'true' : $datetime = 'false';
-        
+
+        // Add JavaScript to check the PIM_LAST_RECEIVER field and set the required attribute for pimReceivedOnId and pimReceivedBackOnId
         $page->addJavascript('
             document.addEventListener("DOMContentLoaded", function() {
                 if (document.querySelector("[id=\'imf-' . $pimReceivedOnId . '_time\']")) {
@@ -255,6 +254,7 @@ foreach ($items->mItemFields as $itemField) {
                 )
             );
             break;
+
         case 'DROPDOWN':
             $form->addSelectBox(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
@@ -268,6 +268,7 @@ foreach ($items->mItemFields as $itemField) {
                 )
             );
             break;
+
         case 'RADIO_BUTTON':
             $form->addRadioButton(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
@@ -282,6 +283,7 @@ foreach ($items->mItemFields as $itemField) {
                 )
             );
             break;
+
         case 'TEXT_BIG':
             $form->addMultilineTextInput(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
@@ -296,6 +298,7 @@ foreach ($items->mItemFields as $itemField) {
                 )
             );
             break;
+
         default:
             $fieldType = 'text';
             $maxlength = '50';

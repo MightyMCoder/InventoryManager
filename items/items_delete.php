@@ -8,15 +8,21 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * Parameters:
  * 
- * mode       : 1 - Display form to delete or mark item as former
- *              2 - Delete an item
- *              3 - Mark an item as former
- * 				4 - Undo marking an item as former
- * item_id    : ID of the item to be deleted or marked as former
- * item_former: 0 - Item is active
- *              1 - Item is already marked as former
+ * Parameters:
+ * mode       	: 1 - Display form to delete or mark item as former
+ *            	  2 - Delete an item
+ *            	  3 - Mark an item as former
+ * 				  4 - Undo marking an item as former
+ * item_id    	: ID of the item to be deleted or marked as former
+ * item_former	: 0 - Item is active
+ *                1 - Item is already marked as former
+ * 
+ * Methods:
+ * displayItemDeleteForm() : Displays the form to delete an item
+ * deleteItem()            : Deletes an item from the database
+ * makeItemFormer()        : Marks an item as former
+ * undoItemFormer()        : Marks an item as no longer former
  ***********************************************************************************************
  */
 
@@ -59,6 +65,7 @@ switch ($getMode) {
 	case 1:
 		displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $authorizedForDelete);
 		break;
+
 	case 2:
 		if ($authorizedForDelete) {
 			deleteItem($items, $getItemId, $gCurrentOrgId);
@@ -67,22 +74,26 @@ switch ($getMode) {
 			$gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 		}
 		break;
+
 	case 3:
 		makeItemFormer($items, $getItemId, $gCurrentOrgId);
 		break;
+
 	case 4:
 		undoItemFormer($items, $getItemId, $gCurrentOrgId);
 		break;
 }
 
 /**
- * Displays the form to delete an item.
- * @param CItems $items 		The items object containing item data.
- * @param User $user 			The user object.
- * @param int $getItemId 		The ID of the item to be deleted.
- * @param bool $getItemFormer 	Indicates if the item is already marked as former.
+ * Displays the form to delete an item
+ * 
+ * @param CItems $items 		The items object containing item data
+ * @param User $user 			The user object
+ * @param int $getItemId 		The ID of the item to be deleted
+ * @param bool $getItemFormer 	Indicates if the item is already marked as former
  */
-function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $authorizedForDelete) {
+function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $authorizedForDelete) : void
+{
 	global $gL10n, $gNavigation;
 
 	$headline = $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE');
@@ -139,18 +150,20 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $autho
 }
 
 /**
- * Deletes an item from the database.
- * @param CItems $items 		The items object containing item data.
- * @param int $getItemId 		The ID of the item to be deleted.
- * @param int $gCurrentOrgId 	The ID of the current organization.
+ * Deletes an item from the database
+ * 
+ * @param CItems $items 		The items object containing item data
+ * @param int $getItemId 		The ID of the item to be deleted
+ * @param int $gCurrentOrgId 	The ID of the current organization
  */
-function deleteItem($items, $getItemId, $gCurrentOrgId) {
+function deleteItem($items, $getItemId, $gCurrentOrgId) : void
+{
 	global $gMessage, $gNavigation, $gL10n;
 
  	$items->deleteItem($getItemId, $gCurrentOrgId);
 
 	// Send notification to all users
-	$items->sendNotification($gCurrentOrgId);
+	$items->sendNotification();
 
 	// Go back to item view
 	if ($gNavigation->count() > 2) {
@@ -162,36 +175,40 @@ function deleteItem($items, $getItemId, $gCurrentOrgId) {
 }
 
 /**
- * Marks an item as former.
- * @param CItems $items 		The items object containing item data.
- * @param int $getItemId 		The ID of the item to be marked as former.
- * @param int $gCurrentOrgId 	The ID of the current organization.
+ * Marks an item as former
+ * 
+ * @param CItems $items 		The items object containing item data
+ * @param int $getItemId 		The ID of the item to be marked as former
+ * @param int $gCurrentOrgId 	The ID of the current organization
  */
-function makeItemFormer($items, $getItemId, $gCurrentOrgId) {
+function makeItemFormer($items, $getItemId, $gCurrentOrgId) : void
+{
 	global $gMessage, $gNavigation, $gL10n;
 
 	$items->makeItemFormer($getItemId, $gCurrentOrgId);
 
 	// Send notification to all users
-	$items->sendNotification($gCurrentOrgId);
+	$items->sendNotification();
 
 	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
 	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEM_MADE_TO_FORMER'));
 }
 
 /**
- * Marks an item as no longer former.
- * @param CItems $items 		The items object containing item data.
- * @param int $getItemId 		The ID of the item to be marked as former.
- * @param int $gCurrentOrgId 	The ID of the current organization.
+ * Marks an item as no longer former
+ * 
+ * @param CItems $items 		The items object containing item data
+ * @param int $getItemId 		The ID of the item to be marked as former
+ * @param int $gCurrentOrgId 	The ID of the current organization
  */
-function undoItemFormer($items, $getItemId, $gCurrentOrgId) {
+function undoItemFormer($items, $getItemId, $gCurrentOrgId) : void
+{
 	global $gMessage, $gNavigation, $gL10n;
 
 	$items->undoItemFormer($getItemId, $gCurrentOrgId);
 
 	// Send notification to all users
-	$items->sendNotification($gCurrentOrgId);
+	$items->sendNotification();
 
 	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
 	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER'));

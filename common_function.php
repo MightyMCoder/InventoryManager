@@ -9,33 +9,37 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * methods:
  * 
- * defineConstantsPIM()                          : Define necessary constants if not already defined
- * isUserAuthorizedForPIM($scriptName)           : Check if the user is authorized to access the plugin
- * getMenuIdByScriptNamePIM($scriptName)         : Get menu ID by script name
- * isUserAuthorizedForPreferencesPIM()           : Check if the user is authorized to access the Preferences module
- * function isUserAuthorizedForAddinPIM()		 : Check if the user is authorized to see the Inventory Manager Addin on the profile page
- * convlanguagePIM($field_name)                  : Translate field name according to naming conventions
- * getNewNameInternPIM($name, $index)            : Generate a new internal name
- * genNewSequencePIM()                           : Generate a new sequence number
- * umlautePIM($tmptext)                          : Replace umlauts in the text
+ * Methods:
+ * defineConstantsPIM()                          			: Define necessary constants if not already defined
+ * isUserAuthorizedForPIM($scriptName)           			: Check if the user is authorized to access the plugin
+ * isUserAuthorizedForPreferencesPIM()           			: Check if the user is authorized to access the Preferences module
+ * isUserAuthorizedForAddinPIM()							: Check if the user is authorized to see the
+ * 																Inventory Manager Addin on the profile page
+ * isKeeperAuthorizedToEdit($keeper)             			: Check if the keeper is authorized to edit spezific item data
+ * getMenuIdByScriptNamePIM($scriptName)         			: Get menu ID by script name
+ * convlanguagePIM($field_name)                  			: Translate field name according to naming conventions
+ * getNewNameInternPIM($name, $index)           			: Generate a new internal name
+ * genNewSequencePIM()                           			: Generate a new sequence number
+ * umlautePIM($tmptext)                          			: Replace umlauts in the text
  * getPreferencePanelPIM($group, $id, $title, $icon, $body) : Generate HTML for a preference panel
- * 
+ * getSqlOrganizationsUsersCompletePIM()         			: Get all users with their id, name, and address
+ * getSqlOrganizationsUsersShortPIM()            			: Get all users with their id and name
  ***********************************************************************************************
  */
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 
+// Define necessary constants if not already defined
 defineConstantsPIM();
 
 /**
  * Define necessary constants if not already defined
+ * 
+ * @return void
  */
-function defineConstantsPIM()
+function defineConstantsPIM() : void
 {
-	global $g_tbl_praefix;
-
 	if (!defined('PLUGIN_FOLDER_IM')) {
 		define('PLUGIN_FOLDER_IM', '/' . basename(__DIR__));
 	}
@@ -55,10 +59,11 @@ function defineConstantsPIM()
 
 /**
  * Check if the user is authorized to access the plugin
+ * 
  * @param string $scriptName 		The script name of the plugin
  * @return bool						true if the user is authorized
  */
-function isUserAuthorizedForPIM($scriptName)
+function isUserAuthorizedForPIM($scriptName) : bool
 {
 	global $gMessage, $gL10n, $gDb, $gCurrentUser;
 	$gCurrentUser = $GLOBALS['gCurrentUser'];
@@ -89,28 +94,11 @@ function isUserAuthorizedForPIM($scriptName)
 }
 
 /**
- * Get menu ID by script name
- * @param string $scriptName		The script name of the plugin
- * @return int|null					The menu ID or null if not found
- */
-function getMenuIdByScriptNamePIM($scriptName)
-{
-	global $gDb;
-
-	$sql = 'SELECT men_id FROM ' . TBL_MENU . ' WHERE men_url = ?;';
-	$menuStatement = $gDb->queryPrepared($sql, array($scriptName));
-
-	if ($menuStatement->rowCount() === 1) {
-		return (int)$menuStatement->fetch()['men_id'];
-	}
-	return null;
-}
-
-/**
  * Check if the user is authorized to access the Preferences module
+ * 
  * @return bool 					true if the user is authorized
  */
-function isUserAuthorizedForPreferencesPIM()
+function isUserAuthorizedForPreferencesPIM() : bool
 {
 	global $pPreferences, $gCurrentUser;
 	$gCurrentUser = $GLOBALS['gCurrentUser'];
@@ -127,32 +115,12 @@ function isUserAuthorizedForPreferencesPIM()
 	return false;
 }
 
-
-/**
- * Check if the keeper is authorized to edit spezific item data
- *
- * @param int|null $keeper The user ID of the keeper.
- * @return bool Returns true if the current user is authorized, otherwise false.
- */
-function isKeeperAuthorizedToEdit(int $keeper = null)
-{
-	global $pPreferences, $gCurrentUser;
-	$gCurrentUser = $GLOBALS['gCurrentUser'];
-
-	if ($pPreferences->config['Optionen']['allow_keeper_edit'] === 1) {
-		if (isset($keeper) && $keeper === $gCurrentUser->getValue('usr_id')) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
 /**
  * Check if the user is authorized to see the Inventory Manager Addin on the profile page
+ * 
  * @return bool 					true if the user is authorized
  */
-function isUserAuthorizedForAddinPIM()
+function isUserAuthorizedForAddinPIM() : bool
 {
 	global $gDb;
 	
@@ -187,11 +155,51 @@ function isUserAuthorizedForAddinPIM()
 }
 
 /**
+ * Check if the keeper is authorized to edit spezific item data
+ * 
+ * @param int|null $keeper 			The user ID of the keeper
+ * @return bool 					true if the keeper is authorized
+ */
+function isKeeperAuthorizedToEdit(int $keeper = null) : bool
+{
+	global $pPreferences, $gCurrentUser;
+	$gCurrentUser = $GLOBALS['gCurrentUser'];
+
+	if ($pPreferences->config['Optionen']['allow_keeper_edit'] === 1) {
+		if (isset($keeper) && $keeper === $gCurrentUser->getValue('usr_id')) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Get menu ID by script name
+ * 
+ * @param string $scriptName		The script name of the plugin
+ * @return int|null					The menu ID or null if not found
+ */
+function getMenuIdByScriptNamePIM($scriptName) : ?int
+{
+	global $gDb;
+
+	$sql = 'SELECT men_id FROM ' . TBL_MENU . ' WHERE men_url = ?;';
+	$menuStatement = $gDb->queryPrepared($sql, array($scriptName));
+
+	if ($menuStatement->rowCount() === 1) {
+		return (int)$menuStatement->fetch()['men_id'];
+	}
+	return null;
+}
+
+/**
  * Translate field name according to naming conventions
+ * 
  * @param string $field_name		field name to translate
  * @return string 					translated field name
  */
-function convlanguagePIM($field_name)
+function convlanguagePIM($field_name) : string
 {
 	global $gL10n;
 
@@ -200,11 +208,12 @@ function convlanguagePIM($field_name)
 
 /**
  * Generate a new internal name
+ * 
  * @param string $name				name to generate internal name from
  * @param int $index				index to append to the internal name
  * @return string 					new internal name
  */
-function getNewNameInternPIM($name, $index)
+function getNewNameInternPIM($name, $index) : string
 {
 	global $gDb;
 
@@ -227,9 +236,10 @@ function getNewNameInternPIM($name, $index)
 
 /**
  * Generate a new sequence number
+ * 
  * @return int 						new sequence number
  */
-function genNewSequencePIM()
+function genNewSequencePIM() : int
 {
 	global $gDb, $gCurrentOrgId;
 
@@ -242,10 +252,11 @@ function genNewSequencePIM()
 
 /**
  * Replace umlauts in the text
+ * 
  * @param string $tmptext			text to replace umlauts in
  * @return string 					text with replaced umlauts
  */
-function umlautePIM($tmptext)
+function umlautePIM($tmptext) : string
 {
 	$replacements = [
 		'&uuml;' => 'ue',
@@ -265,6 +276,7 @@ function umlautePIM($tmptext)
 
 /**
  * Generate HTML for a preference panel
+ * 
  * @param string $group				group the preference panel belongs to
  * @param string $id				unique ID of the preference panel
  * @param string $title				title of the preference panel
@@ -272,7 +284,7 @@ function umlautePIM($tmptext)
  * @param string $body				body of the preference panel
  * @return string 					HTML for the preference panel
  */
-function getPreferencePanelPIM($group, $id, $title, $icon, $body)
+function getPreferencePanelPIM($group, $id, $title, $icon, $body) : string
 {
 	return '
 		<div class="card" id="' . $group . '_panel_' . $id . '">
@@ -288,7 +300,12 @@ function getPreferencePanelPIM($group, $id, $title, $icon, $body)
 	';
 }
 
-function getSqlOrganizationsUsersCompletePIM()
+/**
+ * Get all users with their id, name, and address
+ * 
+ * @return string 					SQL query to get all users with their ID and name
+ */
+function getSqlOrganizationsUsersCompletePIM() : string
 {
 	global $gProfileFields, $gCurrentOrgId;
 
@@ -302,7 +319,12 @@ function getSqlOrganizationsUsersCompletePIM()
 			WHERE usr_valid = 1 AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = 1 AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
 }
 
-function getSqlOrganizationsUsersShortPIM()
+/**
+ * Get all users with their id and name
+ * 
+ * @return string 					SQL query to get all users with their ID and name
+ */
+function getSqlOrganizationsUsersShortPIM() : string
 {
 	global $gProfileFields, $gCurrentOrgId;
 

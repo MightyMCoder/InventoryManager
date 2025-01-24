@@ -8,8 +8,8 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * Parameters:
  * 
+ * Parameters:
  * item_id : ID of the item to be exported
  ***********************************************************************************************
  */
@@ -57,11 +57,13 @@ foreach ($items->mItemFields as $itemField) {
 		case 'DATE':
 			$content = $items->getHtmlValue($imfNameIntern, $content);
 			break;
+
 		case 'DROPDOWN':
 		case 'RADIO_BUTTON':
 			$arrListValues = $items->getProperty($imfNameIntern, 'imf_value_list', 'text');
 			$content = $arrListValues[$content];
 			break;
+			
 		case 'CHECKBOX':
 			$content = $content == 1 ? $gL10n->get('SYS_YES') : $gL10n->get('SYS_NO');
 			break;

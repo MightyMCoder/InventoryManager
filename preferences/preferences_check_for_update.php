@@ -8,18 +8,20 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  *
+ * 
  * Parameters:
- *
  * mode             : 1 - (Default) check availability of updates
  *                    2 - Show results of update check
  * PIMVersion       : The current version of the InventoryManager plugin
  * PIMBetaVersion   : The current beta version of the InventoryManager plugin
  * 
- * methods:
+ * 
+ * Methods:
  * getLatestReleaseVersion($owner, $repo)           : Get the latest release version of the InventoryManager plugin
  * getLatestBetaReleaseVersion($owner, $repo)       : Get the latest beta release version of the InventoryManager plugin
- * checkVersion(string $currentVersion, string $checkStableVersion, string $checkBetaVersion, string $betaRelease,
- *                                string $betaFlag) : Check the current version of the InventoryManager plugin and compare
+ * checkVersion(string $currentVersion,string $checkStableVersion,
+ *              string $checkBetaVersion, string $betaRelease,
+ *              string $betaFlag)                   : Check the current version of the InventoryManager plugin and compare
  *                                                    it with the latest stable and beta release versions
  ***********************************************************************************************
  */
@@ -41,111 +43,6 @@ $pPreferences->read();
 // only authorized user are allowed to start this module
 if (!isUserAuthorizedForPreferencesPIM()) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
-}
-
-/**
- * This function checks the GitHub repository for the latest release version
- * of the InventoryManager plugin. It fetches the release information using
- * GitHub's API and returns the version number of the latest release.
- *
- * @param string $owner The owner of the repository.
- * @param string $repo The name of the repository.
- * @return array An array containing the version number and URL of the latest release.
- */
-function getLatestReleaseVersion($owner, $repo) {
-    $url = "https://api.github.com/repos/$owner/$repo/releases/latest";
-
-    $options = [
-        'http' => [
-            'method' => 'GET',
-            'header' => [
-                'User-Agent: PHP'  // GitHub benötigt diesen Header
-            ]
-        ]
-    ];
-
-    $context = stream_context_create($options);
-    $response = @file_get_contents($url, false, $context);
-
-    if ($response === FALSE) {
-        return ['version' => 'n/a', 'url' => ''];
-    }
-
-    $data = json_decode($response, true);
-    return isset($data['tag_name']) ? ['version' => ltrim($data['tag_name'], 'v'), 'url' => $data['html_url']] : ['version' => 'n/a', 'url' => ''];
-}
-
-/**
- * This function checks the GitHub repository for the latest beta release version
- * of the InventoryManager plugin. It fetches the release information using
- * GitHub's API and returns the version number of the latest beta release.
- *
- * @param string $owner The owner of the repository.
- * @param string $repo The name of the repository.
- * @return array An array containing the version number, release name and URL of the latest beta release.
- */
-function getLatestBetaReleaseVersion($owner, $repo) {
-    $url = "https://api.github.com/repos/$owner/$repo/releases";
-
-    $options = [
-        'http' => [
-            'method' => 'GET',
-            'header' => [
-                'User-Agent: PHP'  // Github requires this header
-            ]
-        ]
-    ];
-
-    $context = stream_context_create($options);
-    $response = @file_get_contents($url, false, $context);
-
-    if ($response === FALSE) {
-        return ['version' => 'n/a', 'release' => '', 'url' => ''];
-    }
-
-    $data = json_decode($response, true);
-    foreach ($data as $release) {
-        if ($release['prerelease']) {
-            return ['version' => ltrim($release['tag_name'], 'v'), 'url' => $release['html_url']];
-        }
-    }
-
-    return ['version' => 'n/a',  'url' => ''];
-}
-
-/**
- * This function checks the current version of the InventoryManager plugin
- * and compares it with the latest stable and beta release versions.
- * It returns an integer value indicating the update state.
- *
- * @param string $currentVersion The current version of the plugin.
- * @param string $checkStableVersion The latest stable release version.
- * @param string $checkBetaVersion The latest beta release version.
- * @param string $betaRelease The name of the latest beta release.
- * @param string $betaFlag The current beta version of the plugin.
- * @return int An integer value indicating the update state.
- */
-function checkVersion(string $currentVersion, string $checkStableVersion, string $currentBetaVersion, string $checkBetaVersion): int
-{
-    // Update state (0 = No update, 1 = New stable version, 2 = New beta version, 3 = New stable + beta version)
-    $update = 0;
-
-    // Zunächst auf stabile Version prüfen
-    if (version_compare($checkStableVersion, $currentVersion, '>')) {
-        $update = 1;
-    }
-
-    // Check for beta version now
-    $status = version_compare($checkBetaVersion, $currentVersion);
-    if ($status === 1 || ($status === 0 && version_compare($checkBetaVersion, $currentBetaVersion, '>'))) {
-        if ($update === 1) {
-            $update = 3;
-        } else {
-            $update = 2;
-        }
-    }
-
-    return $update;
 }
 
 // Repository information
@@ -174,10 +71,7 @@ if ($betaVersion === '') {
 // check for update
 $versionUpdate = checkVersion($PIMVersion, $stableVersion, $PIMBetaVersion, $betaVersion);
 
-
-// Only continues in display mode, otherwise the current update state can be
-// queried in the $versionUpdate variable.
-// $versionUpdate (0 = No update, 1 = New stable version, 2 = New beta version, 3 = New stable + beta version, 99 = No connection)
+// $versionUpdate (0 = No update, 1 = New stable version, 2 = New beta version, 3 = New stable + beta version)
 if ($getMode === 2) {
     // show update result
     if ($versionUpdate === 1) {
@@ -194,7 +88,6 @@ if ($getMode === 2) {
         if ($PIMBetaVersion !== 'n/a') {
             $versionsTextBeta = 'Beta ';
         }
-
         $versionsText = $gL10n->get('PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION', array($versionsTextBeta));
     }
 
@@ -219,4 +112,110 @@ if ($getMode === 2) {
     echo '
         </p>
         <strong>' . $versionsText . '</strong>';
+}
+
+/**
+ * checks the GitHub repository for the latest release version
+ *
+ * @param string $owner         The owner of the repository
+ * @param string $repo          The name of the repository
+ * @return array                Aarray containing the version number and URL of the latest release
+ */
+function getLatestReleaseVersion($owner, $repo) : array
+{
+    $url = "https://api.github.com/repos/$owner/$repo/releases/latest";
+
+    $options = array(
+        'http' => array(
+            'method' => 'GET',
+            'header' => array(
+                'User-Agent: PHP'  // Github requires this header
+            )
+        )
+    );
+
+    $context = stream_context_create($options);
+    $response = @file_get_contents($url, false, $context);
+
+    if ($response === FALSE) {
+        return array('version' => 'n/a', 'url' => '');
+    }
+    
+    $data = json_decode($response, true);
+
+    return isset($data['tag_name']) ? array('version' => ltrim($data['tag_name'], 'v'), 'url' => $data['html_url']) : array('version' => 'n/a', 'url' => '');
+}
+
+/**
+ * This function checks the GitHub repository for the latest beta release version
+ * of the InventoryManager plugin. It fetches the release information using
+ * GitHub's API and returns the version number of the latest beta release.
+ *
+ * @param string $owner         The owner of the repository
+ * @param string $repo          The name of the repository
+ * @return array                Array containing the version number, release name and URL of the latest beta release
+ */
+function getLatestBetaReleaseVersion($owner, $repo) : array
+{
+    $url = "https://api.github.com/repos/$owner/$repo/releases";
+
+    $options = array(
+        'http' => array(
+            'method' => 'GET',
+            'header' => array(
+                'User-Agent: PHP'  // Github requires this header
+            )
+        )
+    );
+
+    $context = stream_context_create($options);
+    $response = @file_get_contents($url, false, $context);
+
+    if ($response === FALSE) {
+        return array('version' => 'n/a', 'release' => '', 'url' => '');
+    }
+
+    $data = json_decode($response, true);
+    foreach ($data as $release) {
+        if ($release['prerelease']) {
+            return array('version' => ltrim($release['tag_name'], 'v'), 'url' => $release['html_url']);
+        }
+    }
+
+    return array('version' => 'n/a',  'url' => '');
+}
+
+/**
+ * This function checks the current version of the InventoryManager plugin
+ * and compares it with the latest stable and beta release versions.
+ * It returns an integer value indicating the update state.
+ *
+ * @param string $currentVersion        The current version of the plugin
+ * @param string $checkStableVersion    The latest stable release version
+ * @param string $checkBetaVersion      The latest beta release version
+ * @param string $betaRelease           The name of the latest beta release
+ * @param string $betaFlag              The current beta version of the plugin
+ * @return int                          The update state (0 = No update, 1 = New stable version, 2 = New beta version, 3 = New stable + beta version)
+ */
+function checkVersion(string $currentVersion, string $checkStableVersion, string $currentBetaVersion, string $checkBetaVersion) : int
+{
+    // Update state (0 = No update, 1 = New stable version, 2 = New beta version, 3 = New stable + beta version)
+    $update = 0;
+
+    // Zunächst auf stabile Version prüfen
+    if (version_compare($checkStableVersion, $currentVersion, '>')) {
+        $update = 1;
+    }
+
+    // Check for beta version now
+    $status = version_compare($checkBetaVersion, $currentVersion);
+    if ($status === 1 || ($status === 0 && version_compare($checkBetaVersion, $currentBetaVersion, '>'))) {
+        if ($update === 1) {
+            $update = 3;
+        } else {
+            $update = 2;
+        }
+    }
+
+    return $update;
 }

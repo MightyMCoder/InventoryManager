@@ -8,12 +8,18 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * Parameters:
  * 
- * mode : 1 - write preferences to database
- *        2 - show dialog for deinstallation
- *        3 - deinstallation
- * form : The name of the form preferences that were submitted.
+ * Parameters:
+ * mode			: 1 - write preferences to database
+ *        		  2 - show dialog for deinstallation
+ *        		  3 - deinstallation
+ * form 		: The name of the form preferences that were submitted.
+ * 
+ * 
+ * Methods:
+ * handleFormSubmission()		: Handles the form submission and updates the preferences accordingly.
+ * showDeinstallationDialog()	: Displays the dialog for deinstallation of the plugin.
+ * performDeinstallation()		: Performs the deinstallation of the plugin and cleans up the data.
  ***********************************************************************************************
  */
 
@@ -33,7 +39,7 @@ if (!isUserAuthorizedForPreferencesPIM()) {
 }
 
 // Initialize and check the parameters
-$getMode = admFuncVariableIsValid($_GET, 'mode', 'numeric', ['defaultValue' => 1]);
+$getMode = admFuncVariableIsValid($_GET, 'mode', 'numeric', array('defaultValue' => 1));
 $getForm = admFuncVariableIsValid($_GET, 'form', 'string');
 
 // in ajax mode only return simple text on error
@@ -45,7 +51,8 @@ switch ($getMode) {
 	case 1:
 		try {
 			handleFormSubmission($getForm, $pPreferences);
-		} catch (AdmException $e) {
+		}
+		catch (AdmException $e) {
 			$e->showText();
 		}
 
@@ -69,7 +76,8 @@ switch ($getMode) {
  * @param object $preferences The preferences object to be updated.
  * @return void
  */
-function handleFormSubmission($form, $preferences) {
+function handleFormSubmission($form, $preferences) : void
+{
 	switch ($form) {
 		case 'interface_pff_preferences':
 			$preferences->config['Optionen']['interface_pff'] = $_POST['interface_pff'];
@@ -108,7 +116,8 @@ function handleFormSubmission($form, $preferences) {
  *
  * @return void
  */
-function showDeinstallationDialog() {
+function showDeinstallationDialog() : void
+{
 	global $gL10n, $gNavigation;
 
 	$headline = $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION');
@@ -122,8 +131,9 @@ function showDeinstallationDialog() {
 	$page->addHtml('<p class="lead">' . $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION_FORM_DESC') . '</p>');
 
 	// show form
-	$form = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/preferences/preferences_function.php', array('mode' => 3)), $page);
 	$radioButtonEntries = array('0' => $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY'), '1' => $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ALLORG'));
+
+	$form = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/preferences/preferences_function.php', array('mode' => 3)), $page);
 	$form->addRadioButton('deinst_org_select', $gL10n->get('PLG_INVENTORY_MANAGER_ORG_CHOICE'), $radioButtonEntries, array('defaultValue' => '0'));
 	$form->addSubmitButton('btn_deinstall', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), array('icon' => 'fa-trash-alt', 'class' => 'offset-sm-3'));
 
@@ -138,7 +148,8 @@ function showDeinstallationDialog() {
  * @param object $preferences The preferences object to be cleaned up.
  * @return void
  */
-function performDeinstallation($preferences) {
+function performDeinstallation($preferences) : void
+{
 	global $gNavigation, $gMessage, $gHomepage, $gL10n;
 
 	$gNavigation->clear();

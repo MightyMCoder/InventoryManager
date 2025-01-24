@@ -8,10 +8,9 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * methods:
  * 
+ * Methods:
  * addPreferencePanel($page, $id, $title, $icon, $content) : Add a new preference panel to the page
- * 
  ***********************************************************************************************
  */
 
@@ -22,21 +21,6 @@ require_once(__DIR__ . '/../classes/configtable.php');
 
 // Access only with valid login
 require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
-
-/**
- * Adds a new preference panel to the given page.
- *
- * @param object $page    The page object where the preference panel will be added.
- * @param string $id      The unique identifier for the preference panel.
- * @param string $title   The title of the preference panel.
- * @param string $icon    The icon associated with the preference panel.
- * @param string $content The HTML content of the preference panel.
- * @return void
- */
-// Function to add new preference panels
-function addPreferencePanel($page, $id, $title, $icon, $content) {
-    $page->addHtml(getPreferencePanelPIM('preferences', $id, $title, $icon, $content));
-}
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
@@ -103,15 +87,16 @@ $page->addJavascript('
 );
 
 $page->addHtml('
-<ul id="preferences_tabs" class="nav nav-tabs" role="tablist">
-    <li class="nav-item">
-        <a id="tabs_nav_preferences" class="nav-link" href="#tabs-preferences" data-toggle="tab" role="tab"></a>
-    </li>
-</ul>
+    <ul id="preferences_tabs" class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a id="tabs_nav_preferences" class="nav-link" href="#tabs-preferences" data-toggle="tab" role="tab"></a>
+        </li>
+    </ul>
 
-<div class="tab-content">
-    <div class="tab-pane fade" id="tabs-preferences" role="tabpanel">
-        <div class="accordion" id="accordion_preferences">');
+    <div class="tab-content">
+        <div class="tab-pane fade" id="tabs-preferences" role="tabpanel">
+            <div class="accordion" id="accordion_preferences">'
+);
 
 $items = new CItems($gDb, $gCurrentOrgId);
 $valueList = array();
@@ -146,8 +131,7 @@ if ($pPreferences->isPffInst()) {
 }
 
 // PANEL: PROFILE ADDIN
-$formProfileAddin = new HtmlForm('profile_addin_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'profile_addin_preferences')), $page, array('class' => 'form-preferences'));
-
+$helpTextIdLabelLink = '<a href="https://github.com/MightyMCoder/InventoryManager/wiki/Profile-View-AddIn" target="_blank">GitHub Wiki</a>';
 $valueList = array();
 foreach ($items->mItemFields as $itemField) {
     if ($itemField->getValue('imf_name_intern') == 'ITEMNAME') {
@@ -156,7 +140,7 @@ foreach ($items->mItemFields as $itemField) {
     $valueList[$itemField->getValue('imf_name_intern')] = $itemField->getValue('imf_name');
 }
 
-$helpTextIdLabelLink = '<a href="https://github.com/MightyMCoder/InventoryManager/wiki/Profile-View-AddIn" target="_blank">GitHub Wiki</a>';
+$formProfileAddin = new HtmlForm('profile_addin_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'profile_addin_preferences')), $page, array('class' => 'form-preferences'));
 $helpTextIdLabel = $gL10n->get('PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2', array($helpTextIdLabelLink));
 $formProfileAddin->addSelectBox('profile_addin', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD'), $valueList, array('defaultValue' => $pPreferences->config['Optionen']['profile_addin'], 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC', 'multiselect' => true, 'helpTextIdLabel' => $helpTextIdLabel));
 $formProfileAddin->addSubmitButton('btn_save_profile_addin_preferences', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
@@ -182,13 +166,14 @@ $formDeinstallation->addCustomContent('', ''.$gL10n->get('PLG_INVENTORY_MANAGER_
 addPreferencePanel($page, 'deinstallation', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), 'fas fa-trash-alt', $formDeinstallation->show());
 
 // PANEL: ACCESS_PREFERENCES
-$formAccessPreferences = new HtmlForm('access_preferences_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'access_preferences')), $page, array('class' => 'form-preferences'));
 $sql = 'SELECT rol.rol_id, rol.rol_name, cat.cat_name FROM '.TBL_CATEGORIES.' AS cat, '.TBL_ROLES.' AS rol
     WHERE cat.cat_id = rol.rol_cat_id
-    AND rol.rol_id != 1 ' //remove admin role
-    . 'AND (cat.cat_org_id = '.$gCurrentOrgId.'
+    AND rol.rol_id != 1 ' . //ignore admin role
+    'AND (cat.cat_org_id = '.$gCurrentOrgId.'
         OR cat.cat_org_id IS NULL)
     ORDER BY cat_sequence, rol.rol_name ASC;';
+
+$formAccessPreferences = new HtmlForm('access_preferences_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'access_preferences')), $page, array('class' => 'form-preferences'));
 $formAccessPreferences->addSelectBoxFromSql('access_preferences', '', $gDb, $sql, array('defaultValue' => $pPreferences->config['access']['preferences'], 'helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC', 'multiselect' => true));
 $formAccessPreferences->addSubmitButton('btn_save_access_preferences', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 addPreferencePanel($page, 'access_preferences', $gL10n->get('PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES'), 'fas fa-key', $formAccessPreferences->show());
@@ -199,22 +184,38 @@ $linkInventoryManager = '<a href="https://github.com/MightyMCoder/InventoryManag
 $linkKeyManager = '<a href="https://github.com/rmbinder/KeyManager" target="_blank">KeyManager (GitHub)</a>';
 $pluginInfo = sprintf($linkInventoryManager, $pluginName);
 $pluginBasedInfo = $pluginInfo .' ' . $gL10n->get('PLG_INVENTORY_MANAGER_BASED_ON', array($linkKeyManager));
-$updateCheck = '<span id="inventory_manager_version">'.$pPreferences->config['Plugininformationen']['version'].'
-                    <a id="link_check_for_update" href="#link_check_for_update" title="'.$gL10n->get('SYS_CHECK_FOR_UPDATE').'">'.$gL10n->get('SYS_CHECK_FOR_UPDATE').'</a>
-                </span>';
+$updateCheck = '
+    <span id="inventory_manager_version">'.$pPreferences->config['Plugininformationen']['version'].'
+        <a id="link_check_for_update" href="#link_check_for_update" title="'.$gL10n->get('SYS_CHECK_FOR_UPDATE').'">'.$gL10n->get('SYS_CHECK_FOR_UPDATE').'</a>
+    </span>';
 $dokumentationLink = '<a href="https://github.com/MightyMCoder/InventoryManager/wiki" target="_blank">'.$gL10n->get('PLG_INVENTORY_MANAGER_DOCUMENTATION_OPEN').'</a>';
 
 $formPluginInformations = new HtmlForm('plugin_informations_preferences_form', null, $page, array('class' => 'form-preferences'));
 $formPluginInformations->addStaticControl('plg_name', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_NAME'), $pluginBasedInfo);
 $formPluginInformations->addStaticControl('plg_dokumentation', $gL10n->get('PLG_INVENTORY_MANAGER_DOCUMENTATION'), $dokumentationLink, array('helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_DOCUMENTATION_OPEN_DESC'));
-
 $formPluginInformations->addCustomContent($gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_VERSION'), $updateCheck);
 $formPluginInformations->addStaticControl('plg_date', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_DATE'), $pPreferences->config['Plugininformationen']['stand']);
 addPreferencePanel($page, 'plugin_informations', $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_INFORMATION'), 'fas fa-info-circle', $formPluginInformations->show());
 
 $page->addHtml('
+            </div>
         </div>
-    </div>
-</div>');
+    </div>'
+);
 
 $page->show();
+
+/**
+ * Adds a new preference panel to the given page
+ *
+ * @param object $page              The page object where the preference panel will be added
+ * @param string $id                The unique identifier for the preference panel
+ * @param string $title             The title of the preference panel
+ * @param string $icon              The icon associated with the preference panel
+ * @param string $content           The HTML content of the preference panel
+ * @return void
+ */
+function addPreferencePanel($page, $id, $title, $icon, $content) : void
+{
+    $page->addHtml(getPreferencePanelPIM('preferences', $id, $title, $icon, $content));
+}

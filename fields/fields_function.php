@@ -8,17 +8,17 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * Parameters:
  * 
+ * Parameters:
  * imf_id               : ID of the item field to be managed
  * mode                 : 1 - create or edit item field
  *                        2 - delete item field
- *                        4 - change sequence of item field
+ *                        3 - change sequence of item field
  * sequence             : direction to move the item field, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN
  * redirect_to_import   : If true, the user will be redirected to the import page after saving the field
  * 
- * Methods:
  * 
+ * Methods:
  * handleCreateOrUpdate($itemField, $getRedirectToImport)               : Handles the creation or update of an item field
  * handleDelete($itemField)                                             : Handles the deletion of an item field
  * handleChangeSequence($itemField, $getSequence)                       : Handles changing the sequence of an item field
@@ -65,20 +65,26 @@ switch ($getMode) {
     case 1:
         handleCreateOrUpdate($itemField, $getRedirectToImport);
         break;
+
     case 2:
         handleDelete($itemField);
         break;
-    case 4:
+
+    case 3:
         handleChangeSequence($itemField, $getSequence);
         break;
 }
 
 /**
- * Handles the creation or update of an item field.
- * @param TableAccess $itemField        The item field object to be created or updated.
+ * Handles the creation or update of an item field
+ * 
+ * @param TableAccess $itemField        The item field object to be created or updated
+ * @param bool $redirectToImport        If true, the user will be redirected to the import page after saving the field
+ * @return void
  */
-function handleCreateOrUpdate($itemField, $redirectToImport = false) {
-    global $gMessage, $gL10n, $gDb, $gCurrentOrgId;
+function handleCreateOrUpdate($itemField, $redirectToImport = false) : void
+{
+    global $gMessage, $gL10n, $gCurrentOrgId;
 
     $_SESSION['fields_request'] = $_POST;
 
@@ -104,7 +110,8 @@ function handleCreateOrUpdate($itemField, $redirectToImport = false) {
                 $itemField->setValue($item, $value);
             }
         }
-    } catch (AdmException $e) {
+    }
+    catch (AdmException $e) {
         $e->showHtml();
     }
 
@@ -127,7 +134,8 @@ function handleCreateOrUpdate($itemField, $redirectToImport = false) {
 
     if ($redirectToImport) {
         $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_column_config.php', 1000);
-    } else {
+    }
+    else {
         $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/fields/fields.php', 1000);
     }
     $gMessage->show($gL10n->get('SYS_SAVE_DATA'));
@@ -135,23 +143,32 @@ function handleCreateOrUpdate($itemField, $redirectToImport = false) {
 }
 
 /**
- * Handles the deletion of an item field.
- * @param TableAccess $itemField        The item field object to be deleted.
+ * Handles the deletion of an item field
+ * 
+ * @param TableAccess $itemField        The item field object to be deleted
+ * @return void
  */
-function handleDelete($itemField) {
+function handleDelete($itemField) : void
+{
+    global $gMessage, $gL10n, $gNavigation;
     if ($itemField->delete()) {
-        // Deletion successful -> Return for XMLHttpRequest
-        echo 'done';
+        // Deletion successful
+    	// go back to field view
+    	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
+    	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_DELETED'));
     }
     exit();
 }
 
 /**
- * Handles changing the sequence of an item field.
- * @param TableAccess $itemField        The item field object whose sequence is to be changed.
- * @param string $getSequence           The direction to move the item field, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN.
+ * Handles changing the sequence of an item field
+ * 
+ * @param TableAccess $itemField        The item field object whose sequence is to be changed
+ * @param string $getSequence           The direction to move the item field, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN
+ * @return void
  */
-function handleChangeSequence($itemField, $getSequence) {
+function handleChangeSequence($itemField, $getSequence) : void
+{
     global $gDb, $gCurrentOrgId;
 
     $imfSequence = (int) $itemField->getValue('imf_sequence');
@@ -181,10 +198,13 @@ function handleChangeSequence($itemField, $getSequence) {
 }
 
 /**
- * Validates the required fields for an item field.
- * @param TableAccess $itemField        The item field object to be validated.
+ * Validates the required fields for an item field
+ * 
+ * @param TableAccess $itemField        The item field object to be validated
+ * @return void
  */
-function validateRequiredFields($itemField) {
+function validateRequiredFields($itemField) : void
+{
     global $gMessage, $gL10n;
 
     if ($itemField->getValue('imf_system') == 0) {
@@ -206,10 +226,13 @@ function validateRequiredFields($itemField) {
 }
 
 /**
- * Checks if an item field already exists.
- * @param string $itemField        The item field string to be checked.
+ * Checks if an item field already exists
+ * 
+ * @param string $itemField        The item field string to be checked
+ * @return void
  */
-function checkFieldExists($itemField) {
+function checkFieldExists($itemField) : void
+{
     global $gMessage, $gL10n, $gDb, $gCurrentOrgId, $getimfId;
 
     $sql = 'SELECT COUNT(*) AS count FROM ' . TBL_INVENTORY_MANAGER_FIELDS . '

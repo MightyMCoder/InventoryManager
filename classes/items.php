@@ -8,31 +8,33 @@
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
  * 
- * methods:
  * 
+ * Methods:
  * __construct($database, $organizationId)                      : Constructor that will initialize variables and read the item field structure
  * setDatabase($database)                                       : Set the database object for communication with the database of this class
  * __sleep()                                                    : Called on serialization of this object. The database object could not be serialized and should be ignored
  * clearItemData()                                              : Item data of all item fields will be initialized
+ * getItemId()                                                  : Retrieves the ID of the item
  * getProperty($fieldNameIntern, $column, $format = '')         : Returns the value of a column from the table adm_inventory_manager_fields for a given internal field name
  * getPropertyById($fieldId, $column, $format = '')             : Returns the value of a column from the table adm_inventory_manager_fields for a given field ID
  * getListValue($fieldNameIntern, $value, $format)              : Returns the list values for a given field name intern (imf_name_intern)
- * getHtmlValue($fieldNameIntern, $value,)                      : Returns the value of the field in html format with consideration of all layout parameters
+ * getHtmlValue($fieldNameIntern, $value)                       : Returns the value of the field in html format with consideration of all layout parameters
  * getValue($fieldNameIntern, $format = '')                     : Returns the item value for this column
  * showFormerItems($newValue = null)                            : This method reads or stores the variable for showing former items
  * isNewItem()                                                  : If the recordset is new and wasn't read from database or was not stored in database then this method will return true otherwise false
  * isDeletedItem()                                              : If the recordset was deleted from database then this method will return true otherwise false
  * readItemData($itemId, $organizationId)                       : Reads the item data of all item fields out of database table adm_inventory_manager_data
  * saveItemData()                                               : Save data of every item field
- * readItemFields($organizationId)                              : Reads the item fields structure out of database table adm_inventory_manager_fields
+ * readItemFields($organizationId, $orderBy = 'imf_id')         : Reads the item fields structure out of database table adm_inventory_manager_fields
  * readItems($organizationId)                                   : Reads the items out of database table adm_inventory_manager_items
- * readItemsByUser($organizationId, $userId)                    : Reads the items for a user out of database table adm_inventory_manager_items
+ * readItemsByUser($organizationId, $userId, $fieldNames)       : Reads the items for a user out of database table adm_inventory_manager_items
  * setValue($fieldNameIntern, $newValue)                        : Set a new value for the item field of the table adm_inventory_manager_data
  * getNewItemId($organizationId)                                : Generates a new ItemId. The new value will be stored in mItemId
  * deleteItem($itemId, $organizationId)                         : Deletes an item from the database
  * makeItemFormer($itemId, $organizationId)                     : Marks an item as former in the database
- * sendNotification($organizationId)                            : Sends a notification to all users that have the right to see the item
- * 
+ * undoItemFormer($itemId, $organizationId)                     : Marks an item as no longer former in the database
+ * setImportedItem()                                            : Marks an item as imported
+ * sendNotification($importData = null)                         : Sends a notification to all users that have the right to see the item
  ***********************************************************************************************
  */
 require_once(__DIR__ . '/configtable.php');
@@ -82,10 +84,12 @@ class CItems
     }
 
     /**
-     * Set the database object for communication with the database of this class.
-     * @param \Database $database       An object of the class Database. This should be the global $gDb object.
+     * Set the database object for communication with the database of this class
+     * 
+     * @param \Database $database       An object of the class Database. This should be the global $gDb object
+     * @return void
      */
-    public function setDatabase($database)
+    public function setDatabase($database) : void
     {
         $this->mDb = $database;
     }
@@ -93,6 +97,7 @@ class CItems
     /**
      * Called on serialization of this object. The database object could not
      * be serialized and should be ignored.
+     * 
      * @return string[]                 Returns all class variables that should be serialized.
      */
     public function __sleep()
@@ -103,8 +108,10 @@ class CItems
     /**
      * Item data of all item fields will be initialized
      * the fields array will not be renewed
+     * 
+     * @return void
      */
-    public function clearItemData()
+    public function clearItemData() : void
     {
         $this->mChangedItemData = array();
         $this->mItemData = array();
@@ -113,21 +120,22 @@ class CItems
     }
 
     /**
-     * Retrieves the ID of the item.
+     * Retrieves the ID of the item
      *
-     * @return int The ID of the item.
+     * @return int The ID of the item
      */
-    public function getItemId()
+    public function getItemId() : int
     {
         return $this->mItemId;
     }
 
     /**
-     * Returns the value of a column from the table adm_inventory_manager_fields for a given internal field name.
+     * Returns the value of a column from the table adm_inventory_manager_fields for a given internal field name
+     * 
      * @param string $fieldNameIntern   Expects the @b imf_name_intern of table @b adm_inventory_manager_fields
      * @param string $column            The column name of @b adm_inventory_manager_fields for which you want the value
      * @param string $format            Optional the format (is necessary for timestamps)
-     * @return array|string             Returns the value for the column.
+     * @return array|string             Returns the value for the column
      */
     public function getProperty($fieldNameIntern, $column, $format = '')
     {
@@ -147,12 +155,13 @@ class CItems
 
     /**
      * Returns the value of a column from the table adm_inventory_manager_fields for a given field ID
+     * 
      * @param int    $fieldId           Expects the @b imf_id of table @b adm_inventory_manager_fields
      * @param string $column            The column name of @b adm_inventory_manager_fields for which you want the value
      * @param string $format            Optional the format (is necessary for timestamps)
      * @return string                   Returns the value for the column.
      */
-    public function getPropertyById($fieldId, $column, $format = '')
+    public function getPropertyById($fieldId, $column, $format = '') : string
     {
         foreach ($this->mItemFields as $field) {
             if ((int) $field->getValue('imf_id') === (int) $fieldId) {
@@ -164,13 +173,14 @@ class CItems
     }
 
     /**
-     * Returns the list values for a given field name intern (imf_name_intern).
+     * Returns the list values for a given field name intern (imf_name_intern)
+     * 
      * @param string $fieldNameIntern   Expects the @b imf_name_intern of table @b adm_inventory_manager_fields
      * @param string $value             The value to be formatted
      * @param string $format            Optional the format (is necessary for timestamps)
-     * @return array                    Returns an array with the list values for the given field name intern.
+     * @return array                    Returns an array with the list values for the given field name intern
      */
-    protected function getListValue($fieldNameIntern, $value, $format)
+    protected function getListValue($fieldNameIntern, $value, $format) : array
     {
         $arrListValuesWithItems = array(); // array with list values and items that represents the internal value
 
@@ -225,12 +235,13 @@ class CItems
 
     /**
      * Returns the value of the field in html format with consideration of all layout parameters
+     * 
      * @param string $fieldNameIntern   Internal item field name of the field that should be html formatted
      * @param string|int $value         The value that should be formatted must be committed so that layout
      *                                  is also possible for values that aren't stored in database
      * @return string                   Returns an html formatted string that considered the profile field settings
      */
-    public function getHtmlValue($fieldNameIntern, $value)
+    public function getHtmlValue($fieldNameIntern, $value) : string
     {
         global $gSettingsManager;
 
@@ -255,6 +266,7 @@ class CItems
                                                     <i class="fas fa-square fa-stack-1x fa-inverse"></i>
                                                 </span>';
                     break;
+
                 case 'DATE':
                     if ($value !== '') {
                         // date must be formatted
@@ -280,6 +292,7 @@ class CItems
                         }
                     }
                     break;
+
                 case 'DROPDOWN':
                 case 'RADIO_BUTTON':
                     $arrListValuesWithItems = array(); // array with list values and items that represents the internal value
@@ -317,13 +330,15 @@ class CItems
 
                     if (array_key_exists($value, $arrListValuesWithItems)) {
                         $htmlValue = $arrListValuesWithItems[$value];
-                    } else {
+                    }
+                    else {
                         // if value is not in list then delete the value
                         $htmlValue = ''; //'list value '.$value .' not found';
                         //$htmlValue = $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD', array($value));
 
                     }
                     break;
+
                 case 'TEXT_BIG':
                     $htmlValue = nl2br($value);
                     break;
@@ -343,12 +358,13 @@ class CItems
 
     /**
      * Returns the item value for this column
+     * 
      * format = 'html'  :               returns the value in html-format if this is necessary for that field type
      * format = 'database' :            returns the value that is stored in database with no format applied
      * @param string $fieldNameIntern   Expects the @b imf_name_intern of table @b adm_inventory_manager_fields
      * @param string $format            Returns the field value in a special format @b text, @b html, @b database
      *                                  or datetime (detailed description in method description)
-     * @return string|int|bool          Returns the value for the column.
+     * @return string|int|bool          Returns the value for the column
      */
     public function getValue($fieldNameIntern, $format = '')
     {
@@ -396,11 +412,13 @@ class CItems
                             else {
                                 $value = $date->format($gSettingsManager->getString('system_date'));
                             }
-                        } else {
+                        }
+                        else {
                             $value = $date->format($format);
                         }
                     }
                     break;
+
                 case 'DROPDOWN':
                 case 'RADIO_BUTTON':
                     // the value in db is only the position, now search for the text
@@ -424,10 +442,11 @@ class CItems
     /**
      * This method reads or stores the variable for showing former items.
      * The values will be stored in database without any inspections!
+     * 
      * @param bool|null $newValue       If set, then the new value will be stored in @b showFormerItems.
      * @return bool                     Returns the current value of @b showFormerItems
      */
-    public function showFormerItems($newValue = null)
+    public function showFormerItems($newValue = null) : bool
     {
         if ($newValue !== null) {
             $this->showFormerItems = $newValue;
@@ -438,18 +457,20 @@ class CItems
     /**
      * If the recordset is new and wasn't read from database or was not stored in database
      * then this method will return true otherwise false
+     * 
      * @return bool                     Returns @b true if record is not stored in database
      */
-    public function isNewItem()
+    public function isNewItem() : bool
     {
         return $this->itemCreated;
     }
 
     /**
      * If the recordset was deleted from database then this method will return true otherwise false
+     * 
      * @return bool                     Returns @b true if record is removed from databaseIf the recordset was deleted from database then this method will return true otherwise false
      */
-    public function isDeletedItem()
+    public function isDeletedItem() : bool
     {
         return $this->itemDeleted;
     }
@@ -458,11 +479,13 @@ class CItems
      * Reads the item data of all item fields out of database table @b adm_inventory_manager_data
      * and adds an object for each field data to the @b mItemData array.
      * If profile fields structure wasn't read, this will be done before.
+     * 
      * @param int $itemId               The id of the item for which the item data should be read.
      * @param int $organizationId       The id of the organization for which the item fields
      *                                  structure should be read if necessary.
+     * @return void
      */
-    public function readItemData($itemId, $organizationId)
+    public function readItemData($itemId, $organizationId) : void
     {                                    
         if (count($this->mItemFields) === 0) {
             $this->readItemFields($organizationId);
@@ -495,8 +518,10 @@ class CItems
 
     /**
      * Save data of every item field
+     * 
+     * @return void
      */
-    public function saveItemData()
+    public function saveItemData() : void
     {
         $this->mDb->startTransaction();
 
@@ -531,10 +556,13 @@ class CItems
     /**
      * Reads the item fields structure out of database table @b adm_inventory_manager_fields
      * and adds an object for each field structure to the @b mItemFields array.
+     * 
      * @param int $organizationId       The id of the organization for which the item fields
      *                                  structure should be read.
+     * @param string $orderBy           The field by which the item fields should be sorted
+     * @return void
      */
-    public function readItemFields($organizationId, $orderBy = 'imf_id')
+    public function readItemFields($organizationId, $orderBy = 'imf_id') : void
     {
         // first initialize existing data
         $this->mItemFields = array();
@@ -559,9 +587,11 @@ class CItems
     /**
      * Reads the items out of database table @b adm_inventory_manager_items
      * and stores the values to the @b items array.
+     * 
      * @param int $organizationId       The id of the organization for which the items should be read.
+     * @return void
      */
-    public function readItems($organizationId)
+    public function readItems($organizationId) : void
     {
         // first initialize existing data
         $this->items = array();
@@ -587,11 +617,13 @@ class CItems
     /**
      * Reads the items for a user out of database table @b adm_inventory_manager_items
      * and stores the values to the @b items array.
+     * 
      * @param int $organizationId       The id of the organization for which the items should be read.
      * @param int $userId               The id of the user for which the items should be read.
-     * @param string[] $fieldNames      field names that should be read
+     * @param array $fieldNames         The internal unique profile field names for which the items should be read
+     * @return void
      */
-    public function readItemsByUser($organizationId, $userId, $fieldNames = array('KEEPER'))
+    public function readItemsByUser($organizationId, $userId, $fieldNames = array('KEEPER')) : void
     {
         // first initialize existing data
         $this->items = array();
@@ -630,11 +662,12 @@ class CItems
      * Set a new value for the item field of the table adm_inventory_manager_data.
      * If the user log is activated then the change of the value will be logged in @b adm_inventory_manager_log.
      * The value is only saved in the object. You must call the method @b save to store the new value to the database
+     * 
      * @param string $fieldNameIntern   The internal unique profile field name
      * @param mixed $newValue           The new value that should be stored in the database field
      * @return bool                     Returns @b true if the value is stored in the current object and @b false if a check failed
      */
-    public function setValue($fieldNameIntern, $newValue)
+    public function setValue($fieldNameIntern, $newValue) : bool
     {
         global $gSettingsManager;
 
@@ -713,11 +746,12 @@ class CItems
     }
 
     /**
-     * Generates a new ItemId. The new value will be stored in @b mItemId.
+     * Generates a new ItemId. The new value will be stored in mItemId.
+     * 
      * @param int $organizationId       The id of the organization for which the items should be read.
-     * @return int @b mItemId
+     * @return int mItemId
      */
-    public function getNewItemId($organizationId)
+    public function getNewItemId($organizationId) : int
     {
         // If an error occurred while generating an item, there is an ItemId but no data for that item.
         // the following routine deletes these unused ItemIds
@@ -750,10 +784,12 @@ class CItems
 
     /**
      * delete an item
+     * 
      * @param int $itemId               The id of the item that should be deleted
      * @param int $organizationId       The id of the organization from which the items should be deleted
+     * @return void
      */
-    public function deleteItem($itemId, $organizationId)
+    public function deleteItem($itemId, $organizationId) : void
     {
         $sql = 'DELETE FROM '.TBL_INVENTORY_MANAGER_LOG.' WHERE iml_imi_id = ?;';
         $this->mDb->queryPrepared($sql, array($itemId));
@@ -768,12 +804,14 @@ class CItems
     }
 
     /**
-     * Marks an item as former.
+     * Marks an item as former
+     * 
      * @param int $itemId 		    The ID of the item to be marked as former.
      * @param int $organizationId   The id of the organization from which the items should be marked as former
+     * @return void
      */
-    public function makeItemFormer($itemId, $organizationId) {
-
+    public function makeItemFormer($itemId, $organizationId) : void
+    {
     	$sql = 'UPDATE '.TBL_INVENTORY_MANAGER_ITEMS.' SET imi_former = 1 WHERE imi_id = ? AND (imi_org_id = ? OR imi_org_id IS NULL);';
         $this->mDb->queryPrepared($sql, array($itemId, $organizationId));
 
@@ -781,11 +819,14 @@ class CItems
     }
 
     /**
-     * Marks an item as no longer former.
+     * Marks an item as no longer former
+     * 
      * @param int $itemId               The ID of the item to be marked as no longer former.
      * @param int $organizationId       The id of the organization from which the items should be marked as no longer former.
+     * @return void
      */
-    public function undoItemFormer($itemId, $organizationId) {
+    public function undoItemFormer($itemId, $organizationId) : void
+    {
     	$sql = 'UPDATE '.TBL_INVENTORY_MANAGER_ITEMS.' SET imi_former = 0 WHERE imi_id = ? AND (imi_org_id = ? OR imi_org_id IS NULL);';
         $this->mDb->queryPrepared($sql, array($itemId, $organizationId));
 
@@ -794,8 +835,11 @@ class CItems
 
     /**
      * Marks an item as imported.
+     * 
+     * @return void
      */
-    public function setImportedItem() {
+    public function setImportedItem() : void
+    {
         $this->itemImported = true;
     }
 
@@ -804,14 +848,15 @@ class CItems
      * to all members of the notification role. This role is configured within the global preference
      * **system_notifications_role**. The email contains the item name, the name of the current user,
      * the timestamp, and the details of the changes.
-     * @param int $organizationId       The id of the organization from which the notifications should be sent
+     * 
+     * @param array $importData         The data of the imported items
      * @return bool                     Returns **true** if the notification was sent
      * @throws AdmException             'SYS_EMAIL_NOT_SEND'
      * @throws Exception
      */
-    public function sendNotification($organizationId, $importData = null): bool
+    public function sendNotification($importData = null) : bool
     {
-        global $gProfileFields, $gCurrentUser, $gSettingsManager, $gL10n;
+        global $gCurrentUser, $gSettingsManager, $gL10n;
 
         // check if notifications are enabled
         if ($gSettingsManager->getBool('system_notifications_new_entries')) {
