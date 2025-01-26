@@ -106,7 +106,7 @@
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_NAME">Nom du plug-in</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_VERSION">Version</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN">Paramètres d'affichage du profil</string>
-    <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">Les objets émises peuvent être consultées dans la vue du profil d'un membre. Par défaut, seul le nom de l'objet est affiché. Outre le nom de l'objet, un autre champ objet peut être sélectionné et affiché ici.</string>    
+    <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">Les objets émises peuvent être consultées dans la vue du profil d'un membre. Par défaut, seul le nom de l'objet est affiché. Outre le nom de l'objet, autre champ objets peut être sélectionné et affiché ici.</string>    
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">Pour que les objets soient affichées dans la vue de profil, la ligne suivante doit être ajoutée à profile.php: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/InventoryManager/inventory_manager_profile_addin.php');".\n\nDe plus amples informations peuvent être trouvées dans le #VAR1#.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_DESC">Si cette option est activée, les objets retirés de cette organisation seront également affichés en plus des objets actuels.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Afficher tout</string>
