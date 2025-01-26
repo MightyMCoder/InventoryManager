@@ -2,7 +2,7 @@
 <resources>
     <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES">Zugriffsberechtigung für Plugin-Einstellungen</string>
     <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Hier kannst du, zusätzlich zur Rolle "Administrator", weitere Rollen für den Zugriff auf die Plugin-Einstellungen berechtigen.</string>   
-    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT">Editierberichtigung für den Verwalter</string>
+    <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT">Editierberechtigung für den Verwalter</string>
     <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_DESC">Hier kannst du die Bearbeitung von spezifischen Eigenschaftsfelden eines Gegenstandes durch den Verwalter zulassen.</string>   
     <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_FIELDS">editierbare Felder durch den Verwalter</string>
     <string name="PLG_INVENTORY_MANAGER_ACCESS_EDIT_FIELDS_DESC">Hier kannst du die spezifischen Eigenschaftsfelder festlegen, die durch den Verwalter des Gegenstandes editiert werden dürfen.</string>   
@@ -106,7 +106,7 @@
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_NAME">Name des Plugins</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_VERSION">Version</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN">Einstellungen für die Profilansicht</string>
-    <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">In der Profilansicht eines Mitglieds können ausgegebene Gegenstände angezeigt werden. Standardmäßig wird nur der Gegenstandsname angezeigt. Hier kannst du, zusätzlich zum Gegenstandsnamen, ein weiteres Eigenschaftsfeld auswählen und anzeigen lassen.</string>    
+    <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">In der Profilansicht eines Mitglieds können ausgegebene Gegenstände angezeigt werden. Standardmäßig wird nur der Gegenstandsname angezeigt. Hier kannst du, zusätzlich zum Gegenstandsnamen, weitere Eigenschaftsfelder auswählen und anzeigen lassen.</string>    
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">Damit in der Profilansicht Gegenstände angezeigt werden, musst du folgende Zeile in die profile.php einfügen: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/InventoryManager/inventory_manager_profile_addin.php');".\n\nWeitere Informationen hierzu findest du in der #VAR1#.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_DESC">Bei gesetzter Einstellung werden neben den aktuellen Gegenständen dieser Organisation auch ausgesonderte Gegenstände angezeigt.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Alle anzeigen</string>

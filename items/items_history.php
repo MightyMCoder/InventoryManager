@@ -121,7 +121,8 @@ while ($row = $fieldHistoryStatement->fetch()) {
                     $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
                 }
                 else {
-                    $columnValues[] = $gL10n->get('SYS_NO_USER_FOUND');
+                    $orgName = '"' . $gCurrentOrganization->getValue('org_longname'). '"';
+                    $columnValues[] = $gL10n->get('SYS_NOT_MEMBER_OF_ORGANIZATION',array($orgName));
                 }
             }
             else {
@@ -145,7 +146,8 @@ while ($row = $fieldHistoryStatement->fetch()) {
                     $columnValues[] = '<a href="'.SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_MODULES.'/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))).'">'.$user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME').'</a>';
                 }
                 else {
-                    $columnValues[] = $gL10n->get('SYS_NO_USER_FOUND');
+                    $orgName = '"' . $gCurrentOrganization->getValue('org_longname'). '"';
+                    $columnValues[] = $gL10n->get('SYS_NOT_MEMBER_OF_ORGANIZATION',array($orgName));
                 }
             }
             else {
