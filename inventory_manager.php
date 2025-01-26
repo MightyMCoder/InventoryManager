@@ -391,19 +391,24 @@ switch ($getMode) {
         }
     
         // read all keeper
-        $sql = 'SELECT DISTINCT imd_value, CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value) FROM '.TBL_INVENTORY_MANAGER_DATA.'
-                INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
-                    ON imf_id = imd_imf_id
-                LEFT JOIN '. TBL_USER_DATA. ' as last_name
-                    ON last_name.usd_usr_id = imd_value
-                    AND last_name.usd_usf_id = '. $gProfileFields->getProperty('LAST_NAME', 'usf_id'). '
-                LEFT JOIN '. TBL_USER_DATA. ' as first_name
-                    ON first_name.usd_usr_id = imd_value
-                    AND first_name.usd_usf_id = '. $gProfileFields->getProperty('FIRST_NAME', 'usf_id'). '
-                WHERE (imf_org_id  = '. $gCurrentOrgId .'
-                    OR imf_org_id IS NULL)
-                AND imf_name_intern = \'KEEPER\'
-                ORDER BY CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value) ASC;';
+        $sql = 'SELECT DISTINCT imd_value, 
+            CASE 
+                WHEN imd_value = -1 THEN \'n/a\'
+                ELSE CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value)
+            END as keeper_name
+            FROM '.TBL_INVENTORY_MANAGER_DATA.'
+            INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
+                ON imf_id = imd_imf_id
+            LEFT JOIN '. TBL_USER_DATA. ' as last_name
+                ON last_name.usd_usr_id = imd_value
+                AND last_name.usd_usf_id = '. $gProfileFields->getProperty('LAST_NAME', 'usf_id'). '
+            LEFT JOIN '. TBL_USER_DATA. ' as first_name
+                ON first_name.usd_usr_id = imd_value
+                AND first_name.usd_usf_id = '. $gProfileFields->getProperty('FIRST_NAME', 'usf_id'). '
+            WHERE (imf_org_id  = '. $gCurrentOrgId .'
+                OR imf_org_id IS NULL)
+            AND imf_name_intern = \'KEEPER\'
+            ORDER BY keeper_name ASC;';
         $form->addSelectBoxFromSql('filter_keeper',$selectBoxKeeperLabel, $gDb, $sql, array('defaultValue' => $getFilterKeeper , 'showContextDependentFirstEntry' => true));
  
         $form->addCheckbox('show_all', $gL10n->get('PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS'), $getShowAll, array('helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_SHOW_ALL_DESC'));                           
@@ -457,23 +462,16 @@ foreach ($items->mItemFields as $itemField) {
             break;
     }
 
-    if ($getMode == 'csv' && $columnNumber === 1) {
-        $csvStr .= $valueQuotes . $gL10n->get('SYS_ABR_NO') . $valueQuotes;
-    }
-
     if ($getMode == 'pdf' && $columnNumber === 1) {
         $arrValidColumns[] = $gL10n->get('SYS_ABR_NO');
     }
 
-    if ($getMode == 'xlsx' || $getMode == "ods" && $columnNumber === 1) {
+    if ($getMode == 'csv' || $getMode == "ods" || $getMode == 'xlsx' && $columnNumber === 1) {
         $header[$gL10n->get('SYS_ABR_NO')] = 'string';
     }
 
     switch ($getMode) {
         case 'csv':
-            $csvStr .= $separator . $valueQuotes . $columnHeader . $valueQuotes;
-            break;
-
         case "ods":
         case 'xlsx':
             $header[$columnHeader] = 'string';
@@ -500,10 +498,7 @@ if ($getMode == 'html') {
     }
 }
 
-if ($getMode == 'csv') {
-    $csvStr .= "\n";
-}
-elseif ($getMode == 'html' || $getMode == 'print') {
+if ($getMode == 'html' || $getMode == 'print') {
     $table->setColumnAlignByArray($columnAlign);
     $table->addRowHeadingByArray($columnValues);
 }
@@ -522,7 +517,6 @@ $user = new User($gDb, $gProfileFields);
 $listRowNumber = 1;
 
 foreach ($items->items as $item) {
-    $tmp_csv = '';
     $items->readItemData($item['imi_id'], $gCurrentOrgId);
     $columnValues = array();
     $strikethrough = $item['imi_former'];
@@ -538,7 +532,6 @@ foreach ($items->items as $item) {
 
         if ($columnNumber === 1) {
             $columnValues[] = $listRowNumber;
-            $tmp_csv .= $valueQuotes . $listRowNumber . $valueQuotes;
         }
 
         $content = $items->getValue($imfNameIntern, 'database');
@@ -546,7 +539,8 @@ foreach ($items->items as $item) {
         if ($imfNameIntern == 'KEEPER' && strlen($content) > 0) {
             $found = $user->readDataById($content);
             if (!$found) {
-                $content = $gL10n->get('SYS_NO_USER_FOUND');
+                $orgName = '"' . $gCurrentOrganization->getValue('org_longname'). '"';
+                $content = $gL10n->get('SYS_NOT_MEMBER_OF_ORGANIZATION',array($orgName));
             }
             else {
                 if ($getMode == 'html') {
@@ -600,18 +594,10 @@ foreach ($items->items as $item) {
             $content = $items->getHtmlValue($imfNameIntern, $content);
         }
         elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DROPDOWN', 'RADIO_BUTTON'))) {
-            $content = ($getMode == 'csv') ?
-                $items->getProperty($imfNameIntern, 'imf_value_list', 'text')[$content] :
-                $items->getHtmlValue($imfNameIntern, $content);
+            $content = $items->getHtmlValue($imfNameIntern, $content);
         }
 
-        if ($getMode == 'csv') {
-            $tmp_csv .= $separator . $valueQuotes . $content . $valueQuotes;
-        }
-        else {
-            $columnValues[] = ($strikethrough && $getMode != 'xlsx' && $getMode != 'ods') ? '<s>' . $content . '</s>' : $content;
-        }
-
+        $columnValues[] = ($strikethrough && $getMode != 'csv' && $getMode != 'ods' && $getMode != 'xlsx') ? '<s>' . $content . '</s>' : $content;
         $columnNumber++;
     }
 
@@ -680,9 +666,6 @@ foreach ($items->items as $item) {
     if ($showRow) {
         switch ($getMode) {
             case 'csv':
-                $csvStr .= $tmp_csv . "\n";
-                break;
-
             case 'ods':
             case 'xlsx':
                 $rows[] = $columnValues;
@@ -709,22 +692,6 @@ if (in_array($getMode, array('csv', 'pdf', 'xlsx', 'ods'))) {
 }
 
 switch ($getMode) {
-    case 'csv':
-        header('Content-Type: text/csv; charset=' . $charset);
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray(explode("\n", $csvStr), NULL, 'A1');
-        
-        $writer = new Csv($spreadsheet);
-        $writer->setDelimiter($separator);
-        $writer->setEnclosure($valueQuotes);
-        $writer->setSheetIndex(0);
-        
-        $writer->save('php://output');
-        break;
-
     case 'pdf':
         $pdf->writeHTML($table->getHtmlTable(), true, false, true);
         $file = ADMIDIO_PATH . FOLDER_DATA . '/temp/' . $filename;
@@ -740,10 +707,22 @@ switch ($getMode) {
         }
         break;
 
+    case 'csv':
     case 'ods':
     case 'xlsx':
-        $contentType = ($getMode == 'xlsx') ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/vnd.oasis.opendocument.spreadsheet";
-        $writerClass = ($getMode == 'xlsx') ? Xlsx::class : Ods::class;
+        $contentType = match ($getMode) {
+            'csv' => 'text/csv; charset=' . $charset,
+            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+            default => throw new InvalidArgumentException('Invalid mode'),
+        };
+
+        $writerClass = match ($getMode) {
+            'csv' => Csv::class,
+            'xlsx' => Xlsx::class,
+            'ods' => Ods::class,
+            default => throw new InvalidArgumentException('Invalid mode'),
+        };
 
         header('Content-disposition: attachment; filename="' . $filename . '"');
         header("Content-Type: $contentType");
@@ -764,14 +743,16 @@ switch ($getMode) {
         $sheet->fromArray(array_keys($header), NULL, 'A1');
         $sheet->fromArray($rows, NULL, 'A2');
 
-        foreach ($strikethroughs as $index => $strikethrough) {
-            if ($strikethrough) {
-                $sheet->getStyle('A' . ($index + 2) . ':' . $sheet->getHighestColumn() . ($index + 2))
-                    ->getFont()->setStrikethrough(true);
+        if (!$getMode == 'csv') {
+            foreach ($strikethroughs as $index => $strikethrough) {
+                if ($strikethrough) {
+                    $sheet->getStyle('A' . ($index + 2) . ':' . $sheet->getHighestColumn() . ($index + 2))
+                        ->getFont()->setStrikethrough(true);
+                }
             }
-        }
 
-        formatSpreadsheet($spreadsheet, $rows, true);
+            formatSpreadsheet($spreadsheet, $rows, true);
+        }
 
         $writer = new $writerClass($spreadsheet);
         $writer->save('php://output');
