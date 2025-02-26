@@ -391,7 +391,30 @@ switch ($getMode) {
         }
     
         // read all keeper
-        $sql = 'SELECT DISTINCT imd_value, 
+        switch ($gDbType) {
+            case 'pgsql':
+                $sql = 'SELECT DISTINCT imd_value, 
+            CASE 
+                WHEN imd_value = \'-1\' THEN \'n/a\'
+                ELSE CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value)
+            END as keeper_name
+            FROM '.TBL_INVENTORY_MANAGER_DATA.'
+            INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
+                ON imf_id = imd_imf_id
+            LEFT JOIN '. TBL_USER_DATA. ' as last_name
+                ON CAST(last_name.usd_usr_id AS VARCHAR)= imd_value
+                AND last_name.usd_usf_id = '. $gProfileFields->getProperty('LAST_NAME', 'usf_id'). '
+            LEFT JOIN '. TBL_USER_DATA. ' as first_name
+                ON CAST(first_name.usd_usr_id AS VARCHAR)= imd_value
+                AND first_name.usd_usf_id = '. $gProfileFields->getProperty('FIRST_NAME', 'usf_id'). '
+            WHERE (imf_org_id  = '. $gCurrentOrgId .'
+                OR imf_org_id IS NULL)
+            AND imf_name_intern = \'KEEPER\'
+            ORDER BY keeper_name ASC;';
+                break;
+            case 'mysql':
+            default:
+                $sql = 'SELECT DISTINCT imd_value, 
             CASE 
                 WHEN imd_value = -1 THEN \'n/a\'
                 ELSE CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value)
@@ -409,6 +432,7 @@ switch ($getMode) {
                 OR imf_org_id IS NULL)
             AND imf_name_intern = \'KEEPER\'
             ORDER BY keeper_name ASC;';
+        }
         $form->addSelectBoxFromSql('filter_keeper',$selectBoxKeeperLabel, $gDb, $sql, array('defaultValue' => $getFilterKeeper , 'showContextDependentFirstEntry' => true));
  
         $form->addCheckbox('show_all', $gL10n->get('PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS'), $getShowAll, array('helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_SHOW_ALL_DESC'));                           
