@@ -650,11 +650,11 @@ foreach ($items->items as $item) {
             $filterString = trim($filterString);
             if (substr($filterString, 0, 1) == '-') {
                 $filterString = substr($filterString, 1);
-                if (stristr(implode('', $columnValues), $filterString) || stristr($tmp_csv, $filterString)) {
+                if (stristr(implode('', $columnValues), $filterString)) {
                     $showRowException = true;
                 }
             }
-            if (stristr(implode('', $columnValues), $filterString) || stristr($tmp_csv, $filterString)) {
+            if (stristr(implode('', $columnValues), $filterString)) {
                 $showRow = true;
             }
         }
