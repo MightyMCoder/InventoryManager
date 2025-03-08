@@ -28,7 +28,6 @@ class CConfigDataPIM
      */
     const CONFIG_DEFAULT = array(
         'Optionen' => array(
-            'interface_pff' => 0,
             'profile_addin' => array(
                 'ITEMNAME',
                 'LAST_RECEIVER'
@@ -61,9 +60,4 @@ class CConfigDataPIM
      * Database token for plugin InventoryManager
      */
     const DB_TOKEN = '#_#';
-
-    /**
-     * Database token for plugin FormFiller
-     */
-    const DB_TOKEN_FORMFILLER = '#!#';
 }

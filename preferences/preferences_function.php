@@ -79,10 +79,6 @@ switch ($getMode) {
 function handleFormSubmission($form, $preferences) : void
 {
 	switch ($form) {
-		case 'interface_pff_preferences':
-			$preferences->config['Optionen']['interface_pff'] = $_POST['interface_pff'];
-			break;
-
 		case 'profile_addin_preferences':
 			$preferences->config['Optionen']['profile_addin'] = isset($_POST['profile_addin']) ? array_filter($_POST['profile_addin']) : array(0);
 			break;

@@ -146,7 +146,7 @@ function insertKeeperView($page, $user, $itemsKeeper) : void
 	}
 
 	// add column for edit and delete icons
-	$columnAlign[]  = 'center';
+	$columnAlign[]  = 'right';
 	$columnHeading[] = '&nbsp;';
 
 	$inventoryAddinTable->setColumnAlignByArray($columnAlign);
@@ -192,12 +192,6 @@ function insertKeeperView($page, $user, $itemsKeeper) : void
 		}
 
 		$tempValue = '';
-		if ($pPreferences->isPffInst()) {
-			$tempValue .= '
-				<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER_IM . '/items/items_export_to_pff.php', array('item_id' => $item['imi_id'])) . '">
-					<i class="fas fa-print" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT') . '"></i>
-				</a>';
-		}
 		if (isUserAuthorizedForPreferencesPIM()) {
 			$tempValue .= '
 				<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
@@ -295,7 +289,7 @@ function insertReceiverView($page, $user, $itemsReceiver) : void
 	}
 
 	// add column for edit and delete icons
-	$columnAlign[]  = 'center';
+	$columnAlign[]  = 'right';
 	$columnHeading[] = '&nbsp;';
 
 	$inventoryAddinTable->setColumnAlignByArray($columnAlign);
@@ -342,12 +336,6 @@ function insertReceiverView($page, $user, $itemsReceiver) : void
 		}
 
 		$tempValue = '';
-		if ($pPreferences->isPffInst()) {
-			$tempValue .= '
-				<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER_IM . '/items/items_export_to_pff.php', array('item_id' => $item['imi_id'])) . '">
-					<i class="fas fa-print" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT') . '"></i>
-				</a>';
-		}
 		if (isUserAuthorizedForPreferencesPIM()) {
 			$tempValue .= '
 				<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">

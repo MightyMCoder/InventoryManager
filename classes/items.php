@@ -763,9 +763,8 @@ class CItems
 
             // update item table
             $this->readItems($organizationId);
-
-            return $this->mItemId;
         }
+        return $this->mItemId;
     }
 
     /**

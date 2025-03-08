@@ -515,7 +515,7 @@ foreach ($items->mItemFields as $itemField) {
 }
 
 if ($getMode == 'html') {
-    $columnAlign[]  = 'center';
+    $columnAlign[]  = 'right';
     $columnValues[] = '&nbsp;';
     if ($datatable) {
         $table->disableDatatablesColumnsSort(array(count($columnValues)));
@@ -632,13 +632,6 @@ foreach ($items->items as $item) {
         if ($gSettingsManager->getBool('profile_log_edit_fields')) {
             $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_history.php', array('item_id' => $item['imi_id'])) . '">
                                <i class="fas fa-history" title="' . $gL10n->get('SYS_CHANGE_HISTORY') . '"></i>
-                           </a>';
-        }
-
-        // show link to print item with PFF
-        if ($pPreferences->isPffInst()) {
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_export_to_pff.php', array('item_id' => $item['imi_id'])) . '">
-                               <i class="fas fa-print" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT') . '"></i>
                            </a>';
         }
 

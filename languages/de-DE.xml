@@ -53,8 +53,6 @@
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ITEMS">Gegenstände importieren</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_PROGRESS">Der Gegenstand #VAR1_BOLD# wurde #VAR2_BOLD# importiert.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_UNUSED_HEAD">Folgenden Spalten der Importdatei sind keine Felder im InventoryManager zugeordnet:</string>
-    <string name="PLG_INVENTORY_MANAGER_INTERFACE_PFF">Interface zum Plugin FormFiller</string>
-    <string name="PLG_INVENTORY_MANAGER_INTERFACE_PFF_DESC">Hier besteht die Möglichkeit, bei installiertem Plugin FormFiller, eine FormFiller-Konfiguration auszuwählen. Anhand dieser kann ein Gegenstandsaus- oder Gegenstandsübergabebeleg erstellt werden. InventoryManager liefert hierbei die Werte, FormFiller die Positionen für den Druck.</string>
     <string name="PLG_INVENTORY_MANAGER_INVENTORY_MANAGER">Inventarverwaltung</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM">Gegenstand</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_COPY">Gegenstand kopieren</string>
@@ -100,7 +98,6 @@
     <string name="PLG_INVENTORY_MANAGER_NUMBER_DESC">Anzahl der anzufügenden Gegenstände</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER_OF_ITEMS">Anzahl der Gegenstände</string>
     <string name="PLG_INVENTORY_MANAGER_ORG_CHOICE">Organisationswahl</string>
-    <string name="PLG_INVENTORY_MANAGER_PFF_CONFIG_NOT_FOUND">Druck über FormFiller nicht möglich. Die gespeicherte FormFiller-Konfiguration ist nicht vorhanden.</string>        
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_DATE">Stand</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_INFORMATION">Plugininformationen</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_NAME">Name des Plugins</string>
