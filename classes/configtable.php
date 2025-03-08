@@ -11,30 +11,25 @@
  *
  * Methods:
  * __construct()                        : constructor
- * checkPffInst()                       : used to check if the plugin FormFiller is installed
- * isPffInst()                            : used to check if plugin FormFiller is installed; if yes returns true otherwise false
- * findPff()                            : used to check if a FormFiller directory exists
- * pffDir()                                : used to get the installation directory of the Plugin FormFiller; returns false if it doesn't exists or if it exists multiple times
- * init()                                : used to check if the configuration table exists, if not creates it and sets default values
+ * init()                               : used to check if the configuration table exists, if not creates it and sets default values
  * createTablesIfNotExist()             : used to create the necessary tables if they do not exist
  * createTableIfNotExist($tableName,
- *        $tableDefinition)                : used to create a table if it does not exist
+ *        $tableDefinition)             : used to create a table if it does not exist
  * initializeDefaultFieldsByOrgId()     : used to initialize default fields in the inventory manager database
  * createField($name, $internalName, $type, $description,
  *        $sequence, $system, $mandatory,
- *        $valueList = '')                : used to create a field in the inventory manager database
+ *        $valueList = '')              : used to create a field in the inventory manager database
  * initializePreferencesByOrgId()       : used to initialize preferences for the inventory manager
- * write()                                : used to write the configuration data to database
- * read()                                : used to read the configuration data from database
- * readPff()                            : used to read the configuration data of plugin FormFiller from database
+ * write()                              : used to write the configuration data to database
+ * read()                               : used to read the configuration data from database
  * readConfigData($pluginShortcut,
- *        &$configArray)                    : used to read the configuration data of a plugin from the database
- * checkForUpdate()                        : used to compare version and stand of file "/../version.php" with data from database
+ *        &$configArray)                : used to read the configuration data of a plugin from the database
+ * checkForUpdate()                     : used to compare version and stand of file "/../version.php" with data from database
  * compareVersion()                     : used to compare plugin version with the current version from the database
  * compareStand()                       : used to compare plugin stand with the current stand from the database
  * checkDefaultFieldsForCurrentOrg()    : used to check if there are default fields for the current organization
- * deleteConfigData($deinstOrgSelect)    : used to delete configuration data in database
- * deleteItemData($deinstOrgSelect)        : used to delete item data in database
+ * deleteConfigData($deinstOrgSelect)   : used to delete configuration data in database
+ * deleteItemData($deinstOrgSelect)     : used to delete item data in database
  ***********************************************************************************************
  */
 
@@ -140,14 +135,11 @@ class CConfigTablePIM
             plp_value TEXT
         ';
 
-    public $config = array();                // array with configuration-data
-    public $configPff = array();            // array with configuration-data of (P)lugin (f)orm (f)iller
+    public $config = array();               // array with configuration-data
 
     private $table_preferences_name;        // db table name *_plugin_preferences
-    private $isPffInst;                    // (is) (P)lugin (f)orm (f)iller (Inst)alled
-    private $pffDir;                        // (p)lugin (f)orm (f)iller (Dir)ectory
 
-    private const SHORTCUT = 'PIM';            // praefix for (P)lugin(I)nventory(M)anager preferences
+    private const SHORTCUT = 'PIM';         // praefix for (P)lugin(I)nventory(M)anager preferences
 
     /**
      * CConfigTablePIM constructor
@@ -158,84 +150,6 @@ class CConfigTablePIM
         require_once(__DIR__ . '/configdata.php');
 
         $this->table_preferences_name = TABLE_PREFIX . '_plugin_preferences';
-
-        $this->findPff();
-        $this->checkPffInst();
-    }
-
-    /**
-     * Checks if the plugin FormFiller is installed
-     *
-     * @return void
-     */
-    private function checkPffInst(): void
-    {
-        global $gDb, $gCurrentOrgId;
-
-        // check if configuration table for plugin FormFiller exists
-        $sql = 'SELECT table_name FROM information_schema.tables WHERE table_name = \'' . $this->table_preferences_name . '\';';
-        $statement = $gDb->queryPrepared($sql);
-
-        if ($statement->rowCount() !== 0) {
-            $sql = 'SELECT COUNT(*) AS COUNT FROM ' . $this->table_preferences_name . ' WHERE plp_name = ? AND (plp_org_id = ? OR plp_org_id IS NULL);';
-            $statement = $gDb->queryPrepared($sql, array('PFF__Plugininformationen__version', $gCurrentOrgId));
-
-            $this->isPffInst = ((int)$statement->fetchColumn() === 1 && $this->pffDir !== false);
-        } else {
-            $this->isPffInst = false;
-        }
-    }
-
-    /**
-     * If the plugin FormFiller is installed
-     * then this method will return true otherwise false
-     *
-     * @return bool                    Returns @b true if plugin FormFiller is installed
-     */
-    public function isPffInst(): bool
-    {
-        return $this->isPffInst;
-    }
-
-    /**
-     * Checks if a FormFiller directory exists
-     *
-     * @return void
-     */
-    private function findPff(): void
-    {
-        $location = ADMIDIO_PATH . FOLDER_PLUGINS;
-        $searchedFile = 'formfiller.php';
-        $formFillerfiles = array();
-        $tempFiles = array();
-
-        $all = opendir($location);
-        while ($found = readdir($all)) {
-            if (is_dir($location . '/' . $found) and $found <> ".." and $found <> ".") {
-                $tempFiles = glob($location . '/' . $found . '/' . $searchedFile);
-                if (count($tempFiles) > 0) {
-                    $formFillerfiles[] = $found;              // only directory is needed
-                }
-            }
-        }
-        closedir($all);
-        unset($all);
-
-        if (count($formFillerfiles) != 1) {
-            $this->pffDir = false;
-        } else {
-            $this->pffDir = $formFillerfiles[0];
-        }
-    }
-
-    /**
-     * Returns the Plugin FormFiller directory
-     *
-     * @return bool/string                Returns the FormFiller directory otherwise false
-     */
-    public function pffDir()
-    {
-        return $this->pffDir;
     }
 
     /**
@@ -592,16 +506,6 @@ class CConfigTablePIM
     }
 
     /**
-     * Reads the configuration data of plugin FormFiller (PFF) from the database
-     *
-     * @return bool
-     */
-    public function readPff(): bool
-    {
-        return $this->readConfigData('PFF', $this->configPff);
-    }
-
-    /**
      * Reads the configuration data of a plugin from the database
      *
      * @param string $pluginShortcut The shortcut of the plugin
@@ -639,16 +543,6 @@ class CConfigTablePIM
                     }
                 } else {
                     $configArray[$array[1]] [$array[2]] = $row['plp_value'];
-                }
-            }
-
-            // if array data is again enclosed in ((  )) -> split again
-            if ($pluginShortcut === 'PFF' && is_array($configArray[$array[1]] [$array[2]])) {
-                for ($i = 0; $i < count($configArray[$array[1]] [$array[2]]); $i++) {
-                    if ((substr($configArray[$array[1]] [$array[2]][$i], 0, 2) == '((') && (substr($configArray[$array[1]] [$array[2]][$i], -2) == '))')) {
-                        $temp = substr($configArray[$array[1]] [$array[2]][$i], 2, -2);
-                        $configArray[$array[1]] [$array[2]][$i] = explode(CConfigDataPIM::DB_TOKEN_FORMFILLER, $temp);
-                    }
                 }
             }
         }

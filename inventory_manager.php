@@ -515,7 +515,7 @@ foreach ($items->mItemFields as $itemField) {
 }
 
 if ($getMode == 'html') {
-    $columnAlign[]  = 'center';
+    $columnAlign[]  = 'right';
     $columnValues[] = '&nbsp;';
     if ($datatable) {
         $table->disableDatatablesColumnsSort(array(count($columnValues)));
@@ -635,13 +635,6 @@ foreach ($items->items as $item) {
                            </a>';
         }
 
-        // show link to print item with PFF
-        if ($pPreferences->isPffInst()) {
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_export_to_pff.php', array('item_id' => $item['imi_id'])) . '">
-                               <i class="fas fa-print" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_PRINT') . '"></i>
-                           </a>';
-        }
-
         // show link to edit, make former or undo former and delete item (if authorized)
         if ($authorizedForPreferences || isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database'))) {
             if ($authorizedForPreferences || (isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database')) && !$item['imi_former'])) {
@@ -674,11 +667,11 @@ foreach ($items->items as $item) {
             $filterString = trim($filterString);
             if (substr($filterString, 0, 1) == '-') {
                 $filterString = substr($filterString, 1);
-                if (stristr(implode('', $columnValues), $filterString) || stristr($tmp_csv, $filterString)) {
+                if (stristr(implode('', $columnValues), $filterString)) {
                     $showRowException = true;
                 }
             }
-            if (stristr(implode('', $columnValues), $filterString) || stristr($tmp_csv, $filterString)) {
+            if (stristr(implode('', $columnValues), $filterString)) {
                 $showRow = true;
             }
         }

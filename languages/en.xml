@@ -53,8 +53,6 @@
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ITEMS">Import items</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_PROGRESS">The item #VAR1_BOLD# was imported #VAR2_BOLD#.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_UNUSED_HEAD">The following columns of the import file are not assigned to any item fields in InventoryManager:</string>
-    <string name="PLG_INVENTORY_MANAGER_INTERFACE_PFF">Interface to the plugin formfiller</string>
-    <string name="PLG_INVENTORY_MANAGER_INTERFACE_PFF_DESC">Here you have the possibility to select a FormFiller configuration if the Plugin FormFiller is installed. This can be used to create a item issue or item transfer document. InventoryManager supplies the values, FormFiller the positions for the print.</string>
     <string name="PLG_INVENTORY_MANAGER_INVENTORY_MANAGER">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM">Item</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_COPY">Copy the item</string>
@@ -100,7 +98,6 @@
     <string name="PLG_INVENTORY_MANAGER_NUMBER_DESC">Number of items to be added</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER_OF_ITEMS">Number of items</string>
     <string name="PLG_INVENTORY_MANAGER_ORG_CHOICE">Organizational choice</string>
-    <string name="PLG_INVENTORY_MANAGER_PFF_CONFIG_NOT_FOUND">Cannot print using FormFiller. The saved FormFiller configuration does not exist.</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_DATE">Situation</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_INFORMATION">Plug-in informations</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_NAME">Plug-in name</string>

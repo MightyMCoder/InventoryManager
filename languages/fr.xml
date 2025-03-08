@@ -53,8 +53,6 @@
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ITEMS">Importer des objets</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_PROGRESS">L'objet #VAR1_BOLD# a été importé #VAR2_BOLD#.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_UNUSED_HEAD">Les colonnes suivantes du fichier d'importation ne sont associées à aucun champ dans InventoryManager :</string>
-    <string name="PLG_INVENTORY_MANAGER_INTERFACE_PFF">Interface avec le Plug-in FormFiller</string>
-    <string name="PLG_INVENTORY_MANAGER_INTERFACE_PFF_DESC">Ici, il est possible de sélectionner une configuration FormFiller avec le plug-in FormFiller installé. Un récépissé de remise de objet ou un récépissé de remise de objet peut être créé sur cette base. InventoryManager fournit les valeurs, FormFiller les positions pour l\'impression.</string>
     <string name="PLG_INVENTORY_MANAGER_INVENTORY_MANAGER">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM">Objet</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_COPY">Copier l'objet</string>
@@ -100,7 +98,6 @@
     <string name="PLG_INVENTORY_MANAGER_NUMBER_DESC">Nombre de objets à ajouter</string>    
     <string name="PLG_INVENTORY_MANAGER_NUMBER_OF_ITEMS">Nombre de objets</string>    
     <string name="PLG_INVENTORY_MANAGER_ORG_CHOICE">Choix de l\'organisation</string>
-    <string name="PLG_INVENTORY_MANAGER_PFF_CONFIG_NOT_FOUND">Impossible d'imprimer avec FormFiller. La configuration FormFiller enregistrée n'existe pas.</string>    
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_DATE">État</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_INFORMATION">Informations sur le plug-in</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_NAME">Nom du plug-in</string>

@@ -99,22 +99,22 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $autho
 	$headline = $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE');
 	$page = new HtmlPage('plg-inventory-manager-items-delete', $headline);
 	$gNavigation->addUrl(CURRENT_URL, $headline);
-	$page->addHtml('<p class="lead">'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE_DESC').'</p>');
+	$page->addHtml('<p class="lead">' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE_DESC') . '</p>');
 
 	$form = new HtmlForm('item_delete_form', null, $page);
 	foreach ($items->mItemFields as $itemField) {
 		$imfNameIntern = $itemField->getValue('imf_name_intern');
 		$content = $items->getValue($imfNameIntern, 'database');
 
-		if ($imfNameIntern === 'KEEPER'|| $imfNameIntern == 'LAST_RECEIVER'&& strlen($content) > 0) {
-            if (is_numeric($content)) {
-                $found = $user->readDataById($content);
-                if ($found) {
-					$content = $user->getValue('LAST_NAME').', '.$user->getValue('FIRST_NAME');
-                }
-                else {
-                    $content = $gL10n->get('SYS_NO_USER_FOUND');
-                }
+		if ($imfNameIntern === 'KEEPER' || $imfNameIntern == 'LAST_RECEIVER' && strlen($content) > 0) {
+			if (is_numeric($content)) {
+				$found = $user->readDataById($content);
+				if ($found) {
+					$content = $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME');
+				}
+				else {
+					$content = $gL10n->get('SYS_NO_USER_FOUND');
+				}
 			}
 		} elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'DATE') {
 			$content = $items->getHtmlValue($imfNameIntern, $content);
@@ -124,7 +124,7 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $autho
 		}
 
 		$form->addInput(
-			'imf-'. $items->getProperty($imfNameIntern, 'imf_id'),
+			'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
 			convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
 			$content,
 			array('property' => HtmlForm::FIELD_DISABLED)
@@ -133,16 +133,16 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $autho
 
 	// keepers are only allowed to mark items as former
 	if ($authorizedForDelete) {
-		$form->addButton('btn_delete', $gL10n->get('SYS_DELETE'), array('icon' => 'fa-trash-alt', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 2)), 'class' => 'btn-primary offset-sm-3'));
+		$form->addButton('btn_delete', $gL10n->get('SYS_DELETE'), array('icon' => 'fa-trash-alt', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 2)), 'class' => 'btn-primary offset-sm-3'));
 	}
 
 	if (!$getItemFormer) {
-		$form->addButton('btn_former', $gL10n->get('PLG_INVENTORY_MANAGER_FORMER'), array('icon' => 'fa-eye-slash', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 3)), 'class' => 'btn-primary offset-sm-3'));
-		$form->addCustomContent('', '<br />'. (($authorizedForDelete) ? $gL10n->get('PLG_INVENTORY_MANAGER_FORMER_DESC') : $gL10n->get('PLG_INVENTORY_MANAGER_KEEPER_FORMER_DESC')));
+		$form->addButton('btn_former', $gL10n->get('PLG_INVENTORY_MANAGER_FORMER'), array('icon' => 'fa-eye-slash', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 3)), 'class' => 'btn-primary offset-sm-3'));
+		$form->addCustomContent('', '<br />' . (($authorizedForDelete) ? $gL10n->get('PLG_INVENTORY_MANAGER_FORMER_DESC') : $gL10n->get('PLG_INVENTORY_MANAGER_KEEPER_FORMER_DESC')));
 	}
 	else {
-		$form->addButton('btn_undo_former', $gL10n->get('PLG_INVENTORY_MANAGER_UNDO_FORMER'), array('icon' => 'fa-eye', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 4)), 'class' => 'btn-primary offset-sm-3'));
-		$form->addCustomContent('', '<br />'.(($authorizedForDelete) ? $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER_DESC') : $gL10n->get('PLG_INVENTORY_MANAGER_KEEPER_ITEM_UNDO_FORMER_DESC')));
+		$form->addButton('btn_undo_former', $gL10n->get('PLG_INVENTORY_MANAGER_UNDO_FORMER'), array('icon' => 'fa-eye', 'link' => SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $getItemId, 'mode' => 4)), 'class' => 'btn-primary offset-sm-3'));
+		$form->addCustomContent('', '<br />' . (($authorizedForDelete) ? $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER_DESC') : $gL10n->get('PLG_INVENTORY_MANAGER_KEEPER_ITEM_UNDO_FORMER_DESC')));
 	}
 
 	$page->addHtml($form->show());
@@ -160,7 +160,7 @@ function deleteItem($items, $getItemId, $gCurrentOrgId) : void
 {
 	global $gMessage, $gNavigation, $gL10n;
 
- 	$items->deleteItem($getItemId, $gCurrentOrgId);
+	$items->deleteItem($getItemId, $gCurrentOrgId);
 
 	// Send notification to all users
 	$items->sendNotification();
@@ -169,7 +169,7 @@ function deleteItem($items, $getItemId, $gCurrentOrgId) : void
 	if ($gNavigation->count() > 2) {
 		$gNavigation->deleteLastUrl();
 	}
-	
+
 	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
 	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETED'));
 }

@@ -30,11 +30,6 @@ if (!isUserAuthorizedForPreferencesPIM()) {
     $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 
-// read formfiller configuration if plugin formfiller is installed
-if ($pPreferences->isPffInst()) {
-    $pPreferences->readPff();
-}
-
 $headline = $gL10n->get('SYS_SETTINGS');
 $gNavigation->addUrl(CURRENT_URL, $headline);
 
@@ -120,15 +115,6 @@ $formItemFields = new HtmlForm('itemfields_form', SecurityUtils::encodeUrl(ADMID
 $formItemFields->addSubmitButton('btn_edit_itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE'), array('icon' => 'fa-edit', 'class' => 'offset-sm-3'));
 $formItemFields->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE_DESC'));
 addPreferencePanel($page, 'itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE'), 'fas fa-edit', $formItemFields->show());
-
-// PANEL: INTERFACE_PFF
-if ($pPreferences->isPffInst()) {
-    $formInterfacePFF = new HtmlForm('interface_pff_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences_function.php', array('form' => 'interface_pff_preferences')), $page, array('class' => 'form-preferences'));
-    $formInterfacePFF->addSelectBox('interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_CONFIGURATION'), $pPreferences->configPff['Formular']['desc'], array('defaultValue' => $pPreferences->config['Optionen']['interface_pff'], 'showContextDependentFirstEntry' => false));
-    $formInterfacePFF->addCustomContent('', $gL10n->get('PLG_INVENTORY_MANAGER_INTERFACE_PFF_DESC'));
-    $formInterfacePFF->addSubmitButton('btn_save_interface_pff_preferences', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
-    addPreferencePanel($page, 'interface_pff', $gL10n->get('PLG_INVENTORY_MANAGER_INTERFACE_PFF'), 'fas fa-file-pdf', $formInterfacePFF->show());
-}
 
 // PANEL: PROFILE ADDIN
 $helpTextIdLabelLink = '<a href="https://github.com/MightyMCoder/InventoryManager/wiki/Profile-View-AddIn" target="_blank">GitHub Wiki</a>';
