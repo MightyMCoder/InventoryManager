@@ -29,4 +29,4 @@ If you have any questions or need further assistance, feel free to [open an issu
 
 ## Acknowledgements
 
-- Based on KeyManager by rmbinder (https://github.com/rmbinder/KeyManager)
+- Based on KeyManager by [rmbinder](https://github.com/rmbinder) (https://github.com/rmbinder/KeyManager)
