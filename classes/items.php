@@ -841,7 +841,7 @@ class CItems
      */
     public function sendNotification($importData = null): bool
     {
-        global $gCurrentUser, $gSettingsManager, $gL10n;
+        global $gCurrentUser, $gSettingsManager, $gL10n, $gDb, $gCurrentOrgId;
 
         // check if notifications are enabled
         if ($gSettingsManager->getBool('system_notifications_new_entries')) {
@@ -970,11 +970,14 @@ class CItems
                     }
                 }
             } else {
+                $itemData = new CItems($gDb, $gCurrentOrgId);
+                $itemData->readItemFields($gCurrentOrgId);
+
                 $messageUserText = 'SYS_CHANGED_BY';
                 $messageDateText = 'SYS_CHANGED_AT';
-
+                
                 $message = $gL10n->get($messageHead) . '<br/><br/>'
-                    . '<b>' . $gL10n->get('PIM_ITEMNAME') . ':</b> ' . $this->getValue('ITEMNAME', 'html') . '<br/>'
+                    . '<b>' . convlanguagePIM($itemData->getProperty('ITEMNAME', 'imf_name')) . ':</b> ' . $this->getValue('ITEMNAME', 'html') . '<br/>'
                     . '<b>' . $gL10n->get($messageUserText) . ':</b> ' . $gCurrentUser->getValue('FIRST_NAME') . ' ' . $gCurrentUser->getValue('LAST_NAME') . '<br/>'
                     . '<b>' . $gL10n->get($messageDateText) . ':</b> ' . date($gSettingsManager->getString('system_date') . ' ' . $gSettingsManager->getString('system_time')) . '<br/>';
             }

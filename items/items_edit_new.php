@@ -113,7 +113,7 @@ foreach ($items->mItemFields as $itemField) {
     if (isset($pimInInventoryId, $pimLastReceiverId, $pimReceivedOnId, $pimReceivedBackOnId) && $imfNameIntern === 'IN_INVENTORY') {
         $pPreferences->config['Optionen']['field_date_time_format'] === 'datetime' ? $datetime = 'true' : $datetime = 'false';
 
-        // Add JavaScript to check the PIM_LAST_RECEIVER field and set the required attribute for pimReceivedOnId and pimReceivedBackOnId
+        // Add JavaScript to check the LAST_RECEIVER field and set the required attribute for pimReceivedOnId and pimReceivedBackOnId
         $page->addJavascript('
             document.addEventListener("DOMContentLoaded", function() {
                 if (document.querySelector("[id=\'imf-' . $pimReceivedOnId . '_time\']")) {

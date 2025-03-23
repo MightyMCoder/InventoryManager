@@ -242,10 +242,10 @@ class CConfigTablePIM
 
         $existingFields = array();
         while ($row = $statement->fetch()) {
-            $existingFields[$row['imf_name']] = $row;
+            $existingFields[$row['imf_name_intern']] = $row;
         }
 
-        $defaultFieldNames = array_column($defaultData, 'imf_name');
+        $defaultFieldNames = array_column($defaultData, 'imf_name_intern');
 
         $pimFields = array();
         $customFields = array();
@@ -363,12 +363,17 @@ class CConfigTablePIM
                 if ($newFieldIds[$oldFieldName] != $oldField['imf_id']) {
                     $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_DATA . ' SET imd_imf_id = ? WHERE imd_imf_id = ?';
                     $gDb->queryPrepared($sql, array($newFieldIds[$oldFieldName], $oldField['imf_id']));
+                    $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_LOG . ' SET iml_imf_id = ? WHERE iml_imf_id = ?';
+                    $gDb->queryPrepared($sql, array($newFieldIds[$oldFieldName], $oldField['imf_id']));
                 }
             } else {
                 // Field no longer exists, set the field to empty and show an error message
                 $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_DATA . ' SET imd_imf_id = NULL WHERE imd_imf_id = ?';
                 $gDb->queryPrepared($sql, array($oldField['imf_id']));
                 $_SESSION['error_messages'][] = 'Error: Field "' . $oldFieldName . '" no longer exists. Please manually check and adjust the database table"' . TBL_INVENTORY_MANAGER_DATA . '"  where "imd_imf_id" equals "NULL" to avoid data loss.';
+                $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_LOG . ' SET iml_imf_id = NULL WHERE iml_imf_id = ?';
+                $gDb->queryPrepared($sql, array($oldField['imf_id']));
+                $_SESSION['error_messages'][] = 'Error: Field "' . $oldFieldName . '" no longer exists. Please manually check and adjust the database table"' . TBL_INVENTORY_MANAGER_LOG . '"  where "iml_imf_id" equals "NULL" to avoid data loss.';
             }
         }
 
