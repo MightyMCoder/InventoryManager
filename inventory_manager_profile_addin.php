@@ -88,7 +88,7 @@ function insertKeeperView($page, $user, $itemsKeeper) : void
 
 	$page->addHtml('
 			<div class="card admidio-field-group" id="inventory_manager_box_keeper">
-				<div class="card-header">' . $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER') . ' (' . $gL10n->get('SYS_VIEW') . ': ' . $gL10n->get('PIM_KEEPER') . ')
+				<div class="card-header">' . $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER') . ' (' . $gL10n->get('SYS_VIEW') . ': ' . convlanguagePIM($itemsKeeper->getProperty('KEEPER', 'imf_name')) . ')
 					<a class="admidio-icon-link float-right" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
 						'export_and_filter' => true,
 						'show_all' => true,
@@ -231,7 +231,7 @@ function insertReceiverView($page, $user, $itemsReceiver) : void
 
 	$page->addHtml('
 			<div class="card admidio-field-group" id="inventory_manager_box_receiver">
-				<div class="card-header">' . $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER') . ' (' . $gL10n->get('SYS_VIEW') . ': ' . $gL10n->get('PIM_LAST_RECEIVER') . ')
+				<div class="card-header">' . $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER') . ' (' . $gL10n->get('SYS_VIEW') . ': ' . convlanguagePIM($itemsReceiver->getProperty('LAST_RECEIVER', 'imf_name')) . ')
 					<a class="admidio-icon-link float-right" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
 						'export_and_filter' => true,
 						'show_all' => true,

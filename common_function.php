@@ -160,7 +160,7 @@ function isUserAuthorizedForAddinPIM() : bool
  * @param int|null $keeper 			The user ID of the keeper
  * @return bool 					true if the keeper is authorized
  */
-function isKeeperAuthorizedToEdit(int $keeper = null) : bool
+function isKeeperAuthorizedToEdit(?int $keeper = null) : bool
 {
 	global $pPreferences, $gCurrentUser;
 	$gCurrentUser = $GLOBALS['gCurrentUser'];

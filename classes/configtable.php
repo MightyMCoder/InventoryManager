@@ -242,10 +242,10 @@ class CConfigTablePIM
 
         $existingFields = array();
         while ($row = $statement->fetch()) {
-            $existingFields[$row['imf_name']] = $row;
+            $existingFields[$row['imf_name_intern']] = $row;
         }
 
-        $defaultFieldNames = array_column($defaultData, 'imf_name');
+        $defaultFieldNames = array_column($defaultData, 'imf_name_intern');
 
         $pimFields = array();
         $customFields = array();
@@ -257,24 +257,29 @@ class CConfigTablePIM
         });
 
         foreach ($existingFields as $fieldName => $fieldData) {
-            if (strpos($fieldName, 'PIM_') === 0) {
+            if ($fieldData['imf_system'] === 1) {
                 $pimFields[$fieldName] = $fieldData;
             } else {
                 $customFields[$fieldName] = $fieldData;
-                $customFields[$fieldName]['previous_imf_name'] = $existingFieldsOrdered[$fieldData['imf_sequence'] - 1]['imf_name'];
-                $customFields[$fieldName]['previous_sequence'] = $existingFieldsOrdered[$fieldData['imf_sequence'] - 1]['imf_sequence'];
+                if ($fieldData['imf_sequence'] > 0) {
+                    $customFields[$fieldName]['previous_imf_name_intern'] = $existingFieldsOrdered[$fieldData['imf_sequence'] - 1]['imf_name_intern'];
+                    $customFields[$fieldName]['previous_sequence'] = $existingFieldsOrdered[$fieldData['imf_sequence'] - 1]['imf_sequence'];
+                } else {
+                    $customFields[$fieldName]['previous_imf_name_intern'] = null;
+                    $customFields[$fieldName]['previous_sequence'] = null;
+                }
             }
         }
 
         // Adjust pimFields to match the defaultData
         foreach ($defaultData as $defaultField) {
-            $defaultFieldName = $defaultField['imf_name'];
+            $defaultFieldName = $defaultField['imf_name_intern'];
             if (!isset($pimFields[$defaultFieldName])) {
                 // Field does not exist, add it to pimFields
                 $pimFields[$defaultFieldName] = $defaultField;
             } else {
                 foreach ($defaultField as $key => $value) {
-                    if ($key === 'imf_value_list') {
+                    if ($key === 'imf_value_list' || $key === 'imf_name') {
                         continue;
                     }
                     $pimFields[$defaultFieldName][$key] = $value;
@@ -287,7 +292,7 @@ class CConfigTablePIM
             return $a['imf_id'] <=> $b['imf_id'];
         });
 
-        $pimFields = array_combine(array_column($pimFields, 'imf_name'), $pimFields);
+        $pimFields = array_combine(array_column($pimFields, 'imf_name_intern'), $pimFields);
 
         // Remove PIM fields that are not in the defaultData
         foreach ($pimFields as $fieldName => $fieldData) {
@@ -301,8 +306,8 @@ class CConfigTablePIM
 
         // Adjust the sequence of pimFields based on customFields
         foreach ($customFields as $customField) {
-            if (isset($customField['previous_imf_name']) && isset($allFields[$customField['previous_imf_name']])) {
-                $customSequence = $allFields[$customField['previous_imf_name']]['imf_sequence'] + 1;
+            if (isset($customField['previous_imf_name_intern']) && isset($allFields[$customField['previous_imf_name_intern']])) {
+                $customSequence = $allFields[$customField['previous_imf_name_intern']]['imf_sequence'] + 1;
                 $customField['imf_sequence'] = $customSequence;
             } else {
                 //old previous item doesnt exist anymore
@@ -317,8 +322,8 @@ class CConfigTablePIM
 
             unset($pimField); // Break reference to the last element
 
-            if (isset($customField['imf_name'])) {
-                $allFields[$customField['imf_name']] = $customField;
+            if (isset($customField['imf_name_intern'])) {
+                $allFields[$customField['imf_name_intern']] = $customField;
             }
         }
         // Now $allFields contains the combined and updated fields
@@ -363,12 +368,17 @@ class CConfigTablePIM
                 if ($newFieldIds[$oldFieldName] != $oldField['imf_id']) {
                     $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_DATA . ' SET imd_imf_id = ? WHERE imd_imf_id = ?';
                     $gDb->queryPrepared($sql, array($newFieldIds[$oldFieldName], $oldField['imf_id']));
+                    $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_LOG . ' SET iml_imf_id = ? WHERE iml_imf_id = ?';
+                    $gDb->queryPrepared($sql, array($newFieldIds[$oldFieldName], $oldField['imf_id']));
                 }
             } else {
                 // Field no longer exists, set the field to empty and show an error message
                 $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_DATA . ' SET imd_imf_id = NULL WHERE imd_imf_id = ?';
                 $gDb->queryPrepared($sql, array($oldField['imf_id']));
                 $_SESSION['error_messages'][] = 'Error: Field "' . $oldFieldName . '" no longer exists. Please manually check and adjust the database table"' . TBL_INVENTORY_MANAGER_DATA . '"  where "imd_imf_id" equals "NULL" to avoid data loss.';
+                $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_LOG . ' SET iml_imf_id = NULL WHERE iml_imf_id = ?';
+                $gDb->queryPrepared($sql, array($oldField['imf_id']));
+                $_SESSION['error_messages'][] = 'Error: Field "' . $oldFieldName . '" no longer exists. Please manually check and adjust the database table"' . TBL_INVENTORY_MANAGER_LOG . '"  where "iml_imf_id" equals "NULL" to avoid data loss.';
             }
         }
 
