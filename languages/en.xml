@@ -118,6 +118,8 @@
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">Current user as default selection</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">If the current user is to be preset as the keeper when adding new items, the checkbox must be checked.</string>
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">You are using the current #VAR1# version of InventoryManager!</string>
+    <string name="PLG_INVENTORY_MANAGER_HIDE_BORROWING">Hide borrowing options</string>
+    <string name="PLG_INVENTORY_MANAGER_HIDE_BORROWING_DESC">Hide the selections for borrowing and returning devices to people</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Category</string>
     <string name="PIM_CATEGORY_DESCRIPTION">Category of the item</string>

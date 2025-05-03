@@ -107,6 +107,9 @@ $formGeneralSettings->addCheckbox('current_user_default_keeper', $gL10n->get('PL
 $formGeneralSettings->addCheckbox('allow_negative_numbers', $gL10n->get('PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS'), $pPreferences->config['Optionen']['allow_negative_numbers'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS_DESC'));
 $formGeneralSettings->addInput('decimal_step', $gL10n->get('PLG_INVENTORY_MANAGER_DECIMAL_STEP'), $pPreferences->config['Optionen']['decimal_step'], array('type' => 'number','minNumber' => 0, 'step' => '0.0000001', 'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_DECIMAL_STEP_DESC', 'property' => HtmlForm::FIELD_REQUIRED));
 $formGeneralSettings->addSelectBox('field_date_time_format', $gL10n->get('PLG_INVENTORY_MANAGER_DATETIME_FORMAT'), array($gL10n->get('SYS_DATE'), $gL10n->get('SYS_DATE') .' & ' .$gL10n->get('SYS_TIME')), array('defaultValue' => (($pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') ? 1 : 0), 'showContextDependentFirstEntry' => false));
+
+$formGeneralSettings->addCheckbox('hide_borrowing', $gL10n->get('PLG_INVENTORY_MANAGER_HIDE_BORROWING'), $pPreferences->config['Optionen']['hide_borrowing'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_HIDE_BORROWING_DESC'));
+
 $formGeneralSettings->addSubmitButton('btn_save_general_preferences', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 addPreferencePanel($page, 'field_settings', $gL10n->get('SYS_COMMON'), 'fas fa-cog fa-fw', $formGeneralSettings->show());
 
