@@ -109,6 +109,11 @@ foreach ($items->mItemFields as $itemField) {
     if (!$authorizedPreferences && !in_array($itemField->getValue('imf_name_intern'), $keeperEditFields)) {
         $fieldProperty = HtmlForm::FIELD_DISABLED;
     }
+
+    $hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'] ; //? null : '0'
+    if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+        break;
+    }
     
     if (isset($pimInInventoryId, $pimLastReceiverId, $pimReceivedOnId, $pimReceivedBackOnId) && $imfNameIntern === 'IN_INVENTORY') {
         $pPreferences->config['Optionen']['field_date_time_format'] === 'datetime' ? $datetime = 'true' : $datetime = 'false';
