@@ -96,7 +96,14 @@ $page->addHtml('
 $items = new CItems($gDb, $gCurrentOrgId);
 $valueList = array();
 foreach ($items->mItemFields as $itemField) {
-    $valueList[$itemField->getValue('imf_name_intern')] = $itemField->getValue('imf_name');
+
+    $imfNameIntern = $itemField->getValue('imf_name_intern');
+    $hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'];
+    if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+		break;
+	}
+    
+    $valueList[$imfNameIntern] = $itemField->getValue('imf_name');
 }
 
 // PANEL: GENERAL PREFERENCES
@@ -123,6 +130,13 @@ addPreferencePanel($page, 'itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMF
 $helpTextIdLabelLink = '<a href="https://github.com/MightyMCoder/InventoryManager/wiki/Profile-View-AddIn" target="_blank">GitHub Wiki</a>';
 $valueList = array();
 foreach ($items->mItemFields as $itemField) {
+
+    $imfNameIntern = $itemField->getValue('imf_name_intern');
+    $hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'];
+    if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+		break;
+	}
+
     if ($itemField->getValue('imf_name_intern') == 'ITEMNAME') {
         continue;
     }
