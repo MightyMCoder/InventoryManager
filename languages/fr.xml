@@ -119,7 +119,7 @@
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">Si l'utilisateur actuel doit être défini par défaut comme gestionnaire lors de l'ajout de nouveaux objets, cochez cette case.</string>    
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">Vous utilisez une #VAR1#version actuelle  d'InventoryManager!</string>
     <string name="PLG_INVENTORY_MANAGER_HIDE_BORROWING">Cacher les options de location</string>
-    <string name="PLG_INVENTORY_MANAGER_HIDE_BORROWING_DESC">Masquer les sélections pour l'emprunt et la restitution d'appareils aux personnes</string>
+    <string name="PLG_INVENTORY_MANAGER_HIDE_BORROWING_DESC">Masquer les sélections pour l'emprunt et la restitution d'appareils aux personnes.</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Catégorie</string>
     <string name="PIM_CATEGORY_DESCRIPTION">La catégorie de l'objet</string>
