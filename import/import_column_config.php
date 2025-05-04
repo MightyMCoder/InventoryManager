@@ -109,16 +109,26 @@ $arrayCsvColumns = array_filter($arrayCsvColumns, function ($value) {
 $categoryId = null;
 $arrayImportableFields = array();
 
+$pPreferences = new CConfigTablePIM();
+$pPreferences->read();
+
 $items = new CItems($gDb, $gCurrentOrgId);
 $row = array();
 foreach ($items->mItemFields as $columnKey => $columnValue) {
     $imfName = $columnValue->GetValue('imf_name');
     
+    $disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
+    $imfNameIntern = $columnValue->GetValue('imf_name_intern');
+
+    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+		break;
+	}
+
     // If the field name starts with 'PIM_', it is a language key
     if (strpos($imfName, 'PIM_') !== false) {
-        $row = array($columnValue->GetValue('imf_name_intern') => $gL10n->get($imfName));
+        $row = array($imfNameIntern => $gL10n->get($imfName));
     } else {
-        $row = array($columnValue->GetValue('imf_name_intern') => $imfName);
+        $row = array($imfNameIntern => $imfName);
     }
     
     $arrayImportableFields[] = $row;

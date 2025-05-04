@@ -96,7 +96,14 @@ $page->addHtml('
 $items = new CItems($gDb, $gCurrentOrgId);
 $valueList = array();
 foreach ($items->mItemFields as $itemField) {
-    $valueList[$itemField->getValue('imf_name_intern')] = $itemField->getValue('imf_name');
+
+    $imfNameIntern = $itemField->getValue('imf_name_intern');
+    $disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
+    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+		break;
+	}
+    
+    $valueList[$imfNameIntern] = $itemField->getValue('imf_name');
 }
 
 // PANEL: GENERAL PREFERENCES
@@ -106,7 +113,13 @@ $formGeneralSettings->addSelectBox('allowed_keeper_edit_fields', $gL10n->get('PL
 $formGeneralSettings->addCheckbox('current_user_default_keeper', $gL10n->get('PLG_INVENTORY_MANAGER_USE_CURRENT_USER'), $pPreferences->config['Optionen']['current_user_default_keeper'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC'));
 $formGeneralSettings->addCheckbox('allow_negative_numbers', $gL10n->get('PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS'), $pPreferences->config['Optionen']['allow_negative_numbers'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS_DESC'));
 $formGeneralSettings->addInput('decimal_step', $gL10n->get('PLG_INVENTORY_MANAGER_DECIMAL_STEP'), $pPreferences->config['Optionen']['decimal_step'], array('type' => 'number','minNumber' => 0, 'step' => '0.0000001', 'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_DECIMAL_STEP_DESC', 'property' => HtmlForm::FIELD_REQUIRED));
-$formGeneralSettings->addSelectBox('field_date_time_format', $gL10n->get('PLG_INVENTORY_MANAGER_DATETIME_FORMAT'), array($gL10n->get('SYS_DATE'), $gL10n->get('SYS_DATE') .' & ' .$gL10n->get('SYS_TIME')), array('defaultValue' => (($pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') ? 1 : 0), 'showContextDependentFirstEntry' => false));
+
+if ($disableBorrowing == 0) { 
+		$formGeneralSettings->addSelectBox('field_date_time_format', $gL10n->get('PLG_INVENTORY_MANAGER_DATETIME_FORMAT'), array($gL10n->get('SYS_DATE'), $gL10n->get('SYS_DATE') .' & ' .$gL10n->get('SYS_TIME')), array('defaultValue' => (($pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') ? 1 : 0), 'showContextDependentFirstEntry' => false));
+}
+
+$formGeneralSettings->addCheckbox('disable_borrowing', $gL10n->get('PLG_INVENTORY_MANAGER_DISABLE_BORROWING'), $pPreferences->config['Optionen']['disable_borrowing'], array('helpTextIdInline' => 'PLG_INVENTORY_MANAGER_DISABLE_BORROWING_DESC'));
+
 $formGeneralSettings->addSubmitButton('btn_save_general_preferences', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => ' offset-sm-3'));
 addPreferencePanel($page, 'field_settings', $gL10n->get('SYS_COMMON'), 'fas fa-cog fa-fw', $formGeneralSettings->show());
 
@@ -120,6 +133,13 @@ addPreferencePanel($page, 'itemfields', $gL10n->get('PLG_INVENTORY_MANAGER_ITEMF
 $helpTextIdLabelLink = '<a href="https://github.com/MightyMCoder/InventoryManager/wiki/Profile-View-AddIn" target="_blank">GitHub Wiki</a>';
 $valueList = array();
 foreach ($items->mItemFields as $itemField) {
+
+    $imfNameIntern = $itemField->getValue('imf_name_intern');
+    $disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
+    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+		break;
+	}
+
     if ($itemField->getValue('imf_name_intern') == 'ITEMNAME') {
         continue;
     }

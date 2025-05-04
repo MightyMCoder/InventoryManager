@@ -79,18 +79,20 @@ if ($getItemId != 0) {
 // Create HTML form
 $form = new HtmlForm('edit_item_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_save.php', array('item_id' => $getItemId)), $page);
 
+$disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
+
 foreach ($items->mItemFields as $itemField) {
     $imfNameIntern = $itemField->getValue('imf_name_intern');
     if($imfNameIntern === 'IN_INVENTORY') {
         $pimInInventoryId = $items->getProperty($imfNameIntern, 'imf_id');
     }
-    if($imfNameIntern === 'LAST_RECEIVER') {
+    if($imfNameIntern === 'LAST_RECEIVER' && $disableBorrowing == 0) {
         $pimLastReceiverId = $items->getProperty($imfNameIntern, 'imf_id');
     }
-    if ($imfNameIntern === 'RECEIVED_ON') {
+    if ($imfNameIntern === 'RECEIVED_ON' && $disableBorrowing == 0) {
         $pimReceivedOnId = $items->getProperty($imfNameIntern, 'imf_id');
     }
-    if ($imfNameIntern === 'RECEIVED_BACK_ON') {
+    if ($imfNameIntern === 'RECEIVED_BACK_ON' && $disableBorrowing == 0) {
         $pimReceivedBackOnId = $items->getProperty($imfNameIntern, 'imf_id');
     }
 }
@@ -108,6 +110,10 @@ foreach ($items->mItemFields as $itemField) {
 
     if (!$authorizedPreferences && !in_array($itemField->getValue('imf_name_intern'), $keeperEditFields)) {
         $fieldProperty = HtmlForm::FIELD_DISABLED;
+    }
+
+    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+        break;
     }
     
     if (isset($pimInInventoryId, $pimLastReceiverId, $pimReceivedOnId, $pimReceivedBackOnId) && $imfNameIntern === 'IN_INVENTORY') {

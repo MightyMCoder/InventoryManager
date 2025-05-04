@@ -122,6 +122,12 @@ $imfSystem = '';
 
 foreach ($items->mItemFields as $itemField) {
     $imfId = (int) $itemField->getValue('imf_id');
+    $imfNameIntern = $itemField->getValue('imf_name_intern');
+    $disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
+
+	if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+		break;
+	}
 
     // cut long text strings and provide tooltip
     $fieldDescription = $itemField->getValue('imf_description') === '' ? '&nbsp;' : $itemField->getValue('imf_description', 'database');

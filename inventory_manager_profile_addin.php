@@ -226,8 +226,14 @@ function insertReceiverView($page, $user, $itemsReceiver) : void
 {
 	global $gL10n, $gCurrentOrgId;
 
+	
 	$pPreferences = new CConfigTablePIM();
 	$pPreferences->read();
+
+	$disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
+	if ($disableBorrowing == 1) { 
+		return;
+	}
 
 	$page->addHtml('
 			<div class="card admidio-field-group" id="inventory_manager_box_receiver">

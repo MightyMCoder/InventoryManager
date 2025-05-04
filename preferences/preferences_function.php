@@ -99,6 +99,7 @@ function handleFormSubmission($form, $preferences) : void
 			$preferences->config['Optionen']['allow_negative_numbers'] = isset($_POST['allow_negative_numbers']) ? 1 : 0;
 			$preferences->config['Optionen']['decimal_step'] = sprintf('%.7f', (float)$_POST['decimal_step']);
 			$preferences->config['Optionen']['field_date_time_format'] = ($_POST['field_date_time_format'] == "0") ? 'date': 'datetime';
+			$preferences->config['Optionen']['disable_borrowing'] = isset($_POST['disable_borrowing']) ? 1 : 0;
 			break;
 
 		default:
