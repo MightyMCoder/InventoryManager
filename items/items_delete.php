@@ -106,6 +106,13 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $autho
 		$imfNameIntern = $itemField->getValue('imf_name_intern');
 		$content = $items->getValue($imfNameIntern, 'database');
 
+		$pPreferences = new CConfigTablePIM();
+		$pPreferences->read();
+		$hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'];
+		if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+			break;
+		}
+
 		if ($imfNameIntern === 'KEEPER' || $imfNameIntern == 'LAST_RECEIVER' && strlen($content) > 0) {
 			if (is_numeric($content)) {
 				$found = $user->readDataById($content);
