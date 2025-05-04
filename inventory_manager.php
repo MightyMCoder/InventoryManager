@@ -79,6 +79,7 @@ $sessionDefaults = array(
 // check if plugin need to be updated
 $pPreferences = new CConfigTablePIM();
 $pPreferences->checkForUpdate() ? $pPreferences->init() : $pPreferences->read();
+$hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'] ;
 
 // check if user is authorized for preferences panel
 if (isUserAuthorizedForPreferencesPIM()) {
@@ -469,6 +470,10 @@ foreach ($items->mItemFields as $itemField) {
     $imfNameIntern = $itemField->getValue('imf_name_intern');
     $columnHeader = convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name'));
 
+    if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+        break;
+    }
+
     switch ($items->getProperty($imfNameIntern, 'imf_type')) {
         case 'CHECKBOX':
         case 'RADIO_BUTTON':
@@ -548,6 +553,10 @@ foreach ($items->items as $item) {
 
     foreach ($items->mItemFields as $itemField) {
         $imfNameIntern = $itemField->getValue('imf_name_intern');
+
+        if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+            break;
+        }
 
         if (($getFilterCategory !== '' && $imfNameIntern == 'CATEGORY' && $getFilterCategory != $items->getValue($imfNameIntern, 'database')) ||
                 ($getFilterKeeper !== 0 && $imfNameIntern == 'KEEPER' && $getFilterKeeper != $items->getValue($imfNameIntern))) {
