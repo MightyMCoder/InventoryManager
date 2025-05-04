@@ -108,8 +108,8 @@ function displayItemDeleteForm($items, $user, $getItemId, $getItemFormer, $autho
 
 		$pPreferences = new CConfigTablePIM();
 		$pPreferences->read();
-		$hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'];
-		if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+		$disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
+		if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
 			break;
 		}
 

@@ -123,9 +123,9 @@ $imfSystem = '';
 foreach ($items->mItemFields as $itemField) {
     $imfId = (int) $itemField->getValue('imf_id');
     $imfNameIntern = $itemField->getValue('imf_name_intern');
-    $hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'];
+    $disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
 
-	if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+	if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
 		break;
 	}
 

@@ -230,8 +230,8 @@ function insertReceiverView($page, $user, $itemsReceiver) : void
 	$pPreferences = new CConfigTablePIM();
 	$pPreferences->read();
 
-	$hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'];
-	if ($hideborrowing == 1) { 
+	$disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
+	if ($disableBorrowing == 1) { 
 		return;
 	}
 

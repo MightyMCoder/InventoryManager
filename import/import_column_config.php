@@ -117,10 +117,10 @@ $row = array();
 foreach ($items->mItemFields as $columnKey => $columnValue) {
     $imfName = $columnValue->GetValue('imf_name');
     
-    $hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'];
+    $disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
     $imfNameIntern = $columnValue->GetValue('imf_name_intern');
 
-    if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
 		break;
 	}
 

@@ -45,7 +45,7 @@ class CConfigDataPIM
             'allow_negative_numbers' => 1,
             'decimal_step' => 0.1,
             'field_date_time_format' => 'date',
-            'hide_borrowing' => 0,
+            'disable_borrowing' => 0,
         ),
         'Plugininformationen' => array(
             'version' => '',

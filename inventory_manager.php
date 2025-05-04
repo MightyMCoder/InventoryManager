@@ -3,7 +3,7 @@
  ***********************************************************************************************
  * InventoryManager
  *
- * Version 1.1.6
+ * Version 1.1.7
  *
  * InventoryManager is an Admidio plugin for managing the inventory of an organisation.
  * 
@@ -79,7 +79,7 @@ $sessionDefaults = array(
 // check if plugin need to be updated
 $pPreferences = new CConfigTablePIM();
 $pPreferences->checkForUpdate() ? $pPreferences->init() : $pPreferences->read();
-$hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'] ;
+$disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'] ;
 
 // check if user is authorized for preferences panel
 if (isUserAuthorizedForPreferencesPIM()) {
@@ -470,7 +470,7 @@ foreach ($items->mItemFields as $itemField) {
     $imfNameIntern = $itemField->getValue('imf_name_intern');
     $columnHeader = convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name'));
 
-    if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
         break;
     }
 
@@ -554,7 +554,7 @@ foreach ($items->items as $item) {
     foreach ($items->mItemFields as $itemField) {
         $imfNameIntern = $itemField->getValue('imf_name_intern');
 
-        if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+        if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
             break;
         }
 

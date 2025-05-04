@@ -118,8 +118,8 @@
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">aktueller Benutzer als Standardauswahl</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">Soll der aktuelle Benutzer beim Hinzufügen neuer Gegenstände standardmäßig als Verwalter voreingestellt werden, so ist der Haken zu setzen.</string>    
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">Du benutzt eine aktuelle #VAR1#Version von InventoryManager!</string>
-    <string name="PLG_INVENTORY_MANAGER_HIDE_BORROWING">Ausleih-Optionen verstecken</string>
-    <string name="PLG_INVENTORY_MANAGER_HIDE_BORROWING_DESC">Verstecke die Felder, die das Ausleihen und Zurückgeben abbilden.</string>
+    <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING">Ausleih-Optionen deaktivieren</string>
+    <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING_DESC">Deaktiviere die Felder und deren Funktionen, die das Ausleihen und Zurückgeben von Gegenständen abbilden.</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Kategorie</string>
     <string name="PIM_CATEGORY_DESCRIPTION">Die Kategorie des Gegenstandes</string>
