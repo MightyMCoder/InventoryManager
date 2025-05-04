@@ -110,7 +110,7 @@ foreach ($items->mItemFields as $itemField) {
         $fieldProperty = HtmlForm::FIELD_DISABLED;
     }
 
-    $hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'] ; //? null : '0'
+    $hideborrowing = $pPreferences->config['Optionen']['hide_borrowing'] ;
     if ($hideborrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
         break;
     }
