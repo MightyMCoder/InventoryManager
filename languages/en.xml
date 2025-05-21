@@ -120,6 +120,7 @@
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">You are using the current #VAR1# version of InventoryManager!</string>
     <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING">Deactivate borrowing options</string>
     <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING_DESC">Deactivate the fields and their functions that represent the borrowing and returning of items.</string>
+    <string name="PLG_INVENTORY_MANAGER_DEFAULT_CATEGORY">General</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Category</string>
     <string name="PIM_CATEGORY_DESCRIPTION">Category of the item</string>
