@@ -229,7 +229,7 @@ class CConfigTablePIM
 
         $defaultData = array(
             array('imf_id' => 1, 'imf_name' => 'PIM_ITEMNAME', 'imf_name_intern' => 'ITEMNAME', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_ITEMNAME_DESCRIPTION'), 'imf_sequence' => 0, 'imf_system' => 1, 'imf_mandatory' => 1),
-            array('imf_id' => 2, 'imf_name' => 'PIM_CATEGORY', 'imf_name_intern' => 'CATEGORY', 'imf_type' => 'DROPDOWN', 'imf_description' => convlanguagePIM('PIM_CATEGORY_DESCRIPTION'), 'imf_sequence' => 1, 'imf_system' => 1, 'imf_mandatory' => 1, 'imf_value_list' => 'Allgemein'),
+            array('imf_id' => 2, 'imf_name' => 'PIM_CATEGORY', 'imf_name_intern' => 'CATEGORY', 'imf_type' => 'DROPDOWN', 'imf_description' => convlanguagePIM('PIM_CATEGORY_DESCRIPTION'), 'imf_sequence' => 1, 'imf_system' => 1, 'imf_mandatory' => 1, 'imf_value_list' => convlanguagePIM('PLG_INVENTORY_MANAGER_DEFAULT_CATEGORY')),
             array('imf_id' => 3, 'imf_name' => 'PIM_KEEPER', 'imf_name_intern' => 'KEEPER', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_KEEPER_DESCRIPTION'), 'imf_sequence' => 2, 'imf_system' => 1, 'imf_mandatory' => 0),
             array('imf_id' => 4, 'imf_name' => 'PIM_IN_INVENTORY', 'imf_name_intern' => 'IN_INVENTORY', 'imf_type' => 'CHECKBOX', 'imf_description' => convlanguagePIM('PIM_IN_INVENTORY_DESCRIPTION'), 'imf_sequence' => 3, 'imf_system' => 1, 'imf_mandatory' => 0),
             array('imf_id' => 5, 'imf_name' => 'PIM_LAST_RECEIVER', 'imf_name_intern' => 'LAST_RECEIVER', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_LAST_RECEIVER_DESCRIPTION'), 'imf_sequence' => 4, 'imf_system' => 1, 'imf_mandatory' => 0),
