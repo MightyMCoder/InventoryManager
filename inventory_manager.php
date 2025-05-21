@@ -736,20 +736,19 @@ switch ($getMode) {
     case 'csv':
     case 'ods':
     case 'xlsx':
-        $contentType = match ($getMode) {
-            'csv' => 'text/csv; charset=' . $charset,
-            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-            default => throw new InvalidArgumentException('Invalid mode'),
-        };
-
-        $writerClass = match ($getMode) {
-            'csv' => Csv::class,
-            'xlsx' => Xlsx::class,
-            'ods' => Ods::class,
-            default => throw new InvalidArgumentException('Invalid mode'),
-        };
-
+	       if ('csv' == $getMode) {
+			         $contentType = 'text/csv; charset=' . $charset;
+			         $writerClass = Csv::class;
+		      } else if ('xlsx' == $getMode) {
+            $contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+			         $writerClass = Xlsx::class;
+		      } else if ('ods' == $getMode) {
+			         $contentType = 'application/vnd.oasis.opendocument.spreadsheet';
+			         $writerClass = Ods::class;
+		      } else {
+            throw new InvalidArgumentException('Invalid mode');
+        }
+ 
         header('Content-disposition: attachment; filename="' . $filename . '"');
         header("Content-Type: $contentType");
         header('Content-Transfer-Encoding: binary');
