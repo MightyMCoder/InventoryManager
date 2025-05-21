@@ -120,6 +120,7 @@
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">Vous utilisez une #VAR1#version actuelle  d'InventoryManager!</string>
     <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING">Désactiver les options d'emprunt</string>
     <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING_DESC">Désactivez les champs et leurs fonctions qui représentent l'emprunt et le retour d'objets.</string>
+    <string name="PLG_INVENTORY_MANAGER_DEFAULT_CATEGORY">Générale</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Catégorie</string>
     <string name="PIM_CATEGORY_DESCRIPTION">La catégorie de l'objet</string>
