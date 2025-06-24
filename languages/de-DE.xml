@@ -14,7 +14,6 @@
     <string name="PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS_DESC">Soll es möglich sein, negative Zahlen für Felder des Types "Zahl" oder "Dezimalzahl" einzugeben, so ist der Haken zu setzen. </string>
     <string name="PLG_INVENTORY_MANAGER_BASED_ON">(basierend auf #VAR1#)</string>
     <string name="PLG_INVENTORY_MANAGER_CATEGORY">Kategorie</string>
-    <string name="PLG_INVENTORY_MANAGER_CONFIGURATION">Konfiguration</string>
     <string name="PLG_INVENTORY_MANAGER_CONNECTION_ERROR">Es konnte keine Verbindung zur GitHub-Relaseseite hergestellt werden! Bitte prüfen Sie Ihre Internetverbindung oder versuchen Sie es zu einem späteren Zeitpunkt nocheinmal. Alternativ können Sie auch manuell auf der Webseite von #VAR1# prüfen ob ein Update vorliegt.</string>
     <string name="PLG_INVENTORY_MANAGER_COPY_PREFERENCES">Einstellungen für das Kopieren eines Gegenstandes:</string>
     <string name="PLG_INVENTORY_MANAGER_CREATED_WITH">erstellt mit dem Plugin InventoryManager der Online-Mitgliederverwaltung Admidio</string> 
@@ -39,7 +38,6 @@
     <string name="PLG_INVENTORY_MANAGER_DOCUMENTATION_OPEN_DESC">Hiermit können Sie die Dokumentation zum Plugin öffnen (Eine bestehende Internetverbindung wird vorausgesetzt, da sich die Daten auf GitHub befinden).</string>
     <string name="PLG_INVENTORY_MANAGER_DOWNLOAD_PAGE">Gehe zur GitHub-Relaseseite</string>
     <string name="PLG_INVENTORY_MANAGER_EXPORT">Export</string>
-    <string name="PLG_INVENTORY_MANAGER_EXPORT_AND_FILTER">Export und Filter</string>
     <string name="PLG_INVENTORY_MANAGER_FIELD">Feld einer lfd. Nr.</string>
     <string name="PLG_INVENTORY_MANAGER_FIELD_DESC">Hier können Sie ein Feld mit einer laufenden Nummer auswählen. Bei einer Auswahl wird die aktuelle Nummer ausgelesen und entsprechend der angegebenen Anzahl erhöht.\n\nHINWEIS: InventoryManager kann nur erkennen, ob ein Datenfeld vom Typ "Zahl" ist. Ob in diesem Datenfeld eine laufende Nummer gespeichert ist, kann nicht erkannt werden.</string>
     <string name="PLG_INVENTORY_MANAGER_FILE_NAME">Dateiname</string>
@@ -50,20 +48,16 @@
     <string name="PLG_INVENTORY_MANAGER_IMPORT">Import</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_DESC">Hier können Sie Gegenstände aus einer vorherigen Exportdatei oder einer eigenen Datei importieren.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ASSIGN_FIELDS">In der linken Spalte der nachfolgenden Tabelle werden alle Eigenschaftsfelder angezeigt. In der rechten Spalte werden in einer Auswahlliste die Spalten aus der zu importierenden Datei angezeigt. Alle Spalten aus der Datei, die Sie importieren möchten, sollten Sie nun einem Eigenschaftsfeld zuordnen.</string>
-    <string name="PLG_INVENTORY_MANAGER_IMPORT_ITEMS">Gegenstände importieren</string>
-    <string name="PLG_INVENTORY_MANAGER_IMPORT_PROGRESS">Der Gegenstand #VAR1_BOLD# wurde #VAR2_BOLD# importiert.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_UNUSED_HEAD">Folgenden Spalten der Importdatei sind keine Felder im InventoryManager zugeordnet:</string>
     <string name="PLG_INVENTORY_MANAGER_INVENTORY_MANAGER">Inventarverwaltung</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM">Gegenstand</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_COPY">Gegenstand kopieren</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_CREATE">Neuen Gegenstand anlegen</string>
-    <string name="PLG_INVENTORY_MANAGER_ITEM_CREATE_DESC">Hier können Sie einzelne Gegenstände dem Inventar hinzufügen.\n\nHinweis: In der Ansicht "Gegenstand ändern" ist es über den Menüpunkt "Gegenstand kopieren" möglich, einen vorhandenen Gegenstand einfach oder mehrfach zu kopieren.</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_DELETE">Gegenstand löschen</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_DELETE_DESC">Soll dieser Gegenstand gelöscht werden?</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_DELETED">Gegenstand gelöscht</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_EDIT">Gegenstand ändern</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_MADE_TO_FORMER">Gegenstand ausgesondert</string>    
-    <string name="PLG_INVENTORY_MANAGER_ITEM_PRINT">Gegenstandsdaten drucken</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER">Aussonderung des Gegenstandes rückgängig gemacht</string>    
     <string name="PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER_DESC">Sie könnent den Gegenstand wieder in die Inventarverwaltung aufnehmen.\n\nWenn Sie Löschen auswählen, wird der Datensatz unwiderruflich aus der Datenbank entfernt und es ist später nicht mehr möglich Daten dieses Gegenstandes einzusehen.</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD">Eigenschaftsfeld</string>
@@ -76,13 +70,11 @@
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE">Felder pflegen</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELDSMANAGE_DESC">In der Felderpflege können Sie Eigenschaftsfelder für Gegenstände anlegen und bearbeiten.</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMLIST">Gegenstandsliste</string>
-    <string name="PLG_INVENTORY_MANAGER_ITEMNAME">Gegenstandsname</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER">Verwalter</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER_FORMER_DESC">Sie können den Gegenstand als ausgesondert markieren. Dies hat den Vorteil, dass die Daten erhalten bleiben und Sie später immer wieder sehen können, wer diesen Gegenstand ausgeliehen hat.\n\nWenn Sie den Gegenstand löschen möchten, wenden Sie sich an einen Administrator oder den Verwalter der Inventarverwaltung!</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER_ITEM_UNDO_FORMER_DESC">Sie können den Gegenstand wieder in die Inventarverwaltung aufnehmen.\n\nWenn Sie den Gegenstand löschen möchten, wenden Sie sich an einen Administrator oder den Verwalter der Inventarverwaltung!</string>
     <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">Die Authorisierungsprüfung des Plugins ist fehlgeschlagen. Es ist mehr als ein Menüpunkt mit derselben URL definiert.\n\n=> #VAR1_BOLD#</string>    
     <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
-    <string name="PLG_INVENTORY_MANAGER_NEW">Neu</string>
     <string name="PLG_INVENTORY_MANAGER_NO_NEW_IMPORT_DATA">In der Importdatei waren keine neuen Daten vorhanden!</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# geändert:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">Der Gegenstand #VAR1_BOLD# wurde von #VAR2_BOLD# angelegt:</string>
@@ -96,7 +88,6 @@
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_SUBJECT_ITEMS_IMPORTED">Im Inventar wurden Gegenstände importiert</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER">Anzahl</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER_DESC">Anzahl der anzufügenden Gegenstände</string>
-    <string name="PLG_INVENTORY_MANAGER_NUMBER_OF_ITEMS">Anzahl der Gegenstände</string>
     <string name="PLG_INVENTORY_MANAGER_ORG_CHOICE">Organisationswahl</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_DATE">Stand</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_INFORMATION">Plugininformationen</string>
@@ -107,13 +98,6 @@
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">Damit in der Profilansicht Gegenstände angezeigt werden, müssen Sie folgende Zeile in die profile.php einfügen: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/InventoryManager/inventory_manager_profile_addin.php');".\n\nWeitere Informationen hierzu finden Sie in der #VAR1#.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_DESC">Bei gesetzter Einstellung werden neben den aktuellen Gegenständen dieser Organisation auch ausgesonderte Gegenstände angezeigt.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Alle anzeigen</string>
-    <string name="PLG_INVENTORY_MANAGER_SPECIAL_CASE_CURUSER_OR_ADMIN">Sonderfall: Aktueller Benutzer oder Administrator</string>    
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE">Benutzer mit Empfänger abgleichen</string>
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_DESC">Hierüber können Sie Benutzer ohne ausgeliehene Gegenstände zu Ehemaligen Mitgliedern machen.\n\n V O R S I C H T\n\n Diese Funktion sollte nur verwendet werden, wenn InventoryManager in einer eigenen Organisation betrieben wird.</string>    
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_ERROR">Es ist ein Fehler passiert! Benutzer mit #VAR1# konnten nicht gelöscht werden.</string>
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">Alle Benutzer sind Empfänger eines Gegenstandes, es kann kein Abgleich durchgeführt werden.</string>
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">Dies ist nur eine Übersicht des Abgleichs, es wurde noch nichts gespeichert.\n\n Benutzer können nur zu Ehemaligen gemacht werden, wenn die Anzahl der Gegenstände 0 beträgt und sie nicht Administrator oder der aktuelle Benutzer sind.</string>
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">Die aufgelisteten Benutzer sind jetzt Ehemalige.</string>
     <string name="PLG_INVENTORY_MANAGER_UNDO_FORMER">Aussondern rückgängig machen</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">aktueller Benutzer als Standardauswahl</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">Soll der aktuelle Benutzer beim Hinzufügen neuer Gegenstände standardmäßig als Verwalter voreingestellt werden, so ist der Haken zu setzen.</string>    
