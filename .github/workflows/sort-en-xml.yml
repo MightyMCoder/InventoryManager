@@ -18,17 +18,20 @@ jobs:
       - name: Install lxml
         run: pip install lxml
 
-      - name: Sort en.xml
+      - name: Run sort script
         run: python .github/scripts/sort_en_xml.py
 
-      - name: Commit sorted file
+      - name: Commit and push changes
+        env:
+          WORKFLOW_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         run: |
           git config user.name "github-actions"
           git config user.email "actions@users.noreply.github.com"
-          git add languages/en.xml
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
+
+          if git diff --quiet; then
+            echo "No changes detected."
           else
-            git commit -m "chore: alphabetically sort en.xml"
-            git push https://x-access-token:${{ secrets.WORKFLOW_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
+            git add languages/en.xml
+            git commit -m "chore: sort en.xml alphabetically"
+            git push https://x-access-token:${WORKFLOW_TOKEN}@github.com/${{ github.repository }}.git HEAD:$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
           fi
