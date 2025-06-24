@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES">Access permission for plugin preferences</string>
     <string name="PLG_INVENTORY_MANAGER_ACCESS_PREFERENCES_DESC">Here, in addition to the role "Administrator", you can authorize additional roles for access to the plugin preferences.</string>
@@ -80,7 +80,7 @@
     <string name="PLG_INVENTORY_MANAGER_KEEPER">Keeper</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER_FORMER_DESC">You can reintegrate the item into the inventory management. This has the advantage that the data is preserved and you can later always see who has borrowed this item.\n\nIf you want to delete the item, please contact an administrator or the manager of the inventory management!</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER_ITEM_UNDO_FORMER_DESC">You can reintegrate the item into the inventory management.\n\nIf you want to delete the item, please contact an administrator or the manager of the inventory management!</string>
-    <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">The authorization check of the plugin failed. There is more than one menu item with the same URL defined.\n\n=> #VAR1_BOLD#</string>
+    <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">The authorization check of the plugin failed. There is more than one menu item with the same URL defined.\n\n=&gt; #VAR1_BOLD#</string>
     <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_NEW">New</string>
     <string name="PLG_INVENTORY_MANAGER_NO_NEW_IMPORT_DATA">There was no new data in the import file!</string>
