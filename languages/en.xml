@@ -14,7 +14,6 @@
     <string name="PLG_INVENTORY_MANAGER_ALLOW_NEGATIVE_NUMBERS_DESC">If it should be possible to enter negative numbers for fields of type "Number" or "Decimal number", the checkbox must be checked.</string>
     <string name="PLG_INVENTORY_MANAGER_BASED_ON">(based on #VAR1#)</string>
     <string name="PLG_INVENTORY_MANAGER_CATEGORY">Category</string>
-    <string name="PLG_INVENTORY_MANAGER_CONFIGURATION">Configuration</string>
     <string name="PLG_INVENTORY_MANAGER_CONNECTION_ERROR">Could not connect to the GitHub release page! Please check your internet connection or try again later. Alternatively, you can manually check on the #VAR1# website if an update is available.</string>
     <string name="PLG_INVENTORY_MANAGER_COPY_PREFERENCES">Settings for copying a item:</string>
     <string name="PLG_INVENTORY_MANAGER_CREATED_WITH">created with the Plugin InventoryManager of the online member administration Admidio</string>
@@ -42,7 +41,6 @@
     <string name="PLG_INVENTORY_MANAGER_DOCUMENTATION_OPEN_DESC">Allows the documentation of the plugin can be opened (An existing Internet connection is required because the data is located on admidio.org).</string>
     <string name="PLG_INVENTORY_MANAGER_DOWNLOAD_PAGE">Go to GitHub release page</string>
     <string name="PLG_INVENTORY_MANAGER_EXPORT">Export</string>
-    <string name="PLG_INVENTORY_MANAGER_EXPORT_AND_FILTER">Export and filter</string>
     <string name="PLG_INVENTORY_MANAGER_FIELD">Field of a running no.</string>
     <string name="PLG_INVENTORY_MANAGER_FIELD_DESC">Here a field of a consecutive number can be selected. In a selection, the current number is read out and increased according to the specified number.\n\nNOTE: InventoryManager can only tell if a data field is of type "number". Whether a serial number is stored in this data field can not be recognized.</string>
     <string name="PLG_INVENTORY_MANAGER_FILE_NAME">Filename</string>
@@ -53,8 +51,6 @@
     <string name="PLG_INVENTORY_MANAGER_IMPORT">Import</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_ASSIGN_FIELDS">In the left column of the following table all item fields are displayed. In the right column the columns from the file to be imported are displayed in a selection list. You should now assign all columns from the file you want to import to a item field.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_DESC">Here you can import items from a previous export file or your own file.</string>
-    <string name="PLG_INVENTORY_MANAGER_IMPORT_ITEMS">Import items</string>
-    <string name="PLG_INVENTORY_MANAGER_IMPORT_PROGRESS">The item #VAR1_BOLD# was imported #VAR2_BOLD#.</string>
     <string name="PLG_INVENTORY_MANAGER_IMPORT_UNUSED_HEAD">The following columns of the import file are not assigned to any item fields in InventoryManager:</string>
     <string name="PLG_INVENTORY_MANAGER_INVENTORY_MANAGER">InventoryManager</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM">Item</string>
@@ -68,16 +64,13 @@
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD_DELETE_DESC">Should this item field and the associated item data be deleted?</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMFIELD_EDIT">Change the item field</string>
     <string name="PLG_INVENTORY_MANAGER_ITEMLIST">Item list</string>
-    <string name="PLG_INVENTORY_MANAGER_ITEMNAME">Item name</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_COPY">Copy the item</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_CREATE">Create a item</string>
-    <string name="PLG_INVENTORY_MANAGER_ITEM_CREATE_DESC">Individual items can be generated here.\n\nNote: In the "Change the item" view, you can use the "Copy the item" menu item to copy an existing item once or several times.</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_DELETE">Delete the item</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_DELETED">Item deleted</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_DELETE_DESC">Should this item be deleted?</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_EDIT">Change the item</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_MADE_TO_FORMER">Item was made to former</string>
-    <string name="PLG_INVENTORY_MANAGER_ITEM_PRINT">Print the item</string>
     <string name="PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER">Undo item made to former</string>    
     <string name="PLG_INVENTORY_MANAGER_ITEM_UNDO_FORMER_DESC">You can reintegrate the item into the inventory management.\n\nIf you select Delete, the record will be irrevocably removed from the database and it will no longer be possible to view the data of this item.</string>
     <string name="PLG_INVENTORY_MANAGER_KEEPER">Keeper</string>
@@ -85,7 +78,6 @@
     <string name="PLG_INVENTORY_MANAGER_KEEPER_ITEM_UNDO_FORMER_DESC">You can reintegrate the item into the inventory management.\n\nIf you want to delete the item, please contact an administrator or the manager of the inventory management!</string>
     <string name="PLG_INVENTORY_MANAGER_MENU_URL_ERROR">The authorization check of the plugin failed. There is more than one menu item with the same URL defined.\n\n=&gt; #VAR1_BOLD#</string>
     <string name="PLG_INVENTORY_MANAGER_NAME_OF_PLUGIN">InventoryManager</string>
-    <string name="PLG_INVENTORY_MANAGER_NEW">New</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEMS_IMPORTED">The following items were imported by #VAR1_BOLD#:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CHANGED">The item #VAR1_BOLD# was changed by #VAR2_BOLD#:</string>
     <string name="PLG_INVENTORY_MANAGER_NOTIFICATION_MESSAGE_ITEM_CREATED">The item #VAR1_BOLD# was created by #VAR2_BOLD#:</string>
@@ -99,7 +91,6 @@
     <string name="PLG_INVENTORY_MANAGER_NO_NEW_IMPORT_DATA">There was no new data in the import file!</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER">Number</string>
     <string name="PLG_INVENTORY_MANAGER_NUMBER_DESC">Number of items to be added</string>
-    <string name="PLG_INVENTORY_MANAGER_NUMBER_OF_ITEMS">Number of items</string>
     <string name="PLG_INVENTORY_MANAGER_ORG_CHOICE">Organizational choice</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_DATE">Situation</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_INFORMATION">Plug-in informations</string>
@@ -110,13 +101,6 @@
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC2">In order for items to be displayed in the profile view, the following line must be added to profile.php: "require_once(ADMIDIO_PATH . FOLDER_PLUGINS .'/InventoryManager/inventory_manager_profile_addin.php');".\n\nFurther information can be found on the #VAR1#.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_DESC">If this setting is enabled, former items of this organization will also be displayed in addition to the current items.</string>
     <string name="PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS">Display all</string>
-    <string name="PLG_INVENTORY_MANAGER_SPECIAL_CASE_CURUSER_OR_ADMIN">Special case: current user or administrator</string>
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE">Synchronize users with recipients</string>
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_DESC">This allows users to be made without a item to a former user.\n\n A T T E N T I O N\n\n  This feature should only be used if InventoryManager is operated in its own organization.</string>
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_ERROR">A mistake happened! Users with #VAR1# could not be deleted.</string>
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_NO_ASSIGN">All users are recipients of a item, no reconciliation can be performed.</string>
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_PREVIEW">This is just an overview of the comparison, nothing has been saved yet.\n\n Users can only be made to a former if the number of items is 0 and they are not administrator or the current user.</string>
-    <string name="PLG_INVENTORY_MANAGER_SYNCHRONIZE_SAVED">The listed users are now former.</string>
     <string name="PLG_INVENTORY_MANAGER_UNDO_FORMER">Undo made to former</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">Current user as default selection</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">If the current user is to be preset as the keeper when adding new items, the checkbox must be checked.</string>
