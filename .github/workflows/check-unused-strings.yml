@@ -1,9 +1,21 @@
 name: Check Unused Strings
 
 on:
-  pull_request:
   push:
+    branches: 
+      - master
+    paths:
+      - languages/en.xml
+  pull_request:
+    branches: 
+      - master
+    paths:
+      - languages/en.xml
   workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   unused-strings:
@@ -21,10 +33,17 @@ jobs:
       - name: Run unused‑string checker
         id: check
         run: |
-          python .github/scripts/check_unused_strings.py --exclude .github
+          python .github/scripts/check_unused_strings.py --exclude .github > unused_keys.txt || echo "Unused keys found"
 
-      - name: Annotate warning if unused
-        if: failure()
-        continue-on-error: true
+      - name: Post PR review with unused keys
+        if: ${{ github.event_name == 'pull_request' && steps.check.outcome == 'failure' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "::warning file=en.xml::Detected unused translation keys. Please review."
+          PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
+          BODY=$(echo -e "**WARNING: Unused translation keys detected**\n\n\`\`\`\n$(cat unused_keys.txt)\n\`\`\`\nPlease consider removing or using these keys." | jq -Rs .)
+
+          curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/reviews \
+            -d "{\"body\": $BODY, \"event\": \"REQUEST_CHANGES\"}"

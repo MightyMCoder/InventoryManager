@@ -1,6 +1,11 @@
 name: Sort en.xml
 
 on:
+  push:
+    branches: 
+      - master
+    paths:
+      - languages/en.xml
   workflow_dispatch:
 
 jobs:
