@@ -20,11 +20,11 @@ jobs:
 
       - name: Run unused‑string checker
         id: check
-        continue-on-error: true
         run: |
           python .github/scripts/check_unused_strings.py --exclude .github
 
       - name: Annotate warning if unused
-        if: steps.check.outcome == 'failure'
+        if: failure()
+        continue-on-error: true
         run: |
           echo "::warning file=en.xml::Detected unused translation keys. Please review."
