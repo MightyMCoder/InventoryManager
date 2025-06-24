@@ -33,7 +33,7 @@ jobs:
       - name: Run unused‑string checker
         id: check
         run: |
-          python .github/scripts/check_unused_strings.py --exclude .github > unused_keys.txt || echo "Unused keys found"
+          python .github/scripts/check_unused_strings.py --exclude .github > unused_keys.txt
 
       - name: Post PR review with unused keys
         if: ${{ github.event_name == 'pull_request' && steps.check.outcome == 'failure' }}
