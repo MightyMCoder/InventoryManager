@@ -1,0 +1,30 @@
+name: Check Unused Strings
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  unused-strings:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run unused‑string checker
+        id: check
+        continue-on-error: true
+        run: |
+          python scripts/check_unused_strings.py --exclude .github
+
+      - name: Annotate warning if unused
+        if: steps.check.outcome == 'failure'
+        run: |
+          echo "::warning file=en.xml::Detected unused translation keys. Please review."
