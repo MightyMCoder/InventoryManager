@@ -35,15 +35,19 @@ jobs:
         run: |
           python .github/scripts/check_unused_strings.py --exclude .github > unused_keys.txt
 
-      - name: Debug outcomes
+      - name: Annotate warning if unused
+        if: failure()
+        continue-on-error: true
         run: |
-          echo "EVENT: ${{ github.event_name }}"
-          echo "CHECK OUTCOME: ${{ steps.check.outcome }}"
+          echo "::warning file=en.xml::Detected unused translation keys. Please review."
+
+      - name: Ensure jq is installed
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Post PR review with unused keys
         if: ${{ github.event_name == 'pull_request' && steps.check.outcome == 'failure' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           PR_NUMBER=$(jq --raw-output .number "$GITHUB_EVENT_PATH")
           BODY=$(echo -e "**WARNING: Unused translation keys detected**\n\n\`\`\`\n$(cat unused_keys.txt)\n\`\`\`\nPlease consider removing or using these keys." | jq -Rs .)
