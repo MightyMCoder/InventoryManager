@@ -41,11 +41,6 @@ jobs:
         run: |
           echo "::warning file=en.xml::Detected unused translation keys. Please review."
 
-      - name: Ensure jq is installed
-        if: failure()
-        continue-on-error: true
-        run: sudo apt-get update && sudo apt-get install -y jq
-
       - name: Post PR review with unused keys
         if: ${{ github.event_name == 'pull_request' && failure() }}
         continue-on-error: true
