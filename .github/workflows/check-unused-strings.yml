@@ -35,6 +35,11 @@ jobs:
         run: |
           python .github/scripts/check_unused_strings.py --exclude .github > unused_keys.txt
 
+      - name: Debug outcomes
+        run: |
+          echo "EVENT: ${{ github.event_name }}"
+          echo "CHECK OUTCOME: ${{ steps.check.outcome }}"
+
       - name: Post PR review with unused keys
         if: ${{ github.event_name == 'pull_request' && steps.check.outcome == 'failure' }}
         env:
