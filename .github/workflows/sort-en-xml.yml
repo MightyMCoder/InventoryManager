@@ -22,8 +22,6 @@ jobs:
         run: python .github/scripts/sort_en_xml.py
 
       - name: Commit and push changes
-        env:
-          WORKFLOW_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         run: |
           git config user.name "github-actions"
           git config user.email "actions@users.noreply.github.com"
@@ -33,5 +31,5 @@ jobs:
           else
             git add languages/en.xml
             git commit -m "chore: sort en.xml alphabetically"
-            git push https://x-access-token:${WORKFLOW_TOKEN}@github.com/${{ github.repository }}.git HEAD:$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
+            git push
           fi
