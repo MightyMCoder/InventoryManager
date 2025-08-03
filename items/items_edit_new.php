@@ -264,8 +264,6 @@ foreach ($items->mItemFields as $itemField) {
         case 'DROPDOWN':
         case'MAINTENANCE_SCHEDULE':
 
-            error_log(serialize($items->getProperty($imfNameIntern, 'imf_value_list')));
-
             $form->addSelectBox(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
                 convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
