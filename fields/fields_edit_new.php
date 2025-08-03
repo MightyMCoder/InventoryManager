@@ -67,7 +67,7 @@ $page = new HtmlPage('plg-inventory-manager-fields-edit-new', $headline);
 
 $page->addJavascript('
     function setValueList() {
-        if ($("#imf_type").val() === "DROPDOWN" || $("#imf_type").val() === "RADIO_BUTTON") {
+        if ($("#imf_type").val() === "DROPDOWN" || $("#imf_type").val() === "RADIO_BUTTON" || $("#imf_type").val() === "MAINTENANCE_SCHEDULE") {
             $("#imf_value_list_group").show("slow");
             $("#imf_value_list").attr("required", "required");
         } else {
@@ -108,7 +108,7 @@ $itemFieldText = array(
     'RADIO_BUTTON' => $gL10n->get('SYS_RADIO_BUTTON'),
     'TEXT' => $gL10n->get('SYS_TEXT') . ' (100 ' . $gL10n->get('SYS_CHARACTERS') . ')',
     'TEXT_BIG' => $gL10n->get('SYS_TEXT') . ' (4000 ' . $gL10n->get('SYS_CHARACTERS') . ')',
-);
+    'MAINTENANCE_SCHEDULE' => $gL10n->get('PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE'));
 asort($itemFieldText);
 
 //bei Systemfeldern darf der Datentyp nicht mehr veraendert werden

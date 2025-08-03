@@ -105,6 +105,7 @@
     <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING">Ausleih-Optionen deaktivieren</string>
     <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING_DESC">Deaktiviere die Felder und deren Funktionen, die das Ausleihen und Zurückgeben von Gegenständen abbilden.</string>
     <string name="PLG_INVENTORY_MANAGER_DEFAULT_CATEGORY">Allgemein</string>
+    <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE">Prüfturnus</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Kategorie</string>
     <string name="PIM_CATEGORY_DESCRIPTION">Die Kategorie des Gegenstandes</string>
