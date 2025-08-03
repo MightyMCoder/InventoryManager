@@ -626,7 +626,7 @@ foreach ($items->items as $item) {
         elseif ($items->getProperty($imfNameIntern, 'imf_type') == 'DATE') {
             $content = $items->getHtmlValue($imfNameIntern, $content);
         }
-        elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DROPDOWN', 'RADIO_BUTTON'))) {
+        elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DROPDOWN', 'RADIO_BUTTON', 'MAINTENANCE_SCHEDULE'))) {
             $content = $items->getHtmlValue($imfNameIntern, $content);
         }
 

@@ -303,11 +303,23 @@ class CItems
 
                 case 'DROPDOWN':
                 case 'RADIO_BUTTON':
+                case 'MAINTENANCE_SCHEDULE':
                     $arrListValuesWithItems = array(); // array with list values and items that represents the internal value
 
                     // first replace windows new line with unix new line and then create an array
                     $valueFormatted = str_replace("\r\n", "\n", $this->mItemFields[$fieldNameIntern]->getValue('imf_value_list', 'database'));
                     $arrListValues = explode("\n", $valueFormatted);
+
+                    //Clean up control-chars from maintenance scheudule
+                    if($imfType == 'MAINTENANCE_SCHEDULE'){
+                        $cleanArrListValues = array();
+                        foreach ($arrListValues as $line) {
+                            if(substr($line,0,1) != '#'){
+                                array_push($cleanArrListValues, explode('|', $line)[0]);
+                            }
+                        }
+                        $arrListValues = $cleanArrListValues;
+                    }
 
                     foreach ($arrListValues as $index => $listValue) {
                         // if value is imagefile or imageurl then show image
