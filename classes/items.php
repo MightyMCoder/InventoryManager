@@ -146,10 +146,22 @@ class CItems
 
         $value = $this->mItemFields[$fieldNameIntern]->getValue($column, $format);
 
-        if ($column === 'imf_value_list' && in_array($this->mItemFields[$fieldNameIntern]->getValue('imf_type'), ['DROPDOWN', 'RADIO_BUTTON'])) {
+        if ($column === 'imf_value_list' && in_array($this->mItemFields[$fieldNameIntern]->getValue('imf_type'), ['DROPDOWN', 'RADIO_BUTTON', 'MAINTENANCE_SCHEDULE'])) {
             $value = $this->getListValue($fieldNameIntern, $value, $format);
+
+            //Clean up control-chars from maintenance scheudule
+            if($this->mItemFields[$fieldNameIntern]->getValue('imf_type') == 'MAINTENANCE_SCHEDULE'){
+                $cleanValue = array();
+                foreach ($value as $line) {
+                    if(substr($line,0,1) != '#'){
+                        array_push($cleanValue, explode('|', $line)[0]);
+                    }
+                }
+                $value = $cleanValue;
+            }
         }
 
+        
         return $value;
     }
 
