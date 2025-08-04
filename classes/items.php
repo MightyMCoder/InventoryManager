@@ -149,16 +149,6 @@ class CItems
         if ($column === 'imf_value_list' && in_array($this->mItemFields[$fieldNameIntern]->getValue('imf_type'), ['DROPDOWN', 'RADIO_BUTTON', 'MAINTENANCE_SCHEDULE'])) {
             $value = $this->getListValue($fieldNameIntern, $value, $format);
 
-            //Clean up control-chars from maintenance scheudule
-            if($this->mItemFields[$fieldNameIntern]->getValue('imf_type') == 'MAINTENANCE_SCHEDULE'){
-                $cleanValue = array();
-                foreach ($value as $line) {
-                    if(substr($line,0,1) != '#'){
-                        array_push($cleanValue, explode('|', $line)[0]);
-                    }
-                }
-                $value = $cleanValue;
-            }
         }
 
         
@@ -199,6 +189,19 @@ class CItems
         // first replace windows new line with unix new line and then create an array
         $valueFormatted = str_replace("\r\n", "\n", $value);
         $arrListValues = explode("\n", $valueFormatted);
+
+        // remove lines starting with # from MAINTENANCE_SCHEDULE
+        // as they're used to select the name of the last inspection date field
+        // Also remove the | and anything that follows
+        if($this->mItemFields[$fieldNameIntern]->getValue('imf_type') == 'MAINTENANCE_SCHEDULE'){
+                $cleanValue = array();
+                foreach ($arrListValues as $line) {
+                    if(substr($line,0,1) != '#'){
+                        array_push($cleanValue, explode('|', $line)[0]);
+                    }
+                }
+                $arrListValues = $cleanValue;
+            }
 
         foreach ($arrListValues as $item => &$listValue) {
             if ($this->mItemFields[$fieldNameIntern]->getValue('imf_type') === 'RADIO_BUTTON') {
