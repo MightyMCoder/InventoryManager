@@ -704,25 +704,9 @@ foreach ($items->items as $item) {
            
             //Compare last test date with future date and output days
             $dateDiff = date_diff($compDate2, $compDate1);
-            $columnHeader2 = $dateDiff->format('%R%a Tage'); //TODO: translate Tage
+            $daysRemaining = $dateDiff->format('%R%a Tage'); //TODO: translate Tage
 
-            switch ($getMode) {
-            case 'csv':
-            case "ods":
-            case 'xlsx':
-                $header[$columnHeader2] = 'string';
-                break;
-
-            case 'pdf':
-                $arrValidColumns[] = $columnHeader2;
-                break;
-
-            case 'html':
-            case 'print':
-                $columnValues[] = $columnHeader2;
-                break;
-            }
-
+            $columnValues[] = ($strikethrough && $getMode != 'csv' && $getMode != 'ods' && $getMode != 'xlsx') ? '<s>' . $daysRemaining . '</s>' : $daysRemaining;
             $columnNumber++;
         }
     }
