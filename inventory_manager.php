@@ -704,7 +704,7 @@ foreach ($items->items as $item) {
            
             //Compare last test date with future date and output days
             $dateDiff = date_diff($compDate2, $compDate1);
-            $daysRemaining = $dateDiff->format('%R%a Tage'); //TODO: translate Tage
+            $daysRemaining = $dateDiff->format('%R%a ' . $gL10n->get('PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DAYS'));
 
             $columnValues[] = ($strikethrough && $getMode != 'csv' && $getMode != 'ods' && $getMode != 'xlsx') ? '<s>' . $daysRemaining . '</s>' : $daysRemaining;
             $columnNumber++;
