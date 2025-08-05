@@ -193,7 +193,7 @@ class CItems
         // remove lines starting with # from MAINTENANCE_SCHEDULE
         // as they're used to select the name of the last inspection date field
         // Also remove the | and anything that follows
-        if($this->mItemFields[$fieldNameIntern]->getValue('imf_type') == 'MAINTENANCE_SCHEDULE'){
+        if($this->mItemFields[$fieldNameIntern]->getValue('imf_type') == 'MAINTENANCE_SCHEDULE' && $format != 'unfiltered'){
                 $cleanValue = array();
                 foreach ($arrListValues as $line) {
                     if(substr($line,0,1) != '#'){

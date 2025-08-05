@@ -517,6 +517,31 @@ foreach ($items->mItemFields as $itemField) {
     }
 
     $columnNumber++;
+
+    //Add additional column to header after each MAINTENANCE_SCHEDULE
+    if($items->getProperty($imfNameIntern, 'imf_type') === 'MAINTENANCE_SCHEDULE'){
+        $columnAlign[] = 'left';
+        $columnHeader2 = convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')) . ' ' . $gL10n->get('PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DAYS_REMAINING');
+
+        switch ($getMode) {
+        case 'csv':
+        case "ods":
+        case 'xlsx':
+            $header[$columnHeader2] = 'string';
+            break;
+
+        case 'pdf':
+            $arrValidColumns[] = $columnHeader2;
+            break;
+
+        case 'html':
+        case 'print':
+            $columnValues[] = $columnHeader2;
+            break;
+        }
+
+        $columnNumber++;
+    }
 }
 
 if ($getMode == 'html') {
@@ -568,6 +593,7 @@ foreach ($items->items as $item) {
         }
 
         $content = $items->getValue($imfNameIntern, 'database');
+        $value = $content; // content gets overwritten in the next part of code but is still needed for MAINTENANCE_SCHEDULE stuff
 
         if ($imfNameIntern == 'KEEPER' && strlen($content) > 0) {
             $found = $user->readDataById($content);
@@ -632,6 +658,77 @@ foreach ($items->items as $item) {
 
         $columnValues[] = ($strikethrough && $getMode != 'csv' && $getMode != 'ods' && $getMode != 'xlsx') ? '<s>' . $content . '</s>' : $content;
         $columnNumber++;
+
+         //Add additional column to header after each MAINTENANCE_SCHEDULE
+        if($items->getProperty($imfNameIntern, 'imf_type') === 'MAINTENANCE_SCHEDULE'){
+            $columnAlign[] = 'left';
+
+            //get #-line from dropdown
+            $unfilteredSelectionItems = $items->getProperty($imfNameIntern, 'imf_value_list', 'unfiltered');
+            $date_field_internal_name = null;
+            $filteredSelectionItems = array();
+
+            foreach ($arrListValues as $line) {
+                if(substr($line,0,1) === '#'){
+                    $date_field_internal_name = substr($line,1);
+                }else{
+                    array_push($filteredSelectionItems, explode('|', $line)[1]);
+                }
+            }
+            //use part after # as internal_name for last test date
+            $compDate1 = date_create($items->getValue($date_field_internal_name, 'database'));
+            $compDate2 = date_create();
+
+            //Calculate future test date
+            $dateAdditionSplit = array();
+            preg_match("/^\s*(\d*)([wymd])\s*$/", $filteredSelectionItems[$value-1], $dateAdditionSplit);
+            error_log(implode("+",$dateAdditionSplit));
+
+            //TODO: better error-handling
+            if(intval($dateAdditionSplit[1]) && $dateAdditionSplit[2]){
+                switch ($dateAdditionSplit[2]) {
+                case 'w':
+                    date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'W'));
+                    break;
+                case 'm':
+                    date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'M'));
+                    break;
+                case 'y':
+                    date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'Y'));
+                    break;
+                case 'd':
+                default:
+                    date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'D'));
+                    break;
+                }
+            }
+            
+            //error_log($filteredSelectionItems[$value-1]);
+            //error_log(implode($filteredSelectionItems));
+            
+            //Compare last test date with future date and output days
+            $dateDiff = date_diff($compDate2, $compDate1);
+            $columnHeader2 = $dateDiff->format('%R%a Tage');
+
+            switch ($getMode) {
+            case 'csv':
+            case "ods":
+            case 'xlsx':
+                $header[$columnHeader2] = 'string';
+                break;
+
+            case 'pdf':
+                $arrValidColumns[] = $columnHeader2;
+                break;
+
+            case 'html':
+            case 'print':
+                $columnValues[] = $columnHeader2;
+                break;
+            }
+
+            $columnNumber++;
+        }
     }
 
     if ($getMode == 'html') {
