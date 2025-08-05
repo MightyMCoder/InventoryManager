@@ -683,7 +683,6 @@ foreach ($items->items as $item) {
             $dateAdditionSplit = array();
             preg_match("/^\s*(\d*)([wymd])\s*$/", $filteredSelectionItems[$value-1], $dateAdditionSplit);
 
-            //TODO: better error-handling
             if(intval($dateAdditionSplit[1]) && $dateAdditionSplit[2]){
                 switch ($dateAdditionSplit[2]) {
                 case 'w':
