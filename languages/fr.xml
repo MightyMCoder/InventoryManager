@@ -105,6 +105,9 @@
     <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING">Désactiver les options d'emprunt</string>
     <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING_DESC">Désactivez les champs et leurs fonctions qui représentent l'emprunt et le retour d'objets.</string>
     <string name="PLG_INVENTORY_MANAGER_DEFAULT_CATEGORY">Générale</string>
+    <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE">Périodicité des contrôles</string>
+    <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DAYS_REMAINING">Jours restants</string>
+    <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DAYS">Jour(s)</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Catégorie</string>
     <string name="PIM_CATEGORY_DESCRIPTION">La catégorie de l'objet</string>
