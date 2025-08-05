@@ -668,7 +668,7 @@ foreach ($items->items as $item) {
             $date_field_internal_name = null;
             $filteredSelectionItems = array();
 
-            foreach ($arrListValues as $line) {
+            foreach ($unfilteredSelectionItems as $line) {
                 if(substr($line,0,1) === '#'){
                     $date_field_internal_name = substr($line,1);
                 }else{
@@ -682,7 +682,6 @@ foreach ($items->items as $item) {
             //Calculate future test date
             $dateAdditionSplit = array();
             preg_match("/^\s*(\d*)([wymd])\s*$/", $filteredSelectionItems[$value-1], $dateAdditionSplit);
-            error_log(implode("+",$dateAdditionSplit));
 
             //TODO: better error-handling
             if(intval($dateAdditionSplit[1]) && $dateAdditionSplit[2]){
@@ -702,13 +701,10 @@ foreach ($items->items as $item) {
                     break;
                 }
             }
-            
-            //error_log($filteredSelectionItems[$value-1]);
-            //error_log(implode($filteredSelectionItems));
-            
+           
             //Compare last test date with future date and output days
             $dateDiff = date_diff($compDate2, $compDate1);
-            $columnHeader2 = $dateDiff->format('%R%a Tage');
+            $columnHeader2 = $dateDiff->format('%R%a Tage'); //TODO: translate Tage
 
             switch ($getMode) {
             case 'csv':
