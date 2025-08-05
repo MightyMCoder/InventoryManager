@@ -108,6 +108,7 @@
     <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE">maintenance Schedule</string>
     <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DAYS_REMAINING">Days Left</string>
     <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DAYS">Day(s)</string>
+    <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DESC">In this field, you can enter the entries for maintenance schedules. For each line, an entry of the drop-down list field can be entered here. \n\nThe List-Item is not stored as text later, but the selected position from the list. If you change the text in a line, all users will immediately see the new text. However, if you move an entry into another line, users may see a different entry.\n\nThe internal name of the date field the current schedules applies to must be specified with a # symbol. e.g. #LAST_CHECK \n\nThe cycle interval must be written in the same line separated by the |-symbol after the title. e.g. Yearly | 1y \n\nIf no unit is specified, days are assumed. \nPossible units: d: days, w: weeks, m: months, y: years</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Category</string>
     <string name="PIM_CATEGORY_DESCRIPTION">Category of the item</string>

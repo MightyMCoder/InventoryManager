@@ -74,6 +74,13 @@ $page->addJavascript('
             $("#imf_value_list").removeAttr("required");
             $("#imf_value_list_group").hide();
         }
+
+        var valueListTooltipContainer = document.getElementById("imf_value_list_group").getElementsByTagName("label")[0].getElementsByTagName("i")[0];
+        if($("#imf_type").val() === "MAINTENANCE_SCHEDULE"){
+            valueListTooltipContainer.setAttribute("data-content","' . $gL10n->get('PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DESC') . '");
+        }else{
+            valueListTooltipContainer.setAttribute("data-content","' . $gL10n->get('ORG_VALUE_LIST_DESC') . '");
+        }
     }
 
     setValueList();

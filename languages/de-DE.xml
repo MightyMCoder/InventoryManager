@@ -108,6 +108,7 @@
     <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE">Prüfturnus</string>
     <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DAYS_REMAINING">Tage Übrig</string>
     <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DAYS">Tag(e)</string>
+    <string name="PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DESC">In diesem Feld können Sie die Einträge für Prüfturnusse eingeben. Pro Zeile kann hier ein Eintrag des Dropdown-Listenfeldes erfasst werden.\n\n Im Inventar wird später nicht der Text gespeichert, sondern die ausgewählte Position aus der Liste. Ändert man somit den Text in einer Zeile, so sehen alle Benutzer:innen sofort den neuen Text. Verschiebt man allerdings einen Eintrag in eine andere Zeile, so wird bei den Benutzerinnen bzw. Benutzern evtl. ein anderer Eintrag angezeigt.\n\n Der interne Name des Datums-Feldes auf das sich der Turnus bezieht, muss mit einem #-Symbol angegeben werden. z.B. #LETZTE_PRUEFUNG \n\n Der Turnus-Intervall muss durch das |-Symbol getrennt hinter die Bezeichnung in die selbe Zeile geschrieben werden. z.B. Jährlich | 1y \n\n Wenn keine Einheit angegeben wird, wird von Tagen ausgegangen. \nMögliche einheiten: d: Tage, w: Wochen, m: Monate, y: Jahre</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Kategorie</string>
     <string name="PIM_CATEGORY_DESCRIPTION">Die Kategorie des Gegenstandes</string>
