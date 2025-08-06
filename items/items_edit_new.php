@@ -263,7 +263,6 @@ foreach ($items->mItemFields as $itemField) {
 
         case 'DROPDOWN':
         case'MAINTENANCE_SCHEDULE':
-
             $form->addSelectBox(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
                 convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
@@ -306,6 +305,7 @@ foreach ($items->mItemFields as $itemField) {
                 )
             );
             break;
+            
         default:
             $fieldType = 'text';
             $maxlength = '50';

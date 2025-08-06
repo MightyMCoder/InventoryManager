@@ -145,13 +145,9 @@ class CItems
         }
 
         $value = $this->mItemFields[$fieldNameIntern]->getValue($column, $format);
-
         if ($column === 'imf_value_list' && in_array($this->mItemFields[$fieldNameIntern]->getValue('imf_type'), ['DROPDOWN', 'RADIO_BUTTON', 'MAINTENANCE_SCHEDULE'])) {
             $value = $this->getListValue($fieldNameIntern, $value, $format);
-
         }
-
-        
         return $value;
     }
 
