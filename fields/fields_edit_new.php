@@ -67,7 +67,7 @@ $page = new HtmlPage('plg-inventory-manager-fields-edit-new', $headline);
 
 $page->addJavascript('
     function setValueList() {
-        if ($("#imf_type").val() === "DROPDOWN" || $("#imf_type").val() === "RADIO_BUTTON" || $("#imf_type").val() === "MAINTENANCE_SCHEDULE") {
+        if ($("#imf_type").val() === "DROPDOWN" || $("#imf_type").val() === "RADIO_BUTTON" || $("#imf_type").val() === "DATE_INTERVAL") {
             $("#imf_value_list_group").show("slow");
             $("#imf_value_list").attr("required", "required");
         } else {
@@ -76,8 +76,8 @@ $page->addJavascript('
         }
 
         var valueListTooltipContainer = document.getElementById("imf_value_list_group").getElementsByTagName("label")[0].getElementsByTagName("i")[0];
-        if($("#imf_type").val() === "MAINTENANCE_SCHEDULE"){
-            valueListTooltipContainer.setAttribute("data-content","' . $gL10n->get('PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DESC') . '");
+        if($("#imf_type").val() === "DATE_INTERVAL"){
+            valueListTooltipContainer.setAttribute("data-content","' . $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL_DESC') . '");
         }else{
             valueListTooltipContainer.setAttribute("data-content","' . $gL10n->get('ORG_VALUE_LIST_DESC') . '");
         }
@@ -115,7 +115,7 @@ $itemFieldText = array(
     'RADIO_BUTTON' => $gL10n->get('SYS_RADIO_BUTTON'),
     'TEXT' => $gL10n->get('SYS_TEXT') . ' (100 ' . $gL10n->get('SYS_CHARACTERS') . ')',
     'TEXT_BIG' => $gL10n->get('SYS_TEXT') . ' (4000 ' . $gL10n->get('SYS_CHARACTERS') . ')',
-    'MAINTENANCE_SCHEDULE' => $gL10n->get('PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE'));
+    'DATE_INTERVAL' => $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL'));
 asort($itemFieldText);
 
 //bei Systemfeldern darf der Datentyp nicht mehr veraendert werden

@@ -145,7 +145,7 @@ class CItems
         }
 
         $value = $this->mItemFields[$fieldNameIntern]->getValue($column, $format);
-        if ($column === 'imf_value_list' && in_array($this->mItemFields[$fieldNameIntern]->getValue('imf_type'), ['DROPDOWN', 'RADIO_BUTTON', 'MAINTENANCE_SCHEDULE'])) {
+        if ($column === 'imf_value_list' && in_array($this->mItemFields[$fieldNameIntern]->getValue('imf_type'), ['DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'])) {
             $value = $this->getListValue($fieldNameIntern, $value, $format);
         }
         return $value;
@@ -186,10 +186,10 @@ class CItems
         $valueFormatted = str_replace("\r\n", "\n", $value);
         $arrListValues = explode("\n", $valueFormatted);
 
-        // remove lines starting with # from MAINTENANCE_SCHEDULE
+        // remove lines starting with # from DATE_INTERVAL
         // as they're used to select the name of the last inspection date field
         // Also remove the | and anything that follows
-        if($this->mItemFields[$fieldNameIntern]->getValue('imf_type') == 'MAINTENANCE_SCHEDULE' && $format != 'unfiltered'){
+        if($this->mItemFields[$fieldNameIntern]->getValue('imf_type') == 'DATE_INTERVAL' && $format != 'unfiltered'){
                 $cleanValue = array();
                 foreach ($arrListValues as $line) {
                     if(substr($line,0,1) != '#'){
@@ -302,7 +302,7 @@ class CItems
 
                 case 'DROPDOWN':
                 case 'RADIO_BUTTON':
-                case 'MAINTENANCE_SCHEDULE':
+                case 'DATE_INTERVAL':
                     $arrListValuesWithItems = array(); // array with list values and items that represents the internal value
 
                     // first replace windows new line with unix new line and then create an array
@@ -310,7 +310,7 @@ class CItems
                     $arrListValues = explode("\n", $valueFormatted);
 
                     //Clean up control-chars from maintenance scheudule
-                    if($imfType == 'MAINTENANCE_SCHEDULE'){
+                    if($imfType == 'DATE_INTERVAL'){
                         $cleanArrListValues = array();
                         foreach ($arrListValues as $line) {
                             if(substr($line,0,1) != '#'){

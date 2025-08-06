@@ -68,7 +68,7 @@ $itemFieldText = array(
 	'RADIO_BUTTON' => $gL10n->get('SYS_RADIO_BUTTON'),
 	'TEXT' => $gL10n->get('SYS_TEXT') . ' (100 ' . $gL10n->get('SYS_CHARACTERS') . ')',
 	'TEXT_BIG' => $gL10n->get('SYS_TEXT') . ' (4000 ' . $gL10n->get('SYS_CHARACTERS') . ')',
-	'MAINTENANCE_SCHEDULE' => $gL10n->get('PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE')
+	'DATE_INTERVAL' => $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL')
 );
 asort($itemFieldText);
 

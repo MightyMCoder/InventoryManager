@@ -501,10 +501,10 @@ foreach ($items->mItemFields as $itemField) {
 
     addColumnToHeader($getMode, $columnHeader, $header, $arrValidColumns, $columnValues, $columnNumber);
 
-    //Add additional column to header after each MAINTENANCE_SCHEDULE
-    if($items->getProperty($imfNameIntern, 'imf_type') === 'MAINTENANCE_SCHEDULE'){
+    //Add additional column to header after each DATE_INTERVAL
+    if($items->getProperty($imfNameIntern, 'imf_type') === 'DATE_INTERVAL'){
         $columnAlign[] = 'left';
-        $columnHeader2 = convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')) . ' ' . $gL10n->get('PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DAYS_REMAINING');
+        $columnHeader2 = convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')) . ' ' . $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL_DAYS_REMAINING');
         addColumnToHeader($getMode, $columnHeader2, $header, $arrValidColumns, $columnValues, $columnNumber);
     }
 }
@@ -558,7 +558,7 @@ foreach ($items->items as $item) {
         }
 
         $content = $items->getValue($imfNameIntern, 'database');
-        $value = $content; // content gets overwritten in the next part of code but is still needed for MAINTENANCE_SCHEDULE stuff
+        $value = $content; // content gets overwritten in the next part of code but is still needed for DATE_INTERVAL stuff
 
         if ($imfNameIntern == 'KEEPER' && strlen($content) > 0) {
             $found = $user->readDataById($content);
@@ -617,15 +617,15 @@ foreach ($items->items as $item) {
         elseif ($items->getProperty($imfNameIntern, 'imf_type') == 'DATE') {
             $content = $items->getHtmlValue($imfNameIntern, $content);
         }
-        elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DROPDOWN', 'RADIO_BUTTON', 'MAINTENANCE_SCHEDULE'))) {
+        elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'))) {
             $content = $items->getHtmlValue($imfNameIntern, $content);
         }
 
         $columnValues[] = ($strikethrough && $getMode != 'csv' && $getMode != 'ods' && $getMode != 'xlsx') ? '<s>' . $content . '</s>' : $content;
         $columnNumber++;
 
-         //Add additional column to header after each MAINTENANCE_SCHEDULE
-        if($items->getProperty($imfNameIntern, 'imf_type') === 'MAINTENANCE_SCHEDULE'){
+         //Add additional column to header after each DATE_INTERVAL
+        if($items->getProperty($imfNameIntern, 'imf_type') === 'DATE_INTERVAL'){
             $columnAlign[] = 'left';
 
             //get #-line from dropdown
