@@ -499,48 +499,13 @@ foreach ($items->mItemFields as $itemField) {
         $header[$gL10n->get('SYS_ABR_NO')] = 'string';
     }
 
-    switch ($getMode) {
-        case 'csv':
-        case "ods":
-        case 'xlsx':
-            $header[$columnHeader] = 'string';
-            break;
-
-        case 'pdf':
-            $arrValidColumns[] = $columnHeader;
-            break;
-
-        case 'html':
-        case 'print':
-            $columnValues[] = $columnHeader;
-            break;
-    }
-
-    $columnNumber++;
+    addColumnToHeader($getMode, $columnHeader, $header, $arrValidColumns, $columnValues, $columnNumber);
 
     //Add additional column to header after each MAINTENANCE_SCHEDULE
     if($items->getProperty($imfNameIntern, 'imf_type') === 'MAINTENANCE_SCHEDULE'){
         $columnAlign[] = 'left';
         $columnHeader2 = convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')) . ' ' . $gL10n->get('PLG_INVENTORY_MANAGER_MAINTENANCE_SCHEDULE_DAYS_REMAINING');
-
-        switch ($getMode) {
-        case 'csv':
-        case "ods":
-        case 'xlsx':
-            $header[$columnHeader2] = 'string';
-            break;
-
-        case 'pdf':
-            $arrValidColumns[] = $columnHeader2;
-            break;
-
-        case 'html':
-        case 'print':
-            $columnValues[] = $columnHeader2;
-            break;
-        }
-
-        $columnNumber++;
+        addColumnToHeader($getMode, $columnHeader2, $header, $arrValidColumns, $columnValues, $columnNumber);
     }
 }
 
@@ -907,4 +872,35 @@ function formatSpreadsheet($spreadsheet, $data, $containsHeadline) : void
         $spreadsheet->getActiveSheet()->getColumnDimension($alphabet[$number])->setAutoSize(true);
     }
     $spreadsheet->getDefaultStyle()->getAlignment()->setWrapText(true);
+}
+
+/**
+ * Adds a given string to a given header when generating the main overview-table
+ *
+ * @param string $getMode
+ * @param string $newHeaderText
+ * @param array $header
+ * @param array $arrValidColumns
+ * @param array $columnValues
+ * @param int $columnNumber
+ */
+function addColumnToHeader($getMode, $newHeaderText, &$header, &$arrValidColumns, &$columnValues, &$columnNumber){
+    switch ($getMode) {
+        case 'csv':
+        case "ods":
+        case 'xlsx':
+            $header[$newHeaderText] = 'string';
+            break;
+
+        case 'pdf':
+            $arrValidColumns[] = $newHeaderText;
+            break;
+
+        case 'html':
+        case 'print':
+            $columnValues[] = $newHeaderText;
+            break;
+    }
+
+    $columnNumber++;
 }
