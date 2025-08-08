@@ -105,9 +105,11 @@
     <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING">Ausleih-Optionen deaktivieren</string>
     <string name="PLG_INVENTORY_MANAGER_DISABLE_BORROWING_DESC">Deaktiviere die Felder und deren Funktionen, die das Ausleihen und Zurückgeben von Gegenständen abbilden.</string>
     <string name="PLG_INVENTORY_MANAGER_DEFAULT_CATEGORY">Allgemein</string>
-    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL">Prüfturnus</string>
-    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_DAYS_REMAINING">Tage Übrig</string>
-    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_DESC">In diesem Feld können Sie die Einträge für Prüfturnusse eingeben. Pro Zeile kann hier ein Eintrag des Dropdown-Listenfeldes erfasst werden.\n\n Im Inventar wird später nicht der Text gespeichert, sondern die ausgewählte Position aus der Liste. Ändert man somit den Text in einer Zeile, so sehen alle Benutzer:innen sofort den neuen Text. Verschiebt man allerdings einen Eintrag in eine andere Zeile, so wird bei den Benutzerinnen bzw. Benutzern evtl. ein anderer Eintrag angezeigt.\n\n Der interne Name des Datums-Feldes auf das sich der Turnus bezieht, muss mit einem #-Symbol angegeben werden. z.B. #LETZTE_PRUEFUNG \n\n Der Turnus-Intervall muss durch das |-Symbol getrennt hinter die Bezeichnung in die selbe Zeile geschrieben werden. z.B. Jährlich | 1y \n\n Wenn keine Einheit angegeben wird, wird von Tagen ausgegangen. \nMögliche einheiten: d: Tage, w: Wochen, m: Monate, y: Jahre</string>
+    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL">Datumsintervall</string>
+    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_FIELD">Datumsintervall-Feld</string>
+    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_FIELD_DESC">Hier kann ein Datum-Eigenschaftsfeld ausgewählt werden, auf das sich das Datumsintervall bezieht.</string>
+    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_DAYS_REMAINING">Tage übrig</string>
+    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_DESC">In diesem Feld können Sie die Einträge für Datumsintervalle eingeben. Pro Zeile kann hier ein Eintrag des Dropdown-Listenfeldes erfasst werden.\n\n Im Inventar wird später nicht der Text gespeichert, sondern die ausgewählte Position aus der Liste. Ändert man somit den Text in einer Zeile, so sehen alle Benutzer:innen sofort den neuen Text. Verschiebt man allerdings einen Eintrag in eine andere Zeile, so wird bei den Benutzerinnen bzw. Benutzern evtl. ein anderer Eintrag angezeigt.\n\n Das Datumsintervall muss durch das |-Symbol getrennt hinter die Bezeichnung in die selbe Zeile geschrieben werden. z.B. Jährlich | 1y \n\n Wenn keine Einheit angegeben wird, wird von Tagen ausgegangen. \nMögliche einheiten: d: Tage, w: Wochen, m: Monate, y: Jahre</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Kategorie</string>
     <string name="PIM_CATEGORY_DESCRIPTION">Die Kategorie des Gegenstandes</string>
