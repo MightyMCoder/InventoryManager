@@ -19,10 +19,10 @@
     <string name="PLG_INVENTORY_MANAGER_CREATED_WITH">created with the Plugin InventoryManager of the online member administration Admidio</string>
     <string name="PLG_INVENTORY_MANAGER_DATETIME_FORMAT">Date representation</string>
     <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL">Date interval</string>
-    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_FIELD">Date interval field</string>
-    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_FIELD_DESC">Here you can select a date item field to which the date interval refers.</string>
     <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_DAYS_REMAINING">Days left</string>
     <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_DESC">In this field, you can enter the entries for date intervals. For each line, an entry of the drop-down list field can be entered here. \n\nThe List-Item is not stored as text later, but the selected position from the list. If you change the text in a line, all users will immediately see the new text. However, if you move an entry into another line, users may see a different entry.\n\nThe date interval must be written in the same line separated by the |-symbol after the title. e.g. Yearly | 1y \n\nIf no unit is specified, days are assumed. \nPossible units: d: days, w: weeks, m: months, y: years</string>
+    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_FIELD">Date interval field</string>
+    <string name="PLG_INVENTORY_MANAGER_DATE_INTERVAL_FIELD_DESC">Here you can select a date item field to which the date interval refers.</string>
     <string name="PLG_INVENTORY_MANAGER_DECIMAL_STEP">Decimal steps</string>
     <string name="PLG_INVENTORY_MANAGER_DECIMAL_STEP_DESC">The specification of the decimal steps for fields of type "Decimal number".</string>
     <string name="PLG_INVENTORY_MANAGER_DEFAULT_CATEGORY">General</string>
