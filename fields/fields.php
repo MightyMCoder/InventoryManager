@@ -151,7 +151,8 @@ foreach ($items->mItemFields as $itemField) {
         'TEXT' => $gL10n->get('SYS_TEXT') . ' (100)',
         'TEXT_BIG' => $gL10n->get('SYS_TEXT') . ' (4000)',
         'NUMBER' => $gL10n->get('SYS_NUMBER'),
-        'DECIMAL' => $gL10n->get('SYS_DECIMAL_NUMBER')
+        'DECIMAL' => $gL10n->get('SYS_DECIMAL_NUMBER'),
+        'DATE_INTERVAL' => $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL')
     );
 
     $imfSystem = $itemField->getValue('imf_system') == 1

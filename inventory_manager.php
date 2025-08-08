@@ -470,7 +470,12 @@ foreach ($items->mItemFields as $itemField) {
     $imfNameIntern = $itemField->getValue('imf_name_intern');
     $columnHeader = convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name'));
 
-    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+    if($items->getProperty($imfNameIntern, 'imf_type') === 'DATE_INTERVAL'){
+        // modify column Header for DATE_INTERVAL fields
+        $columnHeader .= ' ' . $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL_DAYS_REMAINING');
+    }
+
+    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) {
         break;
     }
 
@@ -628,6 +633,52 @@ foreach ($items->items as $item) {
         }
         elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DROPDOWN', 'RADIO_BUTTON'))) {
             $content = $items->getHtmlValue($imfNameIntern, $content);
+        }
+        elseif ($items->getProperty($imfNameIntern, 'imf_type') == 'DATE_INTERVAL') {
+            $selectedInterval = $content;
+            $content = '';
+
+            $intervalValues = $items->getProperty($imfNameIntern, 'imf_value_list');
+            $dateIntervalFieldId = $items->getProperty($imfNameIntern, 'imf_date_interval_field', 'database');
+            if (isset($items->mItemData[$dateIntervalFieldId])) {
+                $dateInternalFieldName = $items->mItemData[$dateIntervalFieldId]->getValue('imf_name_intern');
+                $filteredSelectionItems = array();
+
+                foreach ($intervalValues as $value) {
+                    $filteredSelectionItems[] = trim(explode('|', $value)[1]);
+                }
+                //use part after # as internal_name for last test date
+                $compDate1 = date_create($items->getValue($dateInternalFieldName, 'database'));
+                $compDate2 = date_create();
+
+                //Calculate future test date
+                $dateAdditionSplit = array();
+                if (isset($filteredSelectionItems[$selectedInterval-1])) {
+                    preg_match("/^\s*(\d*)([wymd])\s*$/", $filteredSelectionItems[$selectedInterval-1], $dateAdditionSplit);
+                }
+
+                if(isset($dateAdditionSplit[1]) && isset($dateAdditionSplit[2]) && is_numeric($dateAdditionSplit[1])){
+                    switch ($dateAdditionSplit[2]) {
+                    case 'w':
+                        date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'W'));
+                        break;
+                    case 'm':
+                        date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'M'));
+                        break;
+                    case 'y':
+                        date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'Y'));
+                        break;
+                    case 'd':
+                    default:
+                        date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'D'));
+                        break;
+                    }
+
+                    //Compare last test date with future date and output days
+                    $dateDiff = date_diff($compDate2, $compDate1);
+                    $content = $dateDiff->format('%R%a');
+                }
+            }
         }
 
         $columnValues[] = ($strikethrough && $getMode != 'csv' && $getMode != 'ods' && $getMode != 'xlsx') ? '<s>' . $content . '</s>' : $content;

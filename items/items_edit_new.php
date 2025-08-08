@@ -262,6 +262,7 @@ foreach ($items->mItemFields as $itemField) {
             break;
 
         case 'DROPDOWN':
+        case'DATE_INTERVAL':
             $form->addSelectBox(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
                 convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),

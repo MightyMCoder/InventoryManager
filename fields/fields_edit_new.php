@@ -67,12 +67,25 @@ $page = new HtmlPage('plg-inventory-manager-fields-edit-new', $headline);
 
 $page->addJavascript('
     function setValueList() {
-        if ($("#imf_type").val() === "DROPDOWN" || $("#imf_type").val() === "RADIO_BUTTON") {
+        if ($("#imf_type").val() === "DROPDOWN" || $("#imf_type").val() === "RADIO_BUTTON" || $("#imf_type").val() === "DATE_INTERVAL") {
             $("#imf_value_list_group").show("slow");
             $("#imf_value_list").attr("required", "required");
+            if ($("#imf_type").val() === "DATE_INTERVAL") {
+                $("#imf_date_interval_field_group").show("slow");
+                $("#imf_date_interval_field").attr("required", "required");
+            }
         } else {
             $("#imf_value_list").removeAttr("required");
             $("#imf_value_list_group").hide();
+            $("#imf_date_interval_field").removeAttr("required");
+            $("#imf_date_interval_field_group").hide();
+        }
+
+        var valueListTooltipContainer = document.getElementById("imf_value_list_group").getElementsByTagName("label")[0].getElementsByTagName("i")[0];
+        if($("#imf_type").val() === "DATE_INTERVAL"){
+            valueListTooltipContainer.setAttribute("data-content","' . $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL_DESC') . '");
+        }else{
+            valueListTooltipContainer.setAttribute("data-content","' . $gL10n->get('ORG_VALUE_LIST_DESC') . '");
         }
     }
 
@@ -108,13 +121,21 @@ $itemFieldText = array(
     'RADIO_BUTTON' => $gL10n->get('SYS_RADIO_BUTTON'),
     'TEXT' => $gL10n->get('SYS_TEXT') . ' (100 ' . $gL10n->get('SYS_CHARACTERS') . ')',
     'TEXT_BIG' => $gL10n->get('SYS_TEXT') . ' (4000 ' . $gL10n->get('SYS_CHARACTERS') . ')',
-);
+    'DATE_INTERVAL' => $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL'));
 asort($itemFieldText);
 
 //bei Systemfeldern darf der Datentyp nicht mehr veraendert werden
 $form->addSelectBox('imf_type', $gL10n->get('ORG_DATATYPE'), $itemFieldText, array(
         'property' => $itemField->getValue('imf_system') == 1 ? HtmlForm::FIELD_DISABLED : HtmlForm::FIELD_REQUIRED,
         'defaultValue' => $itemField->getValue('imf_type')
+    )
+);
+
+$sql = "SELECT imf_id, imf_name FROM " . TBL_INVENTORY_MANAGER_FIELDS . " WHERE imf_type = 'DATE'";
+$form->addSelectBoxFromSql('imf_date_interval_field', $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL_FIELD'), $gDb, $sql, array(
+        'property' => HtmlForm::FIELD_REQUIRED,
+        'defaultValue' => $itemField->getValue('imf_date_interval_field'),
+        'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_DATE_INTERVAL_FIELD_DESC'
     )
 );
 
