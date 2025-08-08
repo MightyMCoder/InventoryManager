@@ -70,9 +70,15 @@ $page->addJavascript('
         if ($("#imf_type").val() === "DROPDOWN" || $("#imf_type").val() === "RADIO_BUTTON" || $("#imf_type").val() === "DATE_INTERVAL") {
             $("#imf_value_list_group").show("slow");
             $("#imf_value_list").attr("required", "required");
+            if ($("#imf_type").val() === "DATE_INTERVAL") {
+                $("#imf_date_interval_field_group").show("slow");
+                $("#imf_date_interval_field").attr("required", "required");
+            }
         } else {
             $("#imf_value_list").removeAttr("required");
             $("#imf_value_list_group").hide();
+            $("#imf_date_interval_field").removeAttr("required");
+            $("#imf_date_interval_field_group").hide();
         }
 
         var valueListTooltipContainer = document.getElementById("imf_value_list_group").getElementsByTagName("label")[0].getElementsByTagName("i")[0];
