@@ -186,19 +186,6 @@ class CItems
         $valueFormatted = str_replace("\r\n", "\n", $value);
         $arrListValues = explode("\n", $valueFormatted);
 
-        // remove lines starting with # from DATE_INTERVAL
-        // as they're used to select the name of the last inspection date field
-        // Also remove the | and anything that follows
-        if($this->mItemFields[$fieldNameIntern]->getValue('imf_type') == 'DATE_INTERVAL' && $format != 'unfiltered'){
-                $cleanValue = array();
-                foreach ($arrListValues as $line) {
-                    if(substr($line,0,1) != '#'){
-                        array_push($cleanValue, explode('|', $line)[0]);
-                    }
-                }
-                $arrListValues = $cleanValue;
-            }
-
         foreach ($arrListValues as $item => &$listValue) {
             if ($this->mItemFields[$fieldNameIntern]->getValue('imf_type') === 'RADIO_BUTTON') {
                 // if value is imagefile or imageurl then show image

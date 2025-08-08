@@ -125,6 +125,14 @@ $form->addSelectBox('imf_type', $gL10n->get('ORG_DATATYPE'), $itemFieldText, arr
     )
 );
 
+$sql = "SELECT imf_id, imf_name FROM " . TBL_INVENTORY_MANAGER_FIELDS . " WHERE imf_type = 'DATE'";
+$form->addSelectBoxFromSql('imf_date_interval_field', $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL_FIELD'), $gDb, $sql, array(
+        'property' => HtmlForm::FIELD_REQUIRED,
+        'defaultValue' => $itemField->getValue('imf_date_interval_field'),
+        'helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_DATE_INTERVAL_FIELD_DESC'
+    )
+);
+
 $form->addMultilineTextInput('imf_value_list', $gL10n->get('ORG_VALUE_LIST'), (string)$itemField->getValue('imf_value_list', 'database'), 6, array(
         'property' => HtmlForm::FIELD_REQUIRED,
         'helpTextIdLabel' => 'ORG_VALUE_LIST_DESC'
