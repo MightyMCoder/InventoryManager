@@ -50,10 +50,5 @@ flush_buffer()
 root[:] = new_children
 
 # Save result
-xml_text = etree.tostring(tree, encoding="unicode", pretty_print=True)
-
-with open(file, "w", encoding="utf-8", newline="\r\n") as f:
-    f.write('<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n')  # add declaration
-    f.write(xml_text)  # '\n' becomes CRLF on write
-
+tree.write(file, encoding='utf-8', xml_declaration=True, pretty_print=True)
 print("en.xml successfully sorted and duplicates removed.")
