@@ -1,1 +1,7 @@
+# wiki repository
+# Ignore all files in the wiki directory
 wiki
+
+# Project-specific IDE settings are local for each developer
+/.vscode/
+/.idea/
