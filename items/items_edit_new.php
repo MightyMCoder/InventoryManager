@@ -420,6 +420,9 @@ foreach ($items->mItemFields as $itemField) {
                     $fieldType = 'number';
                     $minNumber = $pPreferences->config['Optionen']['allow_negative_numbers'] ? null : '0';
                     $step = $pPreferences->config['Optionen']['decimal_step'];
+                } elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'URL') {
+                    // maximal browser compatible url length will be 2000 characters
+                    $maxlength = '2000';
                 }
                 $form->addInput(
                     'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),

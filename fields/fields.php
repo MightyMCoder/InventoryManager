@@ -152,6 +152,7 @@ foreach ($items->mItemFields as $itemField) {
         'TEXT_BIG' => $gL10n->get('SYS_TEXT') . ' (4000)',
         'NUMBER' => $gL10n->get('SYS_NUMBER'),
         'DECIMAL' => $gL10n->get('SYS_DECIMAL_NUMBER'),
+        'URL' => $gL10n->get('SYS_URL'),
         'DATE_INTERVAL' => $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL')
     );
 

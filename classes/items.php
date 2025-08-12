@@ -389,6 +389,27 @@ class CItems
                 case 'TEXT_BIG':
                     $htmlValue = nl2br($value);
                     break;
+
+                case 'URL':
+                    $displayValue = $value;
+
+                    // add root path to link unless the full URL is given
+                    if (preg_match('/^http(s?):\/\//', $value) === 0) {
+                        $link = ADMIDIO_URL . $value;
+                    } else {
+                        $link = $value;
+                    }
+
+                    // trim "http://", "https://", "//"
+                    if (str_contains($displayValue, '//')) {
+                        $displayValue = substr($displayValue, strpos($displayValue, '//') + 2);
+                    }
+                    // trim after the 35th char
+                    if (strlen($value) > 35) {
+                        $displayValue = substr($displayValue, 0, 35) . '...';
+                    }
+                    $htmlValue = '<a href="' . $link . '" target="_blank" title="' . $value . '">' . $displayValue . '</a>';
+                    break;
             }
 
             $value = $htmlValue;
