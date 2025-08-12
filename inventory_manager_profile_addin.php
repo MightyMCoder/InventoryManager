@@ -180,7 +180,7 @@ function insertKeeperView(HtmlPage $page, User $user, CItems $itemsKeeper): void
             if ($itemsKeeper->getProperty($imfNameIntern, 'imf_type') == 'CHECKBOX') {
                 $content = ($content != 1) ? 0 : 1;
                 $content = $itemsKeeper->getHtmlValue($imfNameIntern, $content);
-            } elseif (in_array($itemsKeeper->getProperty($imfNameIntern, 'imf_type'), array('DATE', 'DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'))) {
+            } elseif (in_array($itemsKeeper->getProperty($imfNameIntern, 'imf_type'), array('DATE', 'URL', 'DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'))) {
                 $content = $itemsKeeper->getHtmlValue($imfNameIntern, $content);
             }
 
@@ -328,7 +328,7 @@ function insertReceiverView(HtmlPage $page, User $user, CItems $itemsReceiver): 
             if ($itemsReceiver->getProperty($imfNameIntern, 'imf_type') == 'CHECKBOX') {
                 $content = ($content != 1) ? 0 : 1;
                 $content = $itemsReceiver->getHtmlValue($imfNameIntern, $content);
-            } elseif (in_array($itemsReceiver->getProperty($imfNameIntern, 'imf_type'), array('DATE', 'DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'))) {
+            } elseif (in_array($itemsReceiver->getProperty($imfNameIntern, 'imf_type'), array('DATE', 'URL', 'DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'))) {
                 $content = $itemsReceiver->getHtmlValue($imfNameIntern, $content);
             }
 

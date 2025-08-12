@@ -620,7 +620,7 @@ foreach ($items->items as $item) {
             $content = ($getMode == 'csv' || $getMode == 'pdf' || $getMode == 'xlsx' || $getMode == 'ods') ?
                 ($content == 1 ? $gL10n->get('SYS_YES') : $gL10n->get('SYS_NO')) :
                 $items->getHtmlValue($imfNameIntern, $content);
-        } elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DATE', 'DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'))) {
+        } elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DATE', 'URL', 'DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'))) {
             $content = $items->getHtmlValue($imfNameIntern, $content);
         }
 
