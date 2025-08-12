@@ -7,8 +7,8 @@
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
- * 
- * 
+ *
+ *
  * Parameters:
  * imf_id     : ID of the item field that should be deleted
  ***********************************************************************************************
@@ -29,7 +29,7 @@ $pPreferences->read();
 
 // only authorized user are allowed to start this module
 if (!isUserAuthorizedForPreferencesPIM()) {
-	$gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
+    $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 
 $itemField = new TableAccess($gDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf', $getimfId);
@@ -51,7 +51,7 @@ $page->addJavascript('
 
 	setValueList();
 	$("#imf_type").click(function() { setValueList(); });',
-	true
+    true
 );
 
 // add current url to navigation stack
@@ -60,15 +60,15 @@ $page->addHtml('<p class="lead">' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD
 
 // show form
 $itemFieldText = array(
-	'CHECKBOX' => $gL10n->get('SYS_CHECKBOX'),
-	'DATE' => $gL10n->get('SYS_DATE'),
-	'DECIMAL' => $gL10n->get('SYS_DECIMAL_NUMBER'),
-	'DROPDOWN' => $gL10n->get('SYS_DROPDOWN_LISTBOX'),
-	'NUMBER' => $gL10n->get('SYS_NUMBER'),
-	'RADIO_BUTTON' => $gL10n->get('SYS_RADIO_BUTTON'),
-	'TEXT' => $gL10n->get('SYS_TEXT') . ' (100 ' . $gL10n->get('SYS_CHARACTERS') . ')',
-	'TEXT_BIG' => $gL10n->get('SYS_TEXT') . ' (4000 ' . $gL10n->get('SYS_CHARACTERS') . ')',
-	'DATE_INTERVAL' => $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL')
+    'CHECKBOX' => $gL10n->get('SYS_CHECKBOX'),
+    'DATE' => $gL10n->get('SYS_DATE'),
+    'DECIMAL' => $gL10n->get('SYS_DECIMAL_NUMBER'),
+    'DROPDOWN' => $gL10n->get('SYS_DROPDOWN_LISTBOX'),
+    'NUMBER' => $gL10n->get('SYS_NUMBER'),
+    'RADIO_BUTTON' => $gL10n->get('SYS_RADIO_BUTTON'),
+    'TEXT' => $gL10n->get('SYS_TEXT') . ' (100 ' . $gL10n->get('SYS_CHARACTERS') . ')',
+    'TEXT_BIG' => $gL10n->get('SYS_TEXT') . ' (4000 ' . $gL10n->get('SYS_CHARACTERS') . ')',
+    'DATE_INTERVAL' => $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL')
 );
 asort($itemFieldText);
 
@@ -76,8 +76,8 @@ $form = new HtmlForm('itemfield_delete_form', SecurityUtils::encodeUrl(ADMIDIO_U
 $form->addInput('imf_name', $gL10n->get('SYS_NAME'), $itemField->getValue('imf_name', 'database'), array('maxLength' => 100, 'property' => HtmlForm::FIELD_DISABLED));
 $form->addInput('imf_name_intern', $gL10n->get('SYS_INTERNAL_NAME'), $itemField->getValue('imf_name_intern'), array('maxLength' => 100, 'property' => HtmlForm::FIELD_DISABLED));
 $form->addInput('imf_type', $gL10n->get('ORG_DATATYPE'), $itemFieldText[$itemField->getValue('imf_type')], array('maxLength' => 30, 'property' => HtmlForm::FIELD_DISABLED));
-$form->addMultilineTextInput('imf_value_list', $gL10n->get('ORG_VALUE_LIST'), (string) $itemField->getValue('imf_value_list', 'database'), 6, array('property' => HtmlForm::FIELD_DISABLED));
+$form->addMultilineTextInput('imf_value_list', $gL10n->get('ORG_VALUE_LIST'), (string)$itemField->getValue('imf_value_list', 'database'), 6, array('property' => HtmlForm::FIELD_DISABLED));
 $form->addMultilineTextInput('imf_description', $gL10n->get('SYS_DESCRIPTION'), $itemField->getValue('imf_description'), 3, array('property' => HtmlForm::FIELD_DISABLED));
 $form->addSubmitButton('btn_delete', $gL10n->get('SYS_DELETE'), array('icon' => 'fa-trash-alt', 'class' => ' offset-sm-3'));
-$page->addHtml($form->show(false));
+$page->addHtml($form->show());
 $page->show();

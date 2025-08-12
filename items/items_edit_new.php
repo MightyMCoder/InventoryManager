@@ -1,14 +1,15 @@
 <?php
+
 /**
  ***********************************************************************************************
- * Create or edit a item profile
+ * Create or edit an item profile
  *
  * @see         https://github.com/MightyMCoder/InventoryManager/ The InventoryManager GitHub project
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
- * 
- * 
+ *
+ *
  * Parameters:
  * item_id      : ID of the item who should be edited
  * item_former  : indicates that the item was made to former item
@@ -27,7 +28,7 @@ require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 // Initialize and check the parameters
 $getItemId = admFuncVariableIsValid($_GET, 'item_id', 'int');
 $getItemFormer = admFuncVariableIsValid($_GET, 'item_former', 'int');
-$getCopy  = admFuncVariableIsValid($_GET, 'copy', 'bool');
+$getCopy = admFuncVariableIsValid($_GET, 'copy', 'bool');
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
@@ -39,13 +40,12 @@ $authorizedPreferences = false;
 $keeperEditFields = array();
 
 if (!isUserAuthorizedForPreferencesPIM()) {
-	if (!isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database'))) {
-		$gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
-	}
+    if (!isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database'))) {
+        $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
+    }
     $keeperEditFields = $pPreferences->config['Optionen']['allowed_keeper_edit_fields'];
-}
-else {
-	$authorizedPreferences = true;
+} else {
+    $authorizedPreferences = true;
 }
 
 // Set headline of the script
@@ -62,18 +62,30 @@ $page->addJavascriptFile('adm_program/libs/zxcvbn/dist/zxcvbn.js');
 
 // Don't show menu items (copy/print...) if a new item is created
 if ($getItemId != 0) {
-	// show link to view profile field change history
+    // show link to view profile field change history
     if ($gSettingsManager->getBool('profile_log_edit_fields')) {
-        $page->addPageFunctionsMenuItem('menu_item_change_history', $gL10n->get('SYS_CHANGE_HISTORY'),
-            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_history.php', array('item_id' => $getItemId)), 'fa-history');
+        $page->addPageFunctionsMenuItem(
+            'menu_item_change_history',
+            $gL10n->get('SYS_CHANGE_HISTORY'),
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_history.php', array('item_id' => $getItemId)),
+            'fa-history'
+        );
     }
 
     if ($authorizedPreferences) {
-        $page->addPageFunctionsMenuItem('menu_copy_item', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_COPY'),
-            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => $getItemId, 'copy' => 1)), 'fa-clone');
+        $page->addPageFunctionsMenuItem(
+            'menu_copy_item',
+            $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_COPY'),
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => $getItemId, 'copy' => 1)),
+            'fa-clone'
+        );
     }
-    $page->addPageFunctionsMenuItem('menu_delete_item', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE'),
-    SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $getItemId, 'item_former' => $getItemFormer)), 'fa-trash');
+    $page->addPageFunctionsMenuItem(
+        'menu_delete_item',
+        $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE'),
+        SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . '/' . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $getItemId, 'item_former' => $getItemFormer)),
+        'fa-trash'
+    );
 }
 
 // Create HTML form
@@ -83,10 +95,10 @@ $disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
 
 foreach ($items->mItemFields as $itemField) {
     $imfNameIntern = $itemField->getValue('imf_name_intern');
-    if($imfNameIntern === 'IN_INVENTORY') {
+    if ($imfNameIntern === 'IN_INVENTORY') {
         $pimInInventoryId = $items->getProperty($imfNameIntern, 'imf_id');
     }
-    if($imfNameIntern === 'LAST_RECEIVER' && $disableBorrowing == 0) {
+    if ($imfNameIntern === 'LAST_RECEIVER' && $disableBorrowing == 0) {
         $pimLastReceiverId = $items->getProperty($imfNameIntern, 'imf_id');
     }
     if ($imfNameIntern === 'RECEIVED_ON' && $disableBorrowing == 0) {
@@ -103,8 +115,7 @@ foreach ($items->mItemFields as $itemField) {
 
     if ($items->getProperty($imfNameIntern, 'imf_mandatory') == 1) {
         $fieldProperty = HtmlForm::FIELD_REQUIRED;
-    }
-    else {
+    } else {
         $fieldProperty = HtmlForm::FIELD_DEFAULT;
     }
 
@@ -112,10 +123,10 @@ foreach ($items->mItemFields as $itemField) {
         $fieldProperty = HtmlForm::FIELD_DISABLED;
     }
 
-    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) {
         break;
     }
-    
+
     if (isset($pimInInventoryId, $pimLastReceiverId, $pimReceivedOnId, $pimReceivedBackOnId) && $imfNameIntern === 'IN_INVENTORY') {
         $pPreferences->config['Optionen']['field_date_time_format'] === 'datetime' ? $datetime = 'true' : $datetime = 'false';
 
@@ -232,7 +243,7 @@ foreach ($items->mItemFields as $itemField) {
 
                 pimReceivedOnField.addEventListener("input", validateReceivedOnAndBackOn);
                 pimReceivedBackOnField.addEventListener("input", window.checkPimInInventory);
-                
+
                 if (pDateTime === "true") {
                     pimReceivedOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
                     pimReceivedBackOnFieldTime.addEventListener("input", validateReceivedOnAndBackOn);
@@ -243,16 +254,12 @@ foreach ($items->mItemFields as $itemField) {
         ');
     }
 
-    if ($itemField->getValue('imf_type') === 'DATE' && $itemField->getValue('imf_sequence') === '1') {
-        $form->addInput('dummy', 'dummy', 'dummy', ['type' => $pPreferences->config['Optionen']['field_date_time_format'], 'property' => HtmlForm::FIELD_HIDDEN]);
-    }
-
     switch ($items->getProperty($imfNameIntern, 'imf_type')) {
         case 'CHECKBOX':
             $form->addCheckbox(
                 'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
                 convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
-                ($getItemId === 0) ? true : (bool) $items->getValue($imfNameIntern),
+                ($getItemId === 0) ? true : (bool)$items->getValue($imfNameIntern),
                 array(
                     'property' => $fieldProperty,
                     'helpTextIdLabel' => $helpId,
@@ -313,11 +320,11 @@ foreach ($items->mItemFields as $itemField) {
             if ($imfNameIntern === 'KEEPER') {
                 $sql = getSqlOrganizationsUsersCompletePIM();
                 if ($pPreferences->config['Optionen']['current_user_default_keeper'] === 1) {
-                	$user = new User($gDb, $gProfileFields);
+                    $user = new User($gDb, $gProfileFields);
                     $user->readDataByUuid($gCurrentUser->getValue('usr_uuid'));
                 }
-                
-                        $form->addSelectBoxFromSql(
+
+                $form->addSelectBoxFromSql(
                     'imf-' . $items->getProperty($imfNameIntern, 'imf_id'),
                     convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name')),
                     $gDb,
@@ -330,8 +337,7 @@ foreach ($items->mItemFields as $itemField) {
                         'multiselect' => false
                     )
                 );
-            }
-            elseif ($imfNameIntern === "LAST_RECEIVER") {
+            } elseif ($imfNameIntern === 'LAST_RECEIVER') {
                 $sql = getSqlOrganizationsUsersCompletePIM();
 
                 $form->addSelectBoxFromSql(
@@ -364,7 +370,7 @@ foreach ($items->mItemFields as $itemField) {
                     $page->addJavascriptFile(ADMIDIO_URL . FOLDER_LIBS_CLIENT . '/select2/js/select2.js');
                     $page->addJavascriptFile(ADMIDIO_URL . FOLDER_LIBS_CLIENT . '/select2/js/i18n/' . $gL10n->getLanguageLibs() . '.js');
                 }
-    
+
                 $page->addJavascript('
                 $(document).ready(function() {
                     var selectId = "#imf-' . $pimLastReceiverId . '";
@@ -375,7 +381,7 @@ foreach ($items->mItemFields as $itemField) {
                     function isSelect2Empty(selectId) {
                         // Hole den aktuellen Wert des Select2-Feldes
                         var lastReceiverValueHidden = document.querySelector("[id=\'imf-' . $pimLastReceiverId . '-hidden\']");
-                        var renderedElement = $("#select2-imf-' . $pimLastReceiverId .'-container");
+                        var renderedElement = $("#select2-imf-' . $pimLastReceiverId . '-container");
                         if (renderedElement.length) {
                             lastReceiverValueHidden.value = renderedElement.attr("title");
                             console.log("Hidden: " + lastReceiverValueHidden.value);
@@ -389,7 +395,7 @@ foreach ($items->mItemFields as $itemField) {
                         $(selectId).append(newOption).trigger("change");
                     }
 
-                    $("#imf-' . $pimLastReceiverId .'").select2({
+                    $("#imf-' . $pimLastReceiverId . '").select2({
                         theme: "bootstrap4",
                         allowClear: true,
                         placeholder: "",
@@ -402,18 +408,15 @@ foreach ($items->mItemFields as $itemField) {
                         isSelect2Empty(selectId);
                     });
                 });', true);
-            }
-            else {
+            } else {
                 if ($items->getProperty($imfNameIntern, 'imf_type') === 'DATE') {
                     $fieldType = $pPreferences->config['Optionen']['field_date_time_format'];
                     $maxlength = null;
-                }
-                elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'NUMBER') {
+                } elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'NUMBER') {
                     $fieldType = 'number';
                     $minNumber = $pPreferences->config['Optionen']['allow_negative_numbers'] ? null : '0';
                     $step = '1';
-                }
-                elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'DECIMAL') {
+                } elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'DECIMAL') {
                     $fieldType = 'number';
                     $minNumber = $pPreferences->config['Optionen']['allow_negative_numbers'] ? null : '0';
                     $step = $pPreferences->config['Optionen']['decimal_step'];
@@ -424,9 +427,9 @@ foreach ($items->mItemFields as $itemField) {
                     $items->getValue($imfNameIntern),
                     array(
                         'type' => $fieldType,
-                        'maxLength' => isset($maxlength) ? $maxlength : null,
-                        'minNumber' => isset($minNumber) ? $minNumber : null,
-                        'step' => isset($step) ? $step : null,
+                        'maxLength' => $maxlength ?? null,
+                        'minNumber' => $minNumber ?? null,
+                        'step' => $step ?? null,
                         'property' => $fieldProperty,
                         'helpTextIdLabel' => $helpId,
                         'icon' => $items->getProperty($imfNameIntern, 'imf_icon', 'database')
@@ -448,12 +451,14 @@ if ($getCopy) {
 
 $form->addSubmitButton('btn_save', $gL10n->get('SYS_SAVE'), array('icon' => 'fa-check', 'class' => 'offset-sm-3'));
 
-$infoItem = new TableAccess($gDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi', (int) $getItemId);
+$infoItem = new TableAccess($gDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi', (int)$getItemId);
 
 // Show information about item who creates the recordset and changed it
 $form->addHtml(admFuncShowCreateChangeInfoById(
-    (int) $infoItem->getValue('imi_usr_id_create'), $infoItem->getValue('imi_timestamp_create'),
-    (int) $infoItem->getValue('imi_usr_id_change'), $infoItem->getValue('imi_timestamp_change')
+    (int)$infoItem->getValue('imi_usr_id_create'),
+    $infoItem->getValue('imi_timestamp_create'),
+    (int)$infoItem->getValue('imi_usr_id_change'),
+    $infoItem->getValue('imi_timestamp_change')
 ));
 
 $page->addHtml($form->show());

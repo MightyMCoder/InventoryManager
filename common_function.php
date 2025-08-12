@@ -8,25 +8,30 @@
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
- * 
- * 
+ *
+ *
  * Methods:
- * defineConstantsPIM()                          			: Define necessary constants if not already defined
- * isUserAuthorizedForPIM($scriptName)           			: Check if the user is authorized to access the plugin
- * isUserAuthorizedForPreferencesPIM()           			: Check if the user is authorized to access the Preferences module
- * isUserAuthorizedForAddinPIM()							: Check if the user is authorized to see the
- * 																Inventory Manager Addin on the profile page
- * isKeeperAuthorizedToEdit($keeper)             			: Check if the keeper is authorized to edit spezific item data
- * getMenuIdByScriptNamePIM($scriptName)         			: Get menu ID by script name
- * convlanguagePIM($field_name)                  			: Translate field name according to naming conventions
- * getNewNameInternPIM($name, $index)           			: Generate a new internal name
- * genNewSequencePIM()                           			: Generate a new sequence number
- * umlautePIM($tmptext)                          			: Replace umlauts in the text
- * getPreferencePanelPIM($group, $id, $title, $icon, $body) : Generate HTML for a preference panel
- * getSqlOrganizationsUsersCompletePIM()         			: Get all users with their id, name, and address
- * getSqlOrganizationsUsersShortPIM()            			: Get all users with their id and name
+ * defineConstantsPIM()                                         : Define necessary constants if not already defined
+ * isUserAuthorizedForPIM($scriptName)                          : Check if the user is authorized to access the plugin
+ * isUserAuthorizedForPreferencesPIM()                          : Check if the user is authorized to access the Preferences module
+ * isUserAuthorizedForAddinPIM()                                : Check if the user is authorized to see the
+ *                                                                    Inventory Manager Addin on the profile page
+ * isKeeperAuthorizedToEdit($keeper)                            : Check if the keeper is authorized to edit specific item data
+ * getMenuIdByScriptNamePIM($scriptName)                        : Get menu ID by script name
+ * convlanguagePIM($field_name)                                 : Translate field name according to naming conventions
+ * getNewNameInternPIM($name, $index)                           : Generate a new internal name
+ * genNewSequencePIM()                                          : Generate a new sequence number
+ * umlautePIM($tmptext)                                         : Replace umlauts in the text
+ * getPreferencePanelPIM($group, $id, $title, $icon, $body)     : Generate HTML for a preference panel
+ * getSqlOrganizationsUsersCompletePIM()                        : Get all users with their id, name, and address
+ * getSqlOrganizationsUsersShortPIM()                           : Get all users with their id and name
+ * formatSpreadsheet($spreadsheet, $data, $containsHeadline)    : Format the spreadsheet
  ***********************************************************************************************
  */
+
+// PhpSpreadsheet namespaces
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 
@@ -35,258 +40,265 @@ defineConstantsPIM();
 
 /**
  * Define necessary constants if not already defined
- * 
+ *
  * @return void
  */
-function defineConstantsPIM() : void
+function defineConstantsPIM(): void
 {
-	if (!defined('PLUGIN_FOLDER_IM')) {
-		define('PLUGIN_FOLDER_IM', '/' . basename(__DIR__));
-	}
-	if (!defined('TBL_INVENTORY_MANAGER_FIELDS')) {
-		define('TBL_INVENTORY_MANAGER_FIELDS', TABLE_PREFIX . '_inventory_manager_fields');
-	}
-	if (!defined('TBL_INVENTORY_MANAGER_DATA')) {
-		define('TBL_INVENTORY_MANAGER_DATA', TABLE_PREFIX . '_inventory_manager_data');
-	}
-	if (!defined('TBL_INVENTORY_MANAGER_ITEMS')) {
-		define('TBL_INVENTORY_MANAGER_ITEMS', TABLE_PREFIX . '_inventory_manager_items');
-	}
-	if (!defined('TBL_INVENTORY_MANAGER_LOG')) {
-		define('TBL_INVENTORY_MANAGER_LOG', TABLE_PREFIX . '_inventory_manager_log');
-	}
+    if (!defined('PLUGIN_FOLDER_IM')) {
+        define('PLUGIN_FOLDER_IM', '/' . basename(__DIR__));
+    }
+    if (!defined('TBL_INVENTORY_MANAGER_FIELDS')) {
+        define('TBL_INVENTORY_MANAGER_FIELDS', TABLE_PREFIX . '_inventory_manager_fields');
+    }
+    if (!defined('TBL_INVENTORY_MANAGER_DATA')) {
+        define('TBL_INVENTORY_MANAGER_DATA', TABLE_PREFIX . '_inventory_manager_data');
+    }
+    if (!defined('TBL_INVENTORY_MANAGER_ITEMS')) {
+        define('TBL_INVENTORY_MANAGER_ITEMS', TABLE_PREFIX . '_inventory_manager_items');
+    }
+    if (!defined('TBL_INVENTORY_MANAGER_LOG')) {
+        define('TBL_INVENTORY_MANAGER_LOG', TABLE_PREFIX . '_inventory_manager_log');
+    }
 }
 
 /**
  * Check if the user is authorized to access the plugin
- * 
- * @param string $scriptName 		The script name of the plugin
- * @return bool						true if the user is authorized
+ *
+ * @param string $scriptName The script name of the plugin
+ * @return bool true if the user is authorized
+ * @throws SmartyException
+ * @throws AdmException
  */
-function isUserAuthorizedForPIM($scriptName) : bool
+function isUserAuthorizedForPIM(string $scriptName): bool
 {
-	global $gMessage, $gL10n, $gDb, $gCurrentUser;
-	$gCurrentUser = $GLOBALS['gCurrentUser'];
+    global $gMessage, $gL10n, $gDb, $gCurrentUser;
+    $gCurrentUser = $GLOBALS['gCurrentUser'];
 
-	$userIsAuthorized = false;
-	$menId = getMenuIdByScriptNamePIM($scriptName);
+    $userIsAuthorized = false;
+    $menId = getMenuIdByScriptNamePIM($scriptName);
 
-	if ($menId === null) {
-		$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_MENU_URL_ERROR', [$scriptName]), $gL10n->get('SYS_ERROR'));
-	} else {
-		$sql = 'SELECT men_id, men_com_id, com_name_intern FROM ' . TBL_MENU . '
+    if ($menId === null) {
+        $gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_MENU_URL_ERROR', array($scriptName)), $gL10n->get('SYS_ERROR'));
+    } else {
+        $sql = 'SELECT men_id, men_com_id, com_name_intern FROM ' . TBL_MENU . '
 			LEFT JOIN ' . TBL_COMPONENTS . ' ON com_id = men_com_id
 			WHERE men_id = ? ORDER BY men_men_id_parent DESC, men_order;';
-		$menuStatement = $gDb->queryPrepared($sql, array($menId));
+        $menuStatement = $gDb->queryPrepared($sql, array($menId));
 
-		while ($row = $menuStatement->fetch()) {
-			if ((int)$row['men_com_id'] === 0 || Component::isVisible($row['com_name_intern'])) {
-				$displayMenu = new RolesRights($gDb, 'menu_view', $row['men_id']);
-				$rolesDisplayRight = $displayMenu->getRolesIds();
+        while ($row = $menuStatement->fetch()) {
+            if ((int)$row['men_com_id'] === 0 || Component::isVisible($row['com_name_intern'])) {
+                $displayMenu = new RolesRights($gDb, 'menu_view', $row['men_id']);
+                $rolesDisplayRight = $displayMenu->getRolesIds();
 
-				if (count($rolesDisplayRight) === 0 || $displayMenu->hasRight($gCurrentUser->getRoleMemberships())) {
-					$userIsAuthorized = true;
-				}
-			}
-		}
-	}
-	return $userIsAuthorized;
+                if (count($rolesDisplayRight) === 0 || $displayMenu->hasRight($gCurrentUser->getRoleMemberships())) {
+                    $userIsAuthorized = true;
+                }
+            }
+        }
+    }
+    return $userIsAuthorized;
 }
 
 /**
  * Check if the user is authorized to access the Preferences module
- * 
- * @return bool 					true if the user is authorized
+ *
+ * @return bool true if the user is authorized
  */
-function isUserAuthorizedForPreferencesPIM() : bool
+function isUserAuthorizedForPreferencesPIM(): bool
 {
-	global $pPreferences, $gCurrentUser;
-	$gCurrentUser = $GLOBALS['gCurrentUser'];
+    global $pPreferences, $gCurrentUser;
+    $gCurrentUser = $GLOBALS['gCurrentUser'];
 
-	if ($gCurrentUser->isAdministrator()) {
-		return true;
-	}
+    if ($gCurrentUser->isAdministrator()) {
+        return true;
+    }
 
-	foreach ($pPreferences->config['access']['preferences'] as $roleId) {
-		if ($gCurrentUser->isMemberOfRole((int)$roleId)) {
-			return true;
-		}
-	}
-	return false;
+    foreach ($pPreferences->config['access']['preferences'] as $roleId) {
+        if ($gCurrentUser->isMemberOfRole((int)$roleId)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
  * Check if the user is authorized to see the Inventory Manager Addin on the profile page
- * 
- * @return bool 					true if the user is authorized
+ *
+ * @return bool true if the user is authorized
+ * @throws AdmException
  */
-function isUserAuthorizedForAddinPIM() : bool
+function isUserAuthorizedForAddinPIM(): bool
 {
-	global $gDb;
-	
-	$sql = 'SELECT men_id, men_name, men_name_intern
+    global $gDb;
+
+    $sql = 'SELECT men_id, men_name, men_name_intern
 			FROM ' . TBL_MENU . '
 			WHERE men_men_id_parent IS NULL
 			ORDER BY men_order';
 
-	$mainNodesStatement = $gDb->queryPrepared($sql);
+    $mainNodesStatement = $gDb->queryPrepared($sql);
 
-	while ($mainNodes = $mainNodesStatement->fetch()) {
-		$menuNodes = new MenuNode($mainNodes['men_name_intern'], $mainNodes['men_name']);
+    while ($mainNodes = $mainNodesStatement->fetch()) {
+        $menuNodes = new MenuNode($mainNodes['men_name_intern'], $mainNodes['men_name']);
 
-		$nodeId = $mainNodes['men_id'];
-		$sql = 'SELECT men_id, men_com_id, men_name_intern, men_name, men_description, men_url, men_icon, com_name_intern
+        $nodeId = $mainNodes['men_id'];
+        $sql = 'SELECT men_id, men_com_id, men_name_intern, men_name, men_description, men_url, men_icon, com_name_intern
 				FROM ' . TBL_MENU . '
 				LEFT JOIN ' . TBL_COMPONENTS . ' ON com_id = men_com_id
 				WHERE men_men_id_parent = ?
 				ORDER BY men_men_id_parent DESC, men_order';
 
-		$nodesStatement = $gDb->queryPrepared($sql, array($nodeId));
+        $nodesStatement = $gDb->queryPrepared($sql, array($nodeId));
 
-		while ($node = $nodesStatement->fetch(PDO::FETCH_ASSOC)) {
-			if ((int) $node['men_com_id'] === 0 || Component::isVisible($node['com_name_intern'])) {
-				if ($node['men_url'] === "/adm_plugins/InventoryManager/inventory_manager.php" && $menuNodes->menuItemIsVisible($node['men_id'])) {
-					return true;
-				}
-			}
-		}
-	}
-	return false;
+        while ($node = $nodesStatement->fetch(PDO::FETCH_ASSOC)) {
+            if ((int)$node['men_com_id'] === 0 || Component::isVisible($node['com_name_intern'])) {
+                if ($node['men_url'] === '/adm_plugins/InventoryManager/inventory_manager.php' && $menuNodes->menuItemIsVisible($node['men_id'])) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 /**
  * Check if the keeper is authorized to edit spezific item data
- * 
- * @param int|null $keeper 			The user ID of the keeper
- * @return bool 					true if the keeper is authorized
+ *
+ * @param int|null $keeper The user ID of the keeper
+ * @return bool true if the keeper is authorized
  */
-function isKeeperAuthorizedToEdit(?int $keeper = null) : bool
+function isKeeperAuthorizedToEdit(?int $keeper = null): bool
 {
-	global $pPreferences, $gCurrentUser;
-	$gCurrentUser = $GLOBALS['gCurrentUser'];
+    global $pPreferences, $gCurrentUser;
+    $gCurrentUser = $GLOBALS['gCurrentUser'];
 
-	if ($pPreferences->config['Optionen']['allow_keeper_edit'] === 1) {
-		if (isset($keeper) && $keeper === $gCurrentUser->getValue('usr_id')) {
-			return true;
-		}
-	}
+    if ($pPreferences->config['Optionen']['allow_keeper_edit'] === 1) {
+        if (isset($keeper) && $keeper === $gCurrentUser->getValue('usr_id')) {
+            return true;
+        }
+    }
 
-	return false;
+    return false;
 }
 
 /**
  * Get menu ID by script name
- * 
- * @param string $scriptName		The script name of the plugin
- * @return int|null					The menu ID or null if not found
+ *
+ * @param string $scriptName The script name of the plugin
+ * @return int|null The menu ID or null if not found
+ * @throws Exception
  */
-function getMenuIdByScriptNamePIM($scriptName) : ?int
+function getMenuIdByScriptNamePIM(string $scriptName): ?int
 {
-	global $gDb;
+    global $gDb;
 
-	$sql = 'SELECT men_id FROM ' . TBL_MENU . ' WHERE men_url = ?;';
-	$menuStatement = $gDb->queryPrepared($sql, array($scriptName));
+    $sql = 'SELECT men_id FROM ' . TBL_MENU . ' WHERE men_url = ?;';
+    $menuStatement = $gDb->queryPrepared($sql, array($scriptName));
 
-	if ($menuStatement->rowCount() === 1) {
-		return (int)$menuStatement->fetch()['men_id'];
-	}
-	return null;
+    if ($menuStatement->rowCount() === 1) {
+        return (int)$menuStatement->fetch()['men_id'];
+    }
+    return null;
 }
 
 /**
  * Translate field name according to naming conventions
- * 
- * @param string $field_name		field name to translate
- * @return string 					translated field name
+ *
+ * @param string $field_name field name to translate
+ * @return string translated field name
+ * @throws Exception
  */
-function convlanguagePIM($field_name) : string
+function convlanguagePIM(string $field_name): string
 {
-	global $gL10n;
+    global $gL10n;
 
-	return (substr($field_name, 3, 1) === '_') ? $gL10n->get($field_name) : $field_name;
+    return (substr($field_name, 3, 1) === '_') ? $gL10n->get($field_name) : $field_name;
 }
 
 /**
  * Generate a new internal name
- * 
- * @param string $name				name to generate internal name from
- * @param int $index				index to append to the internal name
- * @return string 					new internal name
+ *
+ * @param string $name name to generate internal name from
+ * @param int $index index to append to the internal name
+ * @return string new internal name
+ * @throws Exception
  */
-function getNewNameInternPIM($name, $index) : string
+function getNewNameInternPIM(string $name, int $index): string
 {
-	global $gDb;
+    global $gDb;
 
-	$name = umlautePIM($name);
-	$newNameIntern = strtoupper(str_replace(' ', '_', $name));
+    $name = umlautePIM($name);
+    $newNameIntern = strtoupper(str_replace(' ', '_', $name));
 
-	if ($index > 1) {
-		$newNameIntern .= '_' . $index;
-	}
+    if ($index > 1) {
+        $newNameIntern .= '_' . $index;
+    }
 
-	$sql = 'SELECT imf_id FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE imf_name_intern = ?;';
-	$userFieldsStatement = $gDb->queryPrepared($sql, array($newNameIntern));
+    $sql = 'SELECT imf_id FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE imf_name_intern = ?;';
+    $userFieldsStatement = $gDb->queryPrepared($sql, array($newNameIntern));
 
-	if ($userFieldsStatement->rowCount() > 0) {
-		return getNewNameInternPIM($name, ++$index);
-	}
+    if ($userFieldsStatement->rowCount() > 0) {
+        return getNewNameInternPIM($name, ++$index);
+    }
 
-	return $newNameIntern;
+    return $newNameIntern;
 }
 
 /**
  * Generate a new sequence number
- * 
- * @return int 						new sequence number
+ *
+ * @return int new sequence number
+ * @throws Exception
  */
-function genNewSequencePIM() : int
+function genNewSequencePIM(): int
 {
-	global $gDb, $gCurrentOrgId;
+    global $gDb, $gCurrentOrgId;
 
-	$sql = 'SELECT max(imf_sequence) as max_sequence FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE (imf_org_id = ? OR imf_org_id IS NULL);';
-	$statement = $gDb->queryPrepared($sql, array($gCurrentOrgId));
-	$row = $statement->fetch();
+    $sql = 'SELECT max(imf_sequence) as max_sequence FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE (imf_org_id = ? OR imf_org_id IS NULL);';
+    $statement = $gDb->queryPrepared($sql, array($gCurrentOrgId));
+    $row = $statement->fetch();
 
-	return $row['max_sequence'] + 1;
+    return $row['max_sequence'] + 1;
 }
 
 /**
  * Replace umlauts in the text
- * 
- * @param string $tmptext			text to replace umlauts in
- * @return string 					text with replaced umlauts
+ *
+ * @param string $tmptext text to replace umlauts in
+ * @return string                    text with replaced umlauts
  */
-function umlautePIM($tmptext) : string
+function umlautePIM(string $tmptext): string
 {
-	$replacements = [
-		'&uuml;' => 'ue',
-		'&auml;' => 'ae',
-		'&ouml;' => 'oe',
-		'&szlig;' => 'ss',
-		'&Uuml;' => 'Ue',
-		'&Auml;' => 'Ae',
-		'&Ouml;' => 'Oe',
-		'.' => '',
-		',' => '',
-		'/' => ''
-	];
+    $replacements = array(
+        '&uuml;' => 'ue',
+        '&auml;' => 'ae',
+        '&ouml;' => 'oe',
+        '&szlig;' => 'ss',
+        '&Uuml;' => 'Ue',
+        '&Auml;' => 'Ae',
+        '&Ouml;' => 'Oe',
+        '.' => '',
+        ',' => '',
+        '/' => ''
+    );
 
-	return str_replace(array_keys($replacements), array_values($replacements), htmlentities($tmptext));
+    return str_replace(array_keys($replacements), array_values($replacements), htmlentities($tmptext));
 }
 
 /**
  * Generate HTML for a preference panel
- * 
- * @param string $group				group the preference panel belongs to
- * @param string $id				unique ID of the preference panel
- * @param string $title				title of the preference panel
- * @param string $icon				icon of the preference panel
- * @param string $body				body of the preference panel
- * @return string 					HTML for the preference panel
+ *
+ * @param string $group group the preference panel belongs to
+ * @param string $id unique ID of the preference panel
+ * @param string $title title of the preference panel
+ * @param string $icon icon of the preference panel
+ * @param string $body body of the preference panel
+ * @return string HTML for the preference panel
  */
-function getPreferencePanelPIM($group, $id, $title, $icon, $body) : string
+function getPreferencePanelPIM(string $group, string $id, string $title, string $icon, string $body): string
 {
-	return '
+    return '
 		<div class="card" id="' . $group . '_panel_' . $id . '">
 			<div class="card-header" data-toggle="collapse" data-target="#collapse_' . $id . '">
 				<i class="' . $icon . ' fa-fw"></i>' . $title . '
@@ -302,10 +314,10 @@ function getPreferencePanelPIM($group, $id, $title, $icon, $body) : string
 
 /**
  * Get all users with their id, name, and address
- * 
- * @return string 					SQL query to get all users with their ID and name
+ *
+ * @return string SQL query to get all users with their ID and name
  */
-function getSqlOrganizationsUsersCompletePIM() : string
+function getSqlOrganizationsUsersCompletePIM(): string
 {
     global $gProfileFields, $gCurrentOrgId;
 
@@ -321,10 +333,10 @@ function getSqlOrganizationsUsersCompletePIM() : string
 
 /**
  * Get all users with their id and name
- * 
- * @return string 					SQL query to get all users with their ID and name
+ *
+ * @return string SQL query to get all users with their ID and name
  */
-function getSqlOrganizationsUsersShortPIM() : string
+function getSqlOrganizationsUsersShortPIM(): string
 {
     global $gProfileFields, $gCurrentOrgId;
 
@@ -333,4 +345,38 @@ function getSqlOrganizationsUsersShortPIM() : string
             JOIN ' . TBL_USER_DATA . ' as last_name ON last_name.usd_usr_id = usr_id AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
             JOIN ' . TBL_USER_DATA . ' as first_name ON first_name.usd_usr_id = usr_id AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
             WHERE usr_valid = true AND EXISTS (SELECT 1 FROM ' . TBL_MEMBERS . ', ' . TBL_ROLES . ', ' . TBL_CATEGORIES . ' WHERE mem_usr_id = usr_id AND mem_rol_id = rol_id AND mem_begin <= \'' . DATE_NOW . '\' AND mem_end > \'' . DATE_NOW . '\' AND rol_valid = true AND rol_cat_id = cat_id AND (cat_org_id = ' . $gCurrentOrgId . ' OR cat_org_id IS NULL)) ORDER BY last_name.usd_value, first_name.usd_value;';
+}
+
+/**
+ * Formats the spreadsheet
+ *
+ * @param Spreadsheet $spreadsheet
+ * @param array $data
+ * @param bool $containsHeadline
+ * @throws \PhpOffice\PhpSpreadsheet\Exception
+ */
+function formatSpreadsheet(Spreadsheet $spreadsheet, array $data, bool $containsHeadline): void
+{
+    $alphabet = range('A', 'Z');
+    $column = $alphabet[count($data[0]) - 1];
+
+    if ($containsHeadline) {
+        $spreadsheet
+            ->getActiveSheet()
+            ->getStyle('A1:' . $column . '1')
+            ->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()
+            ->setARGB('ffdddddd');
+        $spreadsheet
+            ->getActiveSheet()
+            ->getStyle('A1:' . $column . '1')
+            ->getFont()
+            ->setBold(true);
+    }
+
+    for ($number = 0; $number < count($data[0]); $number++) {
+        $spreadsheet->getActiveSheet()->getColumnDimension($alphabet[$number])->setAutoSize(true);
+    }
+    $spreadsheet->getDefaultStyle()->getAlignment()->setWrapText(true);
 }

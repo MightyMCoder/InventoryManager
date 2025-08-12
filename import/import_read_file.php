@@ -1,4 +1,5 @@
 <?php
+
 /**
  ***********************************************************************************************
  * Prepare values of import form for further processing
@@ -10,6 +11,14 @@
  ***********************************************************************************************
  */
 
+// PhpSpreadsheet namespaces
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Reader\Html;
+use PhpOffice\PhpSpreadsheet\Reader\Ods;
+use PhpOffice\PhpSpreadsheet\Reader\Xls;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+
 require_once(__DIR__ . '/../../../adm_program/system/common.php');
 require_once(__DIR__ . '/../common_function.php');
 
@@ -17,39 +26,38 @@ require_once(__DIR__ . '/../common_function.php');
 require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
-$postImportFormat   = admFuncVariableIsValid(
+$postImportFormat = admFuncVariableIsValid(
     $_POST,
     'format',
     'string',
     array('requireValue' => true,
         'validValues' => array('AUTO', 'XLSX', 'XLS', 'ODS', 'CSV', 'HTML'))
 );
-$postImportCoding   = admFuncVariableIsValid(
+$postImportCoding = admFuncVariableIsValid(
     $_POST,
     'import_coding',
     'string',
     array('validValues' => array('', 'GUESS', 'UTF-8', 'UTF-16BE', 'UTF-16LE', 'UTF-32BE', 'UTF-32LE', 'CP1252', 'ISO-8859-1'))
 );
-$postSeparator      = admFuncVariableIsValid(
+$postSeparator = admFuncVariableIsValid(
     $_POST,
     'import_separator',
     'string',
     array('validValues' => array('', ',', ';', '\t', '|'))
 );
-$postEnclosure      = admFuncVariableIsValid(
+$postEnclosure = admFuncVariableIsValid(
     $_POST,
     'import_enclosure',
     'string',
     array('validValues' => array('', 'AUTO', '"', '\|'))
 );
 
-$postWorksheet      = admFuncVariableIsValid($_POST, 'import_sheet', 'string');
+$postWorksheet = admFuncVariableIsValid($_POST, 'import_sheet', 'string');
 
 try {
     // check the CSRF token of the form against the session token
     SecurityUtils::validateCsrfToken($_POST['admidio-csrf-token']);
-}
-catch (AdmException $exception) {
+} catch (AdmException $exception) {
     $exception->showHtml();
     // => EXIT
 }
@@ -62,34 +70,34 @@ if (!isUserAuthorizedForPreferencesPIM()) {
 $importfile = $_FILES['userfile']['tmp_name'][0];
 if (strlen($importfile) === 0) {
     $gMessage->show($gL10n->get('SYS_FIELD_EMPTY', array($gL10n->get('SYS_FILE'))));
-// => EXIT
+    // => EXIT
 } elseif ($_FILES['userfile']['error'][0] === UPLOAD_ERR_INI_SIZE) {
     // check the filesize against the server settings
     $gMessage->show($gL10n->get('SYS_FILE_TO_LARGE_SERVER', array(ini_get('upload_max_filesize'))));
-// => EXIT
+    // => EXIT
 } elseif (!file_exists($importfile) || !is_uploaded_file($importfile)) {
     // check if a file was really uploaded
     $gMessage->show($gL10n->get('SYS_FILE_NOT_EXIST'));
-// => EXIT
+    // => EXIT
 }
 
 switch ($postImportFormat) {
     case 'XLSX':
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $reader = new Xlsx();
         break;
 
     case 'XLS':
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+        $reader = new Xls();
         break;
 
     case 'ODS':
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Ods();
+        $reader = new Ods();
         break;
 
     case 'CSV':
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+        $reader = new Csv();
         if ($postImportCoding === 'GUESS') {
-            $postImportCoding = \PhpOffice\PhpSpreadsheet\Reader\Csv::guessEncoding($importfile);
+            $postImportCoding = Csv::guessEncoding($importfile);
         } elseif ($postImportCoding === '') {
             $postImportCoding = 'UTF-8';
         }
@@ -105,12 +113,12 @@ switch ($postImportFormat) {
         break;
 
     case 'HTML':
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
+        $reader = new Html();
         break;
 
     case 'AUTO':
     default:
-        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($importfile);
+        $reader = IOFactory::createReaderForFile($importfile);
         break;
 }
 
@@ -129,12 +137,12 @@ if (isset($reader) and !is_null($reader)) {
 
         if (empty($sheet)) {
             $gMessage->show($gL10n->get('SYS_IMPORT_SHEET_NOT_EXISTS', array($postWorksheet)));
-        // => EXIT
+            // => EXIT
         } else {
             // read data to array without any format
             $_SESSION['import_data'] = $sheet->toArray(null, true, false);
         }
-    } catch (\PhpOffice\PhpSpreadsheet\Exception |Exception $e) {
+    } catch (\PhpOffice\PhpSpreadsheet\Exception|Exception $e) {
         $gMessage->show($e->getMessage());
         // => EXIT
     }

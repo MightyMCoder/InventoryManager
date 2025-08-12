@@ -41,31 +41,31 @@ require_once(__DIR__ . '/configtable.php');
 
 class CItems
 {
-    public $mItemFields = array();  ///< Array with all item fields objects
-    public $mChangedItemData = array();  ///< Array with all changed item data objects for notification
-    public $mItemData = array();  ///< Array with all item data objects
-    public $items = array();  ///< Array with all item objects
-
-    private $mItemId;                       ///< ItemId of the current item of this object
-    private $mDb;                           ///< An object of the class Database for communication with the database
-    private $itemCreated;                   ///< flag if a new item was created
-    private $itemChanged;                   ///< flag if a new item was changed
-    private $itemDeleted;                   ///< flag if a item was deleted
-    private $itemMadeFormer;                ///< flag if a item was made to former item
-    private $itemImported;                   ///< flag if a item was imported
-    private $showFormerItems;               ///< if true, than former items will be showed
-    private $organizationId;                ///< ID of the organization for which the item field structure should be read
-    public $columnsValueChanged;            ///< flag if a value of one field had changed
-    private $pPreferences;                  ///< object of the class CConfigTablePIM    
-
-    private $itemFieldsSort = array();
+    public array $mItemFields = array();        ///< Array with all item fields objects
+    public array $mChangedItemData = array();   ///< Array with all changed item data objects for notification
+    public array $mItemData = array();          ///< Array with all item data objects
+    public array $items = array();              ///< Array with all item objects
+    private int $mItemId;                       ///< ItemId of the current item of this object
+    private Database $mDb;                      ///< An object of the class Database for communication with the database
+    private bool $itemCreated;                  ///< flag if a new item was created
+    private bool $itemChanged;                  ///< flag if a new item was changed
+    private bool $itemDeleted;                  ///< flag if an item was deleted
+    private bool $itemMadeFormer;               ///< flag if an item was made to former item
+    private bool $itemImported;                 ///< flag if an item was imported
+    private bool $showFormerItems;              ///< if true, then former items will be shown
+    private int $organizationId;                ///< ID of the organization for which the item field structure should be read
+    public bool $columnsValueChanged;           ///< flag if a value of one field had changed
+    private CConfigTablePIM $pPreferences;      ///< object of the class CConfigTablePIM
+    private array $itemFieldsSort = array();    ///< Array with the item fields sorted by imf_order_by and imf_name_intern
 
     /**
      * Constructor that will initialize variables and read the item field structure
-     * @param \Database $database Database object (should be @b $gDb)
+     * @param Database $database Database object (should be @b $gDb)
      * @param int $organizationId The id of the organization for which the item field structure should be read
+     * @param string $fieldsOrderBy Optional the order by clause for the item fields. Default is 'imf_id'
+     * @throws Exception
      */
-    public function __construct($database, $organizationId, $fieldsOrderBy = 'imf_id')
+    public function __construct(Database $database, int $organizationId, string $fieldsOrderBy = 'imf_id')
     {
         $this->organizationId = $organizationId;
         $this->setDatabase($database);
@@ -86,10 +86,10 @@ class CItems
     /**
      * Set the database object for communication with the database of this class
      *
-     * @param \Database $database An object of the class Database. This should be the global $gDb object
+     * @param Database $database An object of the class Database. This should be the global $gDb object
      * @return void
      */
-    public function setDatabase($database): void
+    public function setDatabase(Database $database): void
     {
         $this->mDb = $database;
     }
@@ -135,9 +135,10 @@ class CItems
      * @param string $fieldNameIntern Expects the @b imf_name_intern of table @b adm_inventory_manager_fields
      * @param string $column The column name of @b adm_inventory_manager_fields for which you want the value
      * @param string $format Optional the format (is necessary for timestamps)
-     * @return array|string             Returns the value for the column
+     * @return array|string Returns the value for the column
+     * @throws Exception
      */
-    public function getProperty($fieldNameIntern, $column, $format = '')
+    public function getProperty(string $fieldNameIntern, string $column, string $format = '')
     {
         if (!array_key_exists($fieldNameIntern, $this->mItemFields)) {
             // if id-field not exists then return zero
@@ -145,7 +146,7 @@ class CItems
         }
 
         $value = $this->mItemFields[$fieldNameIntern]->getValue($column, $format);
-        if ($column === 'imf_value_list' && in_array($this->mItemFields[$fieldNameIntern]->getValue('imf_type'), ['DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'])) {
+        if ($column === 'imf_value_list' && in_array($this->mItemFields[$fieldNameIntern]->getValue('imf_type'), array('DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'))) {
             $value = $this->getListValue($fieldNameIntern, $value, $format);
         }
         return $value;
@@ -157,12 +158,12 @@ class CItems
      * @param int $fieldId Expects the @b imf_id of table @b adm_inventory_manager_fields
      * @param string $column The column name of @b adm_inventory_manager_fields for which you want the value
      * @param string $format Optional the format (is necessary for timestamps)
-     * @return string                   Returns the value for the column.
+     * @return string Returns the value for the column.
      */
-    public function getPropertyById($fieldId, $column, $format = ''): string
+    public function getPropertyById(int $fieldId, string $column, string $format = ''): string
     {
         foreach ($this->mItemFields as $field) {
-            if ((int)$field->getValue('imf_id') === (int)$fieldId) {
+            if ((int)$field->getValue('imf_id') === $fieldId) {
                 return $field->getValue($column, $format);
             }
         }
@@ -176,9 +177,10 @@ class CItems
      * @param string $fieldNameIntern Expects the @b imf_name_intern of table @b adm_inventory_manager_fields
      * @param string $value The value to be formatted
      * @param string $format Optional the format (is necessary for timestamps)
-     * @return array                    Returns an array with the list values for the given field name intern
+     * @return array Returns an array with the list values for the given field name intern
+     * @throws Exception
      */
-    protected function getListValue($fieldNameIntern, $value, $format): array
+    protected function getListValue(string $fieldNameIntern, string $value, string $format): array
     {
         $arrListValuesWithItems = array(); // array with list values and items that represents the internal value
 
@@ -188,12 +190,12 @@ class CItems
 
         foreach ($arrListValues as $item => &$listValue) {
             if ($this->mItemFields[$fieldNameIntern]->getValue('imf_type') === 'RADIO_BUTTON') {
-                // if value is imagefile or imageurl then show image
+                // if value is image file or image url then show image
                 if (strpos(strtolower($listValue), '.png') > 0 || strpos(strtolower($listValue), '.jpg') > 0) {
-                    // if value is imagefile or imageurl then show image
+                    // if value is image file or image url then show image
                     if (Image::isFontAwesomeIcon($listValue)
                         || StringUtils::strContains($listValue, '.png', false) || StringUtils::strContains($listValue, '.jpg', false)) {
-                        // if there is imagefile and text separated by | then explode them
+                        // if there is image file and text separated by | then explode them
                         if (StringUtils::strContains($listValue, '|')) {
                             list($listValueImage, $listValueText) = explode('|', $listValue);
                         } else {
@@ -216,6 +218,8 @@ class CItems
                         }
                     }
                 }
+            } elseif ($this->mItemFields[$fieldNameIntern]->getValue('imf_type') === 'DATE_INTERVAL') {
+                $listValue = trim(explode('|',  $listValue)[0]);
             }
 
             // if text is a translation-id then translate it
@@ -233,10 +237,11 @@ class CItems
      *
      * @param string $fieldNameIntern Internal item field name of the field that should be html formatted
      * @param string|int $value The value that should be formatted must be committed so that layout
-     *                                  is also possible for values that aren't stored in database
-     * @return string                   Returns an html formatted string that considered the profile field settings
+     *                          is also possible for values that aren't stored in database
+     * @return string Returns a html formatted string that considered the profile field settings
+     * @throws Exception
      */
-    public function getHtmlValue($fieldNameIntern, $value): string
+    public function getHtmlValue(string $fieldNameIntern, $value): string
     {
         global $gSettingsManager;
 
@@ -252,37 +257,36 @@ class CItems
             $imfType = $this->mItemFields[$fieldNameIntern]->getValue('imf_type');
             switch ($imfType) {
                 case 'CHECKBOX':
-                    $htmlValue = $value == 1 ? '<span class="fa-stack">
-                                                    <i class="fas fa-square-full fa-stack-1x"></i>
-                                                    <i class="fas fa-check-square fa-stack-1x fa-inverse"></i>
-                                                </span>'
-                        : '<span class="fa-stack">
-                                                    <i class="fas fa-square-full fa-stack-1x"></i>
-                                                    <i class="fas fa-square fa-stack-1x fa-inverse"></i>
-                                                </span>';
+                    $htmlValue = $value == 1 ? '
+                            <span class="fa-stack">
+                                <i class="fas fa-square-full fa-stack-1x"></i>
+                                <i class="fas fa-check-square fa-stack-1x fa-inverse"></i>
+                            </span>'
+                        : ' <span class="fa-stack">
+                                <i class="fas fa-square-full fa-stack-1x"></i>
+                                <i class="fas fa-square fa-stack-1x fa-inverse"></i>
+                            </span>';
                     break;
 
                 case 'DATE':
-                    if ($value !== '') {
-                        // date must be formatted
-                        if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
-                            //check if date is datetime or only date
-                            if (strpos($value, ' ') === false) {
-                                $value .= ' 00:00';
-                            }
-                            $date = \DateTime::createFromFormat('Y-m-d H:i', $value);
-                            if ($date instanceof \DateTime) {
-                                $htmlValue = $date->format($gSettingsManager->getString('system_date') . ' ' . $gSettingsManager->getString('system_time'));
-                            }
-                        } else {
-                            // check if date is date or datetime
-                            if (strpos($value, ' ') !== false) {
-                                $value = substr($value, 0, 10);
-                            }
-                            $date = \DateTime::createFromFormat('Y-m-d', $value);
-                            if ($date instanceof \DateTime) {
-                                $htmlValue = $date->format($gSettingsManager->getString('system_date'));
-                            }
+                    // date must be formatted
+                    if ($this->pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
+                        //check if date is datetime or only date
+                        if (strpos($value, ' ') === false) {
+                            $value .= ' 00:00';
+                        }
+                        $date = DateTime::createFromFormat('Y-m-d H:i', $value);
+                        if ($date instanceof DateTime) {
+                            $htmlValue = $date->format($gSettingsManager->getString('system_date') . ' ' . $gSettingsManager->getString('system_time'));
+                        }
+                    } else {
+                        // check if date is date or datetime
+                        if (strpos($value, ' ') !== false) {
+                            $value = substr($value, 0, 10);
+                        }
+                        $date = DateTime::createFromFormat('Y-m-d', $value);
+                        if ($date instanceof DateTime) {
+                            $htmlValue = $date->format($gSettingsManager->getString('system_date'));
                         }
                     }
                     break;
@@ -291,27 +295,26 @@ class CItems
                 case 'RADIO_BUTTON':
                 case 'DATE_INTERVAL':
                     $arrListValuesWithItems = array(); // array with list values and items that represents the internal value
-
+                    $filteredSelectionItems = array();
                     // first replace windows new line with unix new line and then create an array
                     $valueFormatted = str_replace("\r\n", "\n", $this->mItemFields[$fieldNameIntern]->getValue('imf_value_list', 'database'));
                     $arrListValues = explode("\n", $valueFormatted);
 
-                    //Clean up control-chars from maintenance scheudule
-                    if($imfType == 'DATE_INTERVAL'){
+                    //Clean up control-chars from maintenance schedule
+                    if ($imfType == 'DATE_INTERVAL') {
                         $cleanArrListValues = array();
                         foreach ($arrListValues as $line) {
-                            if(substr($line,0,1) != '#'){
-                                array_push($cleanArrListValues, explode('|', $line)[0]);
-                            }
+                            $cleanArrListValues[] = trim(explode('|', $line)[0]);
+                            $filteredSelectionItems[] = trim(explode('|', $line)[1]);
                         }
                         $arrListValues = $cleanArrListValues;
                     }
 
                     foreach ($arrListValues as $index => $listValue) {
-                        // if value is imagefile or imageurl then show image
+                        // if value is image file or image url then show image
                         if ($imfType === 'RADIO_BUTTON' && (Image::isFontAwesomeIcon($listValue)
                                 || StringUtils::strContains($listValue, '.png', false) || StringUtils::strContains($listValue, '.jpg', false))) {
-                            // if there is imagefile and text separated by | then explode them
+                            // if there is image file and text separated by | then explode them
                             if (StringUtils::strContains($listValue, '|')) {
                                 list($listValueImage, $listValueText) = explode('|', $listValue);
                             } else {
@@ -324,6 +327,46 @@ class CItems
 
                             // get html snippet with image tag
                             $listValue = Image::getIconHtml($listValueImage, $listValueText);
+                        } elseif ($imfType === 'DATE_INTERVAL') {
+                            $selectedInterval = $value;
+                            $listValue = '';
+
+                            $dateIntervalFieldId = $this->getProperty($fieldNameIntern, 'imf_date_interval_field', 'database');
+                            if (isset($this->mItemData[$dateIntervalFieldId])) {
+                                $dateInternalFieldName = $this->mItemData[$dateIntervalFieldId]->getValue('imf_name_intern');
+
+                                //use part after # as internal_name for last test date
+                                $compDate1 = date_create($this->getValue($dateInternalFieldName, 'database'));
+                                $compDate2 = date_create();
+
+                                //Calculate future test date
+                                $dateAdditionSplit = array();
+                                if (isset($filteredSelectionItems[$selectedInterval - 1])) {
+                                    preg_match("/^\s*(\d*)([wymd])\s*$/", $filteredSelectionItems[$selectedInterval - 1], $dateAdditionSplit);
+                                }
+
+                                if (isset($dateAdditionSplit[1]) && isset($dateAdditionSplit[2]) && is_numeric($dateAdditionSplit[1])) {
+                                    switch ($dateAdditionSplit[2]) {
+                                        case 'w':
+                                            date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'W'));
+                                            break;
+                                        case 'm':
+                                            date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'M'));
+                                            break;
+                                        case 'y':
+                                            date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'Y'));
+                                            break;
+                                        case 'd':
+                                        default:
+                                            date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'D'));
+                                            break;
+                                    }
+
+                                    //Compare last test date with future date and output days
+                                    $dateDiff = date_diff($compDate2, $compDate1);
+                                    $listValue = $dateDiff->format('%R%a');
+                                }
+                            }
                         }
 
                         // if text is a translation-id then translate it
@@ -362,19 +405,20 @@ class CItems
     /**
      * Returns the item value for this column
      *
-     * format = 'html'  :               returns the value in html-format if this is necessary for that field type
-     * format = 'database' :            returns the value that is stored in database with no format applied
+     * format = 'html' : returns the value in html-format if this is necessary for that field type
+     * format = 'database' : returns the value that is stored in database with no format applied
      * @param string $fieldNameIntern Expects the @b imf_name_intern of table @b adm_inventory_manager_fields
      * @param string $format Returns the field value in a special format @b text, @b html, @b database
-     *                                  or datetime (detailed description in method description)
-     * @return string|int|bool          Returns the value for the column
+     *                       or datetime (detailed description in method description)
+     * @return string|int|bool Returns the value for the column
+     * @throws Exception
      */
-    public function getValue($fieldNameIntern, $format = '')
+    public function getValue(string $fieldNameIntern, string $format = '')
     {
         global $gSettingsManager;
         $value = '';
 
-        // exists a item field with that name ?
+        // exists an item field with that name ?
         // then check if item has a data object for this field and then read value of this object
         if (array_key_exists($fieldNameIntern, $this->mItemFields)
             && array_key_exists($this->mItemFields[$fieldNameIntern]->getValue('imf_id'), $this->mItemData)) {
@@ -393,13 +437,13 @@ class CItems
                             if (strpos($value, ' ') === false) {
                                 $value .= ' 00:00';
                             }
-                            $date = \DateTime::createFromFormat('Y-m-d H:i', $value);
+                            $date = DateTime::createFromFormat('Y-m-d H:i', $value);
                         } else {
                             // check if date is date or datetime
                             if (strpos($value, ' ') !== false) {
                                 $value = substr($value, 0, 10);
                             }
-                            $date = \DateTime::createFromFormat('Y-m-d', $value);
+                            $date = DateTime::createFromFormat('Y-m-d', $value);
                         }
 
                         if ($date === false) {
@@ -421,6 +465,7 @@ class CItems
 
                 case 'DROPDOWN':
                 case 'RADIO_BUTTON':
+                case 'DATE_INTERVAL':
                     // the value in db is only the position, now search for the text
                     if ($value > 0 && $format !== 'html') {
                         $valueList = $this->mItemFields[$fieldNameIntern]->getValue('imf_value_list', $format);
@@ -444,9 +489,9 @@ class CItems
      * The values will be stored in database without any inspections!
      *
      * @param bool|null $newValue If set, then the new value will be stored in @b showFormerItems.
-     * @return bool                     Returns the current value of @b showFormerItems
+     * @return bool Returns the current value of @b showFormerItems
      */
-    public function showFormerItems($newValue = null): bool
+    public function showFormerItems(?bool $newValue = null): bool
     {
         if ($newValue !== null) {
             $this->showFormerItems = $newValue;
@@ -482,10 +527,11 @@ class CItems
      *
      * @param int $itemId The id of the item for which the item data should be read.
      * @param int $organizationId The id of the organization for which the item fields
-     *                                  structure should be read if necessary.
+     *                            structure should be read if necessary.
      * @return void
+     * @throws Exception
      */
-    public function readItemData($itemId, $organizationId): void
+    public function readItemData(int $itemId, int $organizationId): void
     {
         if (count($this->mItemFields) === 0) {
             $this->readItemFields($organizationId);
@@ -517,8 +563,9 @@ class CItems
 
     /**
      * Save data of every item field
-     *
+     * @thorws AdmException
      * @return void
+     * @throws AdmException
      */
     public function saveItemData(): void
     {
@@ -556,11 +603,12 @@ class CItems
      * and adds an object for each field structure to the @b mItemFields array.
      *
      * @param int $organizationId The id of the organization for which the item fields
-     *                                  structure should be read.
+     *                            structure should be read.
      * @param string $orderBy The field by which the item fields should be sorted
      * @return void
+     * @throws Exception
      */
-    public function readItemFields($organizationId, $orderBy = 'imf_id'): void
+    public function readItemFields(int $organizationId, string $orderBy = 'imf_id'): void
     {
         // first initialize existing data
         $this->mItemFields = array();
@@ -588,10 +636,10 @@ class CItems
      *
      * @param int $organizationId The id of the organization for which the items should be read.
      * @return void
+     * @throws Exception
      */
-    public function readItems($organizationId): void
+    public function readItems(int $organizationId): void
     {
-        global $gDbType;
         // first initialize existing data
         $this->items = array();
 
@@ -600,12 +648,12 @@ class CItems
             $sqlWhereCondition .= 'AND imi_former = false';
         }
 
-        $sql = 'SELECT DISTINCT imi_id, imi_former FROM '.TBL_INVENTORY_MANAGER_ITEMS.'
-                INNER JOIN '.TBL_INVENTORY_MANAGER_DATA.'
+        $sql = 'SELECT DISTINCT imi_id, imi_former FROM ' . TBL_INVENTORY_MANAGER_ITEMS . '
+                INNER JOIN ' . TBL_INVENTORY_MANAGER_DATA . '
                     ON imd_imi_id = imi_id
                 WHERE imi_org_id IS NULL
                 OR imi_org_id = ?
-                '.$sqlWhereCondition.';';
+                ' . $sqlWhereCondition . ';';
         $statement = $this->mDb->queryPrepared($sql, array($organizationId));
 
         while ($row = $statement->fetch()) {
@@ -621,8 +669,9 @@ class CItems
      * @param int $userId The id of the user for which the items should be read.
      * @param array $fieldNames The internal unique profile field names for which the items should be read
      * @return void
+     * @throws Exception
      */
-    public function readItemsByUser($organizationId, $userId, $fieldNames = array('KEEPER')): void
+    public function readItemsByUser(int $organizationId, int $userId, array $fieldNames = array('KEEPER')): void
     {
         // first initialize existing data
         $this->items = array();
@@ -664,9 +713,10 @@ class CItems
      *
      * @param string $fieldNameIntern The internal unique profile field name
      * @param mixed $newValue The new value that should be stored in the database field
-     * @return bool                     Returns @b true if the value is stored in the current object and @b false if a check failed
+     * @return bool Returns @b true if the value is stored in the current object and @b false if a check failed
+     * @throws AdmException
      */
-    public function setValue($fieldNameIntern, $newValue): bool
+    public function setValue(string $fieldNameIntern, $newValue): bool
     {
         global $gSettingsManager;
 
@@ -696,7 +746,7 @@ class CItems
                     if (strpos($newValue, ' ') === false) {
                         $newValue .= ' 00:00';
                     }
-                    $date = \DateTime::createFromFormat('Y-m-d H:i', $newValue);
+                    $date = DateTime::createFromFormat('Y-m-d H:i', $newValue);
                     if ($date !== false) {
                         $newValue = $date->format('Y-m-d H:i');
                     }
@@ -705,7 +755,7 @@ class CItems
                     if (strpos($newValue, ' ') !== false) {
                         $newValue = substr($newValue, 0, 10);
                     }
-                    $date = \DateTime::createFromFormat('Y-m-d', $newValue);
+                    $date = DateTime::createFromFormat('Y-m-d', $newValue);
                     if ($date !== false) {
                         $newValue = $date->format('Y-m-d');
                     }
@@ -717,8 +767,6 @@ class CItems
         if (strcmp($oldFieldValue, $newValue) === 0) {
             return true;
         }
-
-        $returnCode = false;
 
         if (!array_key_exists($imfId, $this->mItemData)) {
             $this->mItemData[$imfId] = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_DATA, 'imd');
@@ -746,8 +794,9 @@ class CItems
      *
      * @param int $organizationId The id of the organization for which the items should be read.
      * @return int mItemId
+     * @throws AdmException
      */
-    public function getNewItemId($organizationId): int
+    public function getNewItemId(int $organizationId): int
     {
         // If an error occurred while generating an item, there is an ItemId but no data for that item.
         // the following routine deletes these unused ItemIds
@@ -783,8 +832,9 @@ class CItems
      * @param int $itemId The id of the item that should be deleted
      * @param int $organizationId The id of the organization from which the items should be deleted
      * @return void
+     * @throws Exception
      */
-    public function deleteItem($itemId, $organizationId): void
+    public function deleteItem(int $itemId, int $organizationId): void
     {
         $sql = 'DELETE FROM ' . TBL_INVENTORY_MANAGER_LOG . ' WHERE iml_imi_id = ?;';
         $this->mDb->queryPrepared($sql, array($itemId));
@@ -804,8 +854,9 @@ class CItems
      * @param int $itemId The ID of the item to be marked as former.
      * @param int $organizationId The id of the organization from which the items should be marked as former
      * @return void
+     * @throws Exception
      */
-    public function makeItemFormer($itemId, $organizationId): void
+    public function makeItemFormer(int $itemId, int $organizationId): void
     {
         $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_ITEMS . ' SET imi_former = 1 WHERE imi_id = ? AND (imi_org_id = ? OR imi_org_id IS NULL);';
         $this->mDb->queryPrepared($sql, array($itemId, $organizationId));
@@ -819,8 +870,9 @@ class CItems
      * @param int $itemId The ID of the item to be marked as no longer former.
      * @param int $organizationId The id of the organization from which the items should be marked as no longer former.
      * @return void
+     * @throws Exception
      */
-    public function undoItemFormer($itemId, $organizationId): void
+    public function undoItemFormer(int $itemId, int $organizationId): void
     {
         $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_ITEMS . ' SET imi_former = 0 WHERE imi_id = ? AND (imi_org_id = ? OR imi_org_id IS NULL);';
         $this->mDb->queryPrepared($sql, array($itemId, $organizationId));
@@ -844,12 +896,12 @@ class CItems
      * **system_notifications_role**. The email contains the item name, the name of the current user,
      * the timestamp, and the details of the changes.
      *
-     * @param array $importData The data of the imported items
+     * @param array|null $importData The data of the imported items
      * @return bool                     Returns **true** if the notification was sent
      * @throws AdmException             'SYS_EMAIL_NOT_SEND'
      * @throws Exception
      */
-    public function sendNotification($importData = null): bool
+    public function sendNotification(?array $importData = null): bool
     {
         global $gCurrentUser, $gSettingsManager, $gL10n, $gDb, $gCurrentOrgId;
 
@@ -878,7 +930,7 @@ class CItems
                 return false;
             }
 
-            // if items were imported then sent a message with all itemnames, the user and the date
+            // if items were imported then sent a message with all item names, the user and the date
             // if item was created or changed then sent a message with all changed fields in a table
             // if item was deleted or made former then sent a message with the item name, the user and the date
             if ($this->itemImported || $this->itemCreated || $this->itemChanged) {
@@ -923,8 +975,8 @@ class CItems
 
                                     $changes[] = array(
                                         $key,
-                                        isset($users[$value['oldValue']]) ? $users[$value['oldValue']] : $textOld,
-                                        isset($users[$value['newValue']]) ? $users[$value['newValue']] : $textNew
+                                        $users[$value['oldValue']] ?? $textOld,
+                                        $users[$value['newValue']] ?? $textNew
                                     );
                                 } elseif ($key === 'LAST_RECEIVER') {
                                     $sql = getSqlOrganizationsUsersCompletePIM();
@@ -936,8 +988,8 @@ class CItems
 
                                     $changes[] = array(
                                         $key,
-                                        isset($users[$value['oldValue']]) ? $users[$value['oldValue']] : $value['oldValue'],
-                                        isset($users[$value['newValue']]) ? $users[$value['newValue']] : $value['newValue']
+                                        $users[$value['oldValue']] ?? $value['oldValue'],
+                                        $users[$value['newValue']] ?? $value['newValue']
                                     );
                                 } elseif ($key === 'IN_INVENTORY') {
                                     $changes[] = array(
@@ -948,8 +1000,8 @@ class CItems
                                 } elseif ($listValues !== '') {
                                     $changes[] = array(
                                         $key,
-                                        isset($listValues[$value['oldValue']]) ? $listValues[$value['oldValue']] : '',
-                                        isset($listValues[$value['newValue']]) ? $listValues[$value['newValue']] : ''
+                                        $listValues[$value['oldValue']] ?? '',
+                                        $listValues[$value['newValue']] ?? ''
                                     );
                                 } else {
                                     $changes[] = array($key, $value['oldValue'], $value['newValue']);
@@ -985,7 +1037,7 @@ class CItems
 
                 $messageUserText = 'SYS_CHANGED_BY';
                 $messageDateText = 'SYS_CHANGED_AT';
-                
+
                 $message = $gL10n->get($messageHead) . '<br/><br/>'
                     . '<b>' . convlanguagePIM($itemData->getProperty('ITEMNAME', 'imf_name')) . ':</b> ' . $this->getValue('ITEMNAME', 'html') . '<br/>'
                     . '<b>' . $gL10n->get($messageUserText) . ':</b> ' . $gCurrentUser->getValue('FIRST_NAME') . ' ' . $gCurrentUser->getValue('LAST_NAME') . '<br/>'

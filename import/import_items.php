@@ -1,4 +1,5 @@
 <?php
+
 /**
  ***********************************************************************************************
  * Import items from a file
@@ -7,8 +8,8 @@
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
- * 
- * 
+ *
+ *
  * Methods:
  * compareArrays(array $array1, array $array2)      : Compares two arrays to determine if they are
  *                                                    different based on specific criteria
@@ -87,11 +88,11 @@ foreach ($items->items as $fieldId => $value) {
     foreach ($items->mItemData as $key => $itemData) {
         $itemValue = $itemData->getValue('imd_value');
         if ($itemData->getValue('imf_name_intern') === 'KEEPER' || $itemData->getValue('imf_name_intern') === 'LAST_RECEIVER' ||
-                $itemData->getValue('imf_name_intern') === 'IN_INVENTORY' || $itemData->getValue('imf_name_intern') === 'RECEIVED_ON' ||
-                $itemData->getValue('imf_name_intern') === 'RECEIVED_BACK_ON') {
+            $itemData->getValue('imf_name_intern') === 'IN_INVENTORY' || $itemData->getValue('imf_name_intern') === 'RECEIVED_ON' ||
+            $itemData->getValue('imf_name_intern') === 'RECEIVED_BACK_ON') {
             continue;
         }
-        
+
         if ($itemData->getValue('imf_name_intern') === 'CATEGORY') {
             $imfNameIntern = $itemData->getValue('imf_name_intern');
             // get value list of the item field
@@ -112,11 +113,10 @@ foreach ($items->items as $fieldId => $value) {
         break;
     }
 
-    foreach($assignedFieldColumn as $key => $value) {
-        $ret = compareArrays($value, $itemValues);
+    foreach ($assignedFieldColumn as $key => $values) {
+        $ret = compareArrays($values, $itemValues);
         if (!$ret) {
             unset($assignedFieldColumn[$key]);
-            continue;
         }
     }
 }
@@ -126,31 +126,27 @@ $valueList = array();
 $importedItemData = array();
 
 foreach ($assignedFieldColumn as $row => $values) {
-    foreach ($items->mItemFields as $fields){
+    foreach ($items->mItemFields as $fields) {
         $imfNameIntern = $fields->getValue('imf_name_intern');
 
-        if (isset($values[$imfNameIntern]))
-        {
-            if ($fields->getValue('imf_type')=='CHECKBOX') {
+        if (isset($values[$imfNameIntern])) {
+            if ($fields->getValue('imf_type') == 'CHECKBOX') {
                 if ($values[$imfNameIntern] === $gL10n->get('SYS_YES')) {
                     $values[$imfNameIntern] = 1;
-                }
-                else {
+                } else {
                     $values[$imfNameIntern] = 0;
                 }
             }
 
-            if($imfNameIntern === 'ITEMNAME') {
+            if ($imfNameIntern === 'ITEMNAME') {
                 if ($values[$imfNameIntern] === '') {
                     break;
                 }
                 $val = $values[$imfNameIntern];
-            }
-            elseif($imfNameIntern === 'KEEPER') {
+            } elseif ($imfNameIntern === 'KEEPER') {
                 if (substr_count($values[$imfNameIntern], ',') === 1) {
                     $sql = getSqlOrganizationsUsersShortPIM();
-                }
-                else {
+                } else {
                     $sql = getSqlOrganizationsUsersCompletePIM();
                 }
 
@@ -163,12 +159,10 @@ foreach ($assignedFieldColumn as $row => $values) {
                     }
                     $val = '-1';
                 }
-            }
-            elseif($imfNameIntern === 'LAST_RECEIVER') {
+            } elseif ($imfNameIntern === 'LAST_RECEIVER') {
                 if (substr_count($values[$imfNameIntern], ',') === 1) {
                     $sql = getSqlOrganizationsUsersShortPIM();
-                }
-                else {
+                } else {
                     $sql = getSqlOrganizationsUsersCompletePIM();
                 }
 
@@ -181,8 +175,7 @@ foreach ($assignedFieldColumn as $row => $values) {
                     }
                     $val = $values[$imfNameIntern];
                 }
-            }
-            elseif($imfNameIntern === 'CATEGORY') {
+            } elseif ($imfNameIntern === 'CATEGORY') {
                 // Merge the arrays
                 $valueList = array_merge($items->getProperty($imfNameIntern, 'imf_value_list'), $valueList);
                 // Remove duplicates
@@ -195,12 +188,11 @@ foreach ($assignedFieldColumn as $row => $values) {
                 if ($val === false) {
                     if ($values[$imfNameIntern] == '') {
                         $val = array_search($valueList[1], $valueList);
-                    }
-                    else {
+                    } else {
                         $itemField = new TableAccess($gDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf');
                         $itemField->readDataById($items->mItemFields[$imfNameIntern]->getValue('imf_id'));
                         $valueList[] = $values[$imfNameIntern];
-                        $itemField->setValue("imf_value_list", $string = implode("\n", $valueList));
+                        $itemField->setValue('imf_value_list', $string = implode("\n", $valueList));
 
                         // Save data to the database
                         $returnCode = $itemField->save();
@@ -208,21 +200,19 @@ foreach ($assignedFieldColumn as $row => $values) {
                         if ($returnCode < 0) {
                             $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
                             // => EXIT
-                        }
-                        else {
+                        } else {
                             $val = array_search($values[$imfNameIntern], $valueList);
                         }
                     }
                 }
-            }
-            elseif($imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON') {
+            } elseif ($imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON') {
                 $val = $values[$imfNameIntern];
                 if ($val !== '') {
                     // date must be formatted
                     if ($pPreferences->config['Optionen']['field_date_time_format'] === 'datetime') {
                         //check if date is datetime or only date
                         if (strpos($val, ' ') === false) {
-                            $val .=  '00:00';
+                            $val .= '00:00';
                         }
                         // check if date is wrong formatted
                         $dateObject = DateTime::createFromFormat('d.m.Y H:i', $val);
@@ -233,10 +223,9 @@ foreach ($assignedFieldColumn as $row => $values) {
                         // check if date is right formatted
                         $date = DateTime::createFromFormat('Y-m-d H:i', $val);
                         if ($date instanceof DateTime) {
-                            $val = $date->format($gSettingsManager->getString('system_date').' '.$gSettingsManager->getString('system_time'));
+                            $val = $date->format($gSettingsManager->getString('system_date') . ' ' . $gSettingsManager->getString('system_time'));
                         }
-                    }
-                    else {
+                    } else {
                         // check if date is date or datetime
                         if (strpos($val, ' ') !== false) {
                             $val = substr($val, 0, 10);
@@ -254,29 +243,26 @@ foreach ($assignedFieldColumn as $row => $values) {
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 $val = $values[$imfNameIntern];
             }
-        }
-        else {
+        } else {
             $val = '';
         }
-        $_POST['imf-' . $fields->getValue('imf_id')] = '' . $val . '';
-        $ItemData[] = array($items->mItemFields[$imfNameIntern]->getValue('imf_name') => array('oldValue' => "", 'newValue' => $val));
+        $_POST['imf-' . $fields->getValue('imf_id')] = '' . $val;
+        $ItemData[] = array($items->mItemFields[$imfNameIntern]->getValue('imf_name') => array('oldValue' => '', 'newValue' => $val));
     }
 
     $importedItemData[] = $ItemData;
     $ItemData = array();
     if (count($assignedFieldColumn) > 0) {
- 
         // save item
         $_POST['redirect'] = 0;
         $_POST['imported'] = 1;
         require(__DIR__ . '/../items/items_save.php');
         $importSuccess = true;
         unset($_POST);
-    }   
+    }
 }
 
 // Send notification to all users
@@ -286,14 +272,13 @@ $gNavigation->deleteLastUrl();
 
 // Go back to item view
 if ($gNavigation->count() > 2) {
-	$gNavigation->deleteLastUrl();
+    $gNavigation->deleteLastUrl();
 }
 
- if ($importSuccess) {
+if ($importSuccess) {
     $gMessage->setForwardUrl($gNavigation->getUrl(), 1000);
     $gMessage->show($gL10n->get('SYS_SAVE_DATA'));
-}
-else {
+} else {
     $gMessage->setForwardUrl($gNavigation->getUrl());
     $gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_NO_NEW_IMPORT_DATA'));
 }
@@ -301,13 +286,13 @@ else {
 /**
  * Compares two arrays to determine if they are different based on specific criteria
  *
- * @param array             $array1 The first array to compare
- * @param array             $array2 The second array to compare
+ * @param array $array1 The first array to compare
+ * @param array $array2 The second array to compare
  * @return bool             true if the arrays are different based on the criteria, otherwise false
  */
-function compareArrays(array $array1, array $array2) : bool
+function compareArrays(array $array1, array $array2): bool
 {
-    $array1 = array_filter($array1, function($key) {
+    $array1 = array_filter($array1, function ($key) {
         return $key !== 'KEEPER' && $key !== 'LAST_RECEIVER' && $key !== 'IN_INVENTORY' && $key !== 'RECEIVED_ON' && $key !== 'RECEIVED_BACK_ON';
     }, ARRAY_FILTER_USE_KEY);
 
@@ -315,7 +300,7 @@ function compareArrays(array $array1, array $array2) : bool
         if ($value === '') {
             continue;
         }
-        
+
         if (!in_array($value, $array2, true)) {
             return true;
         }

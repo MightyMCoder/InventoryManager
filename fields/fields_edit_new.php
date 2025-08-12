@@ -7,8 +7,8 @@
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
- * 
- * 
+ *
+ *
  * Parameters:
  * imf_id               : ID of the item field that should be edited
  * field_name           : Name of the field that should be set
@@ -46,7 +46,7 @@ if ($getimfId > 0) {
     $itemField->readDataById($getimfId);
 
     // Check if the field belongs to the current organization
-    if ($itemField->getValue('imf_org_id') > 0 && (int) $itemField->getValue('imf_org_id') !== (int) $gCurrentOrgId) {
+    if ($itemField->getValue('imf_org_id') > 0 && (int)$itemField->getValue('imf_org_id') !== (int)$gCurrentOrgId) {
         $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
     }
 }

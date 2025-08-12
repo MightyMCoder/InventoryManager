@@ -1,4 +1,5 @@
 <?php
+
 /**
  ***********************************************************************************************
  * InventoryManager
@@ -6,31 +7,31 @@
  * Version 1.1.8
  *
  * InventoryManager is an Admidio plugin for managing the inventory of an organisation.
- * 
+ *
  * Compatible with Admidio version 4.3
- * 
+ *
  * @see         https://github.com/MightyMCoder/InventoryManager/ The InventoryManager GitHub project
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License (https://github.com/MightyMCoder/InventoryManager/blob/master/LICENSE)
- * 
- * 
+ *
+ *
  * @note:
  *  - InventoryManager is based on KeyManager by rmbinder (https://github.com/rmbinder/KeyManager)
- * 
- * 
+ *
+ *
  * Parameters:
  * mode             : Output(html, print, csv-ms, csv-oo, pdf, pdfl, xlsx, ods)
  * filter_string    : general filter string
@@ -40,18 +41,14 @@
  *                    1 - show all items (also made to former)
  * same_side        : 0 - (Default) side was called by another side
  *                    1 - internal call of the side
- * 
- * 
- * Methods:
- * formatSpreadsheet($spreadsheet, $data, $containsHeadline)    : Format the spreadsheet
  ***********************************************************************************************
  */
 
 // PhpSpreadsheet namespaces
- use PhpOffice\PhpSpreadsheet\Spreadsheet;
- use PhpOffice\PhpSpreadsheet\Writer\Csv;
- use PhpOffice\PhpSpreadsheet\Writer\Ods;
- use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Ods;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 require_once(__DIR__ . '/../../adm_program/system/common.php');
 require_once(__DIR__ . '/common_function.php');
@@ -79,13 +76,12 @@ $sessionDefaults = array(
 // check if plugin need to be updated
 $pPreferences = new CConfigTablePIM();
 $pPreferences->checkForUpdate() ? $pPreferences->init() : $pPreferences->read();
-$disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'] ;
+$disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
 
 // check if user is authorized for preferences panel
 if (isUserAuthorizedForPreferencesPIM()) {
     $authorizedForPreferences = true;
-}
-else {
+} else {
     $authorizedForPreferences = false;
 }
 
@@ -95,9 +91,13 @@ foreach ($sessionDefaults as $key => $default) {
     }
 }
 
-$getMode = admFuncVariableIsValid($_GET, 'mode', 'string', array(
+$getMode = admFuncVariableIsValid(
+    $_GET,
+    'mode',
+    'string',
+    array(
         'defaultValue' => 'html',
-        'validValues' => ['csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx', 'ods']
+        'validValues' => array('csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx', 'ods')
     )
 );
 $getFilterString = admFuncVariableIsValid($_GET, 'filter_string', 'string');
@@ -113,8 +113,7 @@ if ($getSameSide) {
         'filter_keeper' => $getFilterKeeper,
         'show_all' => $getShowAll
     );
-}
-else {
+} else {
     $getFilterString = $_SESSION['pInventoryManager']['filter_string'];
     $getFilterCategory = $_SESSION['pInventoryManager']['filter_category'];
     $getFilterKeeper = $_SESSION['pInventoryManager']['filter_keeper'];
@@ -133,8 +132,8 @@ if ($pPreferences->config['Optionen']['add_date']) {
 }
 
 $modeSettings = array(
-    'csv-ms' => array('csv', ';', '"', 'iso-8859-1', null, null),   //mode, seperator, valueQuotes, charset, classTable, orientation
-    'csv-oo' => array('csv', ',', '"', 'utf-8', null , null),
+    'csv-ms' => array('csv', ';', '"', 'iso-8859-1', null, null),   //mode, separator, valueQuotes, charset, classTable, orientation
+    'csv-oo' => array('csv', ',', '"', 'utf-8', null, null),
     'pdf' => array('pdf', null, null, null, 'table', 'P'),
     'pdfl' => array('pdf', null, null, null, 'table', 'L'),
     'html' => array('html', null, null, null, 'table table-condensed', null),
@@ -151,9 +150,9 @@ if (isset($modeSettings[$getMode])) {
 // Maybe there are hidden fields.
 $arrValidColumns = array();
 
-$csvStr         = '';                   // CSV file as string
-$header         = array();              //'xlsx'
-$rows           = array();              //'xlsx'
+$csvStr = '';                   // CSV file as string
+$header = array();              //'xlsx'
+$rows = array();              //'xlsx'
 $strikethroughs = array();              //'xlsx'
 
 // we are in keeper edit mode
@@ -161,7 +160,7 @@ if (!$authorizedForPreferences) {
     $keeperItems = new CItems($gDb, $gCurrentOrgId);
     $keeperItems->showFormerItems(true);
     $keeperItems->readItemsByUser($gCurrentOrgId, $gCurrentUser->getValue('usr_id'));
-    
+
     if (count($keeperItems->items) > 0 && !$getSameSide) {
         $getShowAll = true;
         $getFilterKeeper = (int)$gCurrentUser->getValue('usr_id');
@@ -173,7 +172,7 @@ $title = $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER');
 $headline = $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER');
 
 // if html mode and last url was not a list view then save this url to navigation stack
-if ($gNavigation->count() === 0 || ($getMode == 'html' && strpos($gNavigation->getUrl(), 'inventory_manager.php') === false)) {
+if ($gNavigation->count() === 0 || ($getMode == 'html' && !str_contains($gNavigation->getUrl(), 'inventory_manager.php'))) {
     $gNavigation->addStartUrl(CURRENT_URL, $headline, 'fa-warehouse');
 }
 
@@ -237,10 +236,10 @@ switch ($getMode) {
         $datatable = true;
         $hoverRows = true;
 
-        $inputFilterStringLabel = '<i class="fas fa-search" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_GENERAL').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_GENERAL').'"></i>';
-        $selectBoxCategoryLabel ='<i class="fas fa-list" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_CATEGORY').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_CATEGORY').'"></i>';
-        $selectBoxKeeperLabel = '<i class="fas fa-user" alt="'.$gL10n->get('PLG_INVENTORY_MANAGER_KEEPER').'" title="'.$gL10n->get('PLG_INVENTORY_MANAGER_KEEPER').'"></i>';
-        
+        $inputFilterStringLabel = '<i class="fas fa-search" alt="' . $gL10n->get('PLG_INVENTORY_MANAGER_GENERAL') . '" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_GENERAL') . '"></i>';
+        $selectBoxCategoryLabel = '<i class="fas fa-list" alt="' . $gL10n->get('PLG_INVENTORY_MANAGER_CATEGORY') . '" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_CATEGORY') . '"></i>';
+        $selectBoxKeeperLabel = '<i class="fas fa-user" alt="' . $gL10n->get('PLG_INVENTORY_MANAGER_KEEPER') . '" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_KEEPER') . '"></i>';
+
         // create html page object
         $page = new HtmlPage('plg-inventory-manager-main-html');
         $page->setTitle($title);
@@ -248,41 +247,41 @@ switch ($getMode) {
 
         $page->addJavascript('
             $("#filter_category").change(function () {
-                self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                            'mode'              => 'html',
-                            'filter_string'     => $getFilterString,
-                            'filter_keeper'   => $getFilterKeeper,
-                            'same_side'         => true,
-                            'show_all'          => $getShowAll
-                        )
-                    ) . '&filter_category=" + $(this).val();
+                self.location.href = "' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                    'mode' => 'html',
+                    'filter_string' => $getFilterString,
+                    'filter_keeper' => $getFilterKeeper,
+                    'same_side' => true,
+                    'show_all' => $getShowAll
+                )
+            ) . '&filter_category=" + $(this).val();
             });
             $("#filter_keeper").change(function () {
-                self.location.href = "'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                            'mode'              => 'html',
-                            'filter_string'     => $getFilterString,
-                            'filter_category'   => $getFilterCategory,
-                            'same_side'         => true,
-                            'show_all'          => $getShowAll
-                        )
-                    ) . '&filter_keeper=" + $(this).val();
+                self.location.href = "' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                    'mode' => 'html',
+                    'filter_string' => $getFilterString,
+                    'filter_category' => $getFilterCategory,
+                    'same_side' => true,
+                    'show_all' => $getShowAll
+                )
+            ) . '&filter_keeper=" + $(this).val();
             });
             $("#menu_item_lists_print_view").click(function() {
-                window.open("'.SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                            'filter_string'     => $getFilterString,
-                            'filter_category'   => $getFilterCategory, 
-                            'filter_keeper'   => $getFilterKeeper,
-                            'show_all'          => $getShowAll,  
-                            'mode'              => 'print'
-                        )
-                    ) . '", "_blank"
+                window.open("' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                    'filter_string' => $getFilterString,
+                    'filter_category' => $getFilterCategory,
+                    'filter_keeper' => $getFilterKeeper,
+                    'show_all' => $getShowAll,
+                    'mode' => 'print'
+                )
+            ) . '", "_blank"
                 );
             });
             $("#show_all").change(function() {
-                $("#navbar_inventorylist_form").submit();
+                $("#navbar_inventory_list_form").submit();
             });
             $("#filter_string").change(function() {
-                $("#navbar_inventorylist_form").submit();
+                $("#navbar_inventory_list_form").submit();
             });',
             true
         );
@@ -290,157 +289,156 @@ switch ($getMode) {
         // links to print and exports
         $page->addPageFunctionsMenuItem('menu_item_lists_print_view', $gL10n->get('SYS_PRINT_PREVIEW'), 'javascript:void(0);', 'fa-print');
         $page->addPageFunctionsMenuItem('menu_item_lists_export', $gL10n->get('SYS_EXPORT_TO'), '#', 'fa-file-download');
-        $page->addPageFunctionsMenuItem('menu_item_lists_xlsx', $gL10n->get('SYS_MICROSOFT_EXCEL').' (*.xlsx)',
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                    'filter_string'     => $getFilterString,
-                    'filter_category'   => $getFilterCategory,
-                    'filter_keeper'   => $getFilterKeeper,
-                    'show_all'          => $getShowAll,
-                    'mode'              => 'xlsx'
+        $page->addPageFunctionsMenuItem('menu_item_lists_xlsx', $gL10n->get('SYS_MICROSOFT_EXCEL') . ' (*.xlsx)',
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                    'filter_string' => $getFilterString,
+                    'filter_category' => $getFilterCategory,
+                    'filter_keeper' => $getFilterKeeper,
+                    'show_all' => $getShowAll,
+                    'mode' => 'xlsx'
                 )
             ),
             'fa-file-excel', 'menu_item_lists_export'
         );
         $page->addPageFunctionsMenuItem('menu_item_lists_ods', $gL10n->get('SYS_ODF_SPREADSHEET'),
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                    'filter_string'     => $getFilterString,
-                    'filter_category'   => $getFilterCategory,
-                    'filter_keeper'   => $getFilterKeeper,
-                    'show_all'          => $getShowAll,
-                    'mode'              => 'ods'
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                    'filter_string' => $getFilterString,
+                    'filter_category' => $getFilterCategory,
+                    'filter_keeper' => $getFilterKeeper,
+                    'show_all' => $getShowAll,
+                    'mode' => 'ods'
                 )
             ),
             'fa-file-alt', 'menu_item_lists_export'
-        );    
+        );
         $page->addPageFunctionsMenuItem('menu_item_lists_csv_ms', $gL10n->get('SYS_COMMA_SEPARATED_FILE'),
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                    'filter_string'     => $getFilterString,
-                    'filter_category'   => $getFilterCategory,
-                    'filter_keeper'   => $getFilterKeeper,
-                    'show_all'          => $getShowAll,
-                    'mode'              => 'csv-ms'
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                    'filter_string' => $getFilterString,
+                    'filter_category' => $getFilterCategory,
+                    'filter_keeper' => $getFilterKeeper,
+                    'show_all' => $getShowAll,
+                    'mode' => 'csv-ms'
                 )
             ),
             'fa-file-excel', 'menu_item_lists_export'
         );
-        $page->addPageFunctionsMenuItem('menu_item_lists_csv', $gL10n->get('SYS_COMMA_SEPARATED_FILE').' ('.$gL10n->get('SYS_UTF8').')',
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                    'filter_string'     => $getFilterString,
-                    'filter_category'   => $getFilterCategory,
-                    'filter_keeper'   => $getFilterKeeper,
-                    'show_all'          => $getShowAll,
-                    'mode'              => 'csv-oo'
+        $page->addPageFunctionsMenuItem('menu_item_lists_csv', $gL10n->get('SYS_COMMA_SEPARATED_FILE') . ' (' . $gL10n->get('SYS_UTF8') . ')',
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                    'filter_string' => $getFilterString,
+                    'filter_category' => $getFilterCategory,
+                    'filter_keeper' => $getFilterKeeper,
+                    'show_all' => $getShowAll,
+                    'mode' => 'csv-oo'
                 )
             ),
             'fa-file-csv', 'menu_item_lists_export'
         );
-        $page->addPageFunctionsMenuItem('menu_item_lists_pdf', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_PORTRAIT').')',
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                    'filter_string'     => $getFilterString,
-                    'filter_category'   => $getFilterCategory,
-                    'filter_keeper'   => $getFilterKeeper,
-                    'show_all'          => $getShowAll,
-                    'mode'              => 'pdf'
+        $page->addPageFunctionsMenuItem('menu_item_lists_pdf', $gL10n->get('SYS_PDF') . ' (' . $gL10n->get('SYS_PORTRAIT') . ')',
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                    'filter_string' => $getFilterString,
+                    'filter_category' => $getFilterCategory,
+                    'filter_keeper' => $getFilterKeeper,
+                    'show_all' => $getShowAll,
+                    'mode' => 'pdf'
                 )
             ),
             'fa-file-pdf', 'menu_item_lists_export'
         );
-        $page->addPageFunctionsMenuItem('menu_item_lists_pdfl', $gL10n->get('SYS_PDF').' ('.$gL10n->get('SYS_LANDSCAPE').')',
-            SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array(
-                    'filter_string'     => $getFilterString,
-                    'filter_category'   => $getFilterCategory,
-                    'filter_keeper'   => $getFilterKeeper,
-                    'show_all'          => $getShowAll,
-                    'mode'              => 'pdfl'
+        $page->addPageFunctionsMenuItem('menu_item_lists_pdfl', $gL10n->get('SYS_PDF') . ' (' . $gL10n->get('SYS_LANDSCAPE') . ')',
+            SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                    'filter_string' => $getFilterString,
+                    'filter_category' => $getFilterCategory,
+                    'filter_keeper' => $getFilterKeeper,
+                    'show_all' => $getShowAll,
+                    'mode' => 'pdfl'
                 )
             ),
             'fa-file-pdf', 'menu_item_lists_export'
         );
-        
+
         if ($authorizedForPreferences) {
-            $page->addPageFunctionsMenuItem('menu_preferences', $gL10n->get('SYS_SETTINGS'), SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/preferences/preferences.php'),  'fa-cog');
-            $page->addPageFunctionsMenuItem('itemcreate_form_btn', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE'), SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/items/items_edit_new.php', array('item_id' => 0)), 'fas fa-plus-circle');
-        } 
-        
+            $page->addPageFunctionsMenuItem('menu_preferences', $gL10n->get('SYS_SETTINGS'), SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/preferences/preferences.php'), 'fa-cog');
+            $page->addPageFunctionsMenuItem('itemcreate_form_btn', $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_CREATE'), SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => 0)), 'fas fa-plus-circle');
+        }
+
         // create filter menu with elements for role
         $filterNavbar = new HtmlNavbar('navbar_filter', '', null, 'filter');
-        $form = new HtmlForm('navbar_inventorylist_form', SecurityUtils::encodeUrl(ADMIDIO_URL.FOLDER_PLUGINS . PLUGIN_FOLDER_IM .'/inventory_manager.php', array('headline' => $headline)), $page, array('type' => 'navbar', 'setFocus' => false));
+        $form = new HtmlForm('navbar_inventory_list_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array('headline' => $headline)), $page, array('type' => 'navbar', 'setFocus' => false));
 
         $form->addInput('filter_string', $inputFilterStringLabel, $getFilterString);
-          
+
         $getItemId = admFuncVariableIsValid($_GET, 'item_id', 'int');
         $items2 = new CItems($gDb, $gCurrentOrgId);
         $items2->showFormerItems($getShowAll);
         $items2->readItemData($getItemId, $gCurrentOrgId);
-        foreach ($items2->mItemFields as $itemField) {  
+        foreach ($items2->mItemFields as $itemField) {
             $imfNameIntern = $itemField->getValue('imf_name_intern');
-        
+
             if ($items2->getProperty($imfNameIntern, 'imf_type') === 'DROPDOWN') {
                 $arrListValues = $items2->getProperty($imfNameIntern, 'imf_value_list');
-                $defaultValue  = $items2->getValue($imfNameIntern, 'database');
-        
+                $defaultValue = $items2->getValue($imfNameIntern, 'database');
+
                 $form->addSelectBox(
                     'filter_category',
                     $selectBoxCategoryLabel,
                     $arrListValues,
                     array(
-                        'defaultValue'    => $getFilterCategory,
+                        'defaultValue' => $getFilterCategory,
                         'showContextDependentFirstEntry' => true
                     )
                 );
             }
         }
-    
+
         // read all keeper
         switch ($gDbType) {
             case 'pgsql':
-                $sql = 'SELECT DISTINCT imd_value, 
-            CASE 
+                $sql = 'SELECT DISTINCT imd_value,
+            CASE
                 WHEN imd_value = \'-1\' THEN \'n/a\'
                 ELSE CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value)
             END as keeper_name
-            FROM '.TBL_INVENTORY_MANAGER_DATA.'
-            INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
+            FROM ' . TBL_INVENTORY_MANAGER_DATA . '
+            INNER JOIN ' . TBL_INVENTORY_MANAGER_FIELDS . '
                 ON imf_id = imd_imf_id
-            LEFT JOIN '. TBL_USER_DATA. ' as last_name
+            LEFT JOIN ' . TBL_USER_DATA . ' as last_name
                 ON CAST(last_name.usd_usr_id AS VARCHAR)= imd_value
-                AND last_name.usd_usf_id = '. $gProfileFields->getProperty('LAST_NAME', 'usf_id'). '
-            LEFT JOIN '. TBL_USER_DATA. ' as first_name
+                AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
+            LEFT JOIN ' . TBL_USER_DATA . ' as first_name
                 ON CAST(first_name.usd_usr_id AS VARCHAR)= imd_value
-                AND first_name.usd_usf_id = '. $gProfileFields->getProperty('FIRST_NAME', 'usf_id'). '
-            WHERE (imf_org_id  = '. $gCurrentOrgId .'
+                AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
+            WHERE (imf_org_id  = ' . $gCurrentOrgId . '
                 OR imf_org_id IS NULL)
             AND imf_name_intern = \'KEEPER\'
             ORDER BY keeper_name ASC;';
                 break;
             case 'mysql':
             default:
-                $sql = 'SELECT DISTINCT imd_value, 
-            CASE 
+                $sql = 'SELECT DISTINCT imd_value,
+            CASE
                 WHEN imd_value = -1 THEN \'n/a\'
                 ELSE CONCAT_WS(\', \', last_name.usd_value, first_name.usd_value)
             END as keeper_name
-            FROM '.TBL_INVENTORY_MANAGER_DATA.'
-            INNER JOIN '.TBL_INVENTORY_MANAGER_FIELDS.'
+            FROM ' . TBL_INVENTORY_MANAGER_DATA . '
+            INNER JOIN ' . TBL_INVENTORY_MANAGER_FIELDS . '
                 ON imf_id = imd_imf_id
-            LEFT JOIN '. TBL_USER_DATA. ' as last_name
+            LEFT JOIN ' . TBL_USER_DATA . ' as last_name
                 ON last_name.usd_usr_id = imd_value
-                AND last_name.usd_usf_id = '. $gProfileFields->getProperty('LAST_NAME', 'usf_id'). '
-            LEFT JOIN '. TBL_USER_DATA. ' as first_name
+                AND last_name.usd_usf_id = ' . $gProfileFields->getProperty('LAST_NAME', 'usf_id') . '
+            LEFT JOIN ' . TBL_USER_DATA . ' as first_name
                 ON first_name.usd_usr_id = imd_value
-                AND first_name.usd_usf_id = '. $gProfileFields->getProperty('FIRST_NAME', 'usf_id'). '
-            WHERE (imf_org_id  = '. $gCurrentOrgId .'
+                AND first_name.usd_usf_id = ' . $gProfileFields->getProperty('FIRST_NAME', 'usf_id') . '
+            WHERE (imf_org_id  = ' . $gCurrentOrgId . '
                 OR imf_org_id IS NULL)
             AND imf_name_intern = \'KEEPER\'
             ORDER BY keeper_name ASC;';
         }
-        $form->addSelectBoxFromSql('filter_keeper',$selectBoxKeeperLabel, $gDb, $sql, array('defaultValue' => $getFilterKeeper , 'showContextDependentFirstEntry' => true));
- 
-        $form->addCheckbox('show_all', $gL10n->get('PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS'), $getShowAll, array('helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_SHOW_ALL_DESC'));                           
+        $form->addSelectBoxFromSql('filter_keeper', $selectBoxKeeperLabel, $gDb, $sql, array('defaultValue' => $getFilterKeeper, 'showContextDependentFirstEntry' => true));
+
+        $form->addCheckbox('show_all', $gL10n->get('PLG_INVENTORY_MANAGER_SHOW_ALL_ITEMS'), $getShowAll, array('helpTextIdLabel' => 'PLG_INVENTORY_MANAGER_SHOW_ALL_DESC'));
         $form->addInput('same_side', '', '1', array('property' => HtmlForm::FIELD_HIDDEN));
         $filterNavbar->addForm($form->show());
-        
-        $page->addHtml($filterNavbar->show());        
+        $page->addHtml($filterNavbar->show());
 
         $table = new HtmlTable('adm_inventory_table', $page, $hoverRows, $datatable, $classTable);
         if ($datatable) {
@@ -456,7 +454,7 @@ switch ($getMode) {
 }
 
 // initialize array parameters for table and set the first column for the counter
-$columnAlign  = ($getMode == 'html') ? array('left') : array('center');
+$columnAlign = ($getMode == 'html') ? array('left') : array('center');
 $columnValues = array($gL10n->get('SYS_ABR_NO'));
 
 $items = new CItems($gDb, $gCurrentOrgId);
@@ -470,7 +468,7 @@ foreach ($items->mItemFields as $itemField) {
     $imfNameIntern = $itemField->getValue('imf_name_intern');
     $columnHeader = convlanguagePIM($items->getProperty($imfNameIntern, 'imf_name'));
 
-    if($items->getProperty($imfNameIntern, 'imf_type') === 'DATE_INTERVAL'){
+    if ($items->getProperty($imfNameIntern, 'imf_type') === 'DATE_INTERVAL') {
         // modify column Header for DATE_INTERVAL fields
         $columnHeader .= ' ' . $gL10n->get('PLG_INVENTORY_MANAGER_DATE_INTERVAL_DAYS_REMAINING');
     }
@@ -482,7 +480,6 @@ foreach ($items->mItemFields as $itemField) {
     switch ($items->getProperty($imfNameIntern, 'imf_type')) {
         case 'CHECKBOX':
         case 'RADIO_BUTTON':
-        case 'GENDER':
             $columnAlign[] = 'center';
             break;
 
@@ -500,13 +497,13 @@ foreach ($items->mItemFields as $itemField) {
         $arrValidColumns[] = $gL10n->get('SYS_ABR_NO');
     }
 
-    if ($getMode == 'csv' || $getMode == "ods" || $getMode == 'xlsx' && $columnNumber === 1) {
+    if ($getMode == 'csv' || $getMode == 'ods' || $getMode == 'xlsx' && $columnNumber === 1) {
         $header[$gL10n->get('SYS_ABR_NO')] = 'string';
     }
 
     switch ($getMode) {
         case 'csv':
-        case "ods":
+        case 'ods':
         case 'xlsx':
             $header[$columnHeader] = 'string';
             break;
@@ -525,7 +522,7 @@ foreach ($items->mItemFields as $itemField) {
 }
 
 if ($getMode == 'html') {
-    $columnAlign[]  = 'right';
+    $columnAlign[] = 'right';
     $columnValues[] = '&nbsp;';
     if ($datatable) {
         $table->disableDatatablesColumnsSort(array(count($columnValues)));
@@ -535,8 +532,7 @@ if ($getMode == 'html') {
 if ($getMode == 'html' || $getMode == 'print') {
     $table->setColumnAlignByArray($columnAlign);
     $table->addRowHeadingByArray($columnValues);
-}
-elseif ($getMode == 'pdf') {
+} elseif ($getMode == 'pdf') {
     $table->setColumnAlignByArray($columnAlign);
     $table->addTableHeader();
     $table->addRow();
@@ -559,12 +555,12 @@ foreach ($items->items as $item) {
     foreach ($items->mItemFields as $itemField) {
         $imfNameIntern = $itemField->getValue('imf_name_intern');
 
-        if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
+        if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) {
             break;
         }
 
         if (($getFilterCategory !== '' && $imfNameIntern == 'CATEGORY' && $getFilterCategory != $items->getValue($imfNameIntern, 'database')) ||
-                ($getFilterKeeper !== 0 && $imfNameIntern == 'KEEPER' && $getFilterKeeper != $items->getValue($imfNameIntern))) {
+            ($getFilterKeeper !== 0 && $imfNameIntern == 'KEEPER' && $getFilterKeeper != $items->getValue($imfNameIntern))) {
             continue 2;
         }
 
@@ -577,16 +573,14 @@ foreach ($items->items as $item) {
         if ($imfNameIntern == 'KEEPER' && strlen($content) > 0) {
             $found = $user->readDataById($content);
             if (!$found) {
-                $orgName = '"' . $gCurrentOrganization->getValue('org_longname'). '"';
-                $content = $gL10n->get('SYS_NOT_MEMBER_OF_ORGANIZATION',array($orgName));
-            }
-            else {
+                $orgName = '"' . $gCurrentOrganization->getValue('org_longname') . '"';
+                $content = $gL10n->get('SYS_NOT_MEMBER_OF_ORGANIZATION', array($orgName));
+            } else {
                 if ($getMode == 'html') {
                     $content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>';
-                }
-                else {
+                } else {
                     $sql = getSqlOrganizationsUsersCompletePIM();
-                    
+
                     $result = $gDb->queryPrepared($sql);
 
                     while ($row = $result->fetch()) {
@@ -595,7 +589,7 @@ foreach ($items->items as $item) {
                             break;
                         }
                         $content = $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME');
-                    }        
+                    }
                 }
             }
         }
@@ -606,79 +600,28 @@ foreach ($items->items as $item) {
                 if ($found) {
                     if ($getMode == 'html') {
                         $content = '<a href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_MODULES . '/profile/profile.php', array('user_uuid' => $user->getValue('usr_uuid'))) . '">' . $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME') . '</a>';
-                    }
-                    else {
+                    } else {
                         $sql = getSqlOrganizationsUsersCompletePIM();
                         $result = $gDb->queryPrepared($sql);
-    
+
                         while ($row = $result->fetch()) {
                             if ($row['usr_id'] == $user->getValue('usr_id')) {
                                 $content = $row['name'];
                                 break;
                             }
                             $content = $user->getValue('LAST_NAME') . ', ' . $user->getValue('FIRST_NAME');
-                        }        
+                        }
                     }
                 }
             }
         }
         if ($items->getProperty($imfNameIntern, 'imf_type') == 'CHECKBOX') {
             $content = ($content != 1) ? 0 : 1;
-            $content = ($getMode == 'csv' || $getMode == 'pdf' || $getMode == 'xlsx'|| $getMode == 'ods') ?
+            $content = ($getMode == 'csv' || $getMode == 'pdf' || $getMode == 'xlsx' || $getMode == 'ods') ?
                 ($content == 1 ? $gL10n->get('SYS_YES') : $gL10n->get('SYS_NO')) :
                 $items->getHtmlValue($imfNameIntern, $content);
-        }
-        elseif ($items->getProperty($imfNameIntern, 'imf_type') == 'DATE') {
+        } elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DATE', 'DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'))) {
             $content = $items->getHtmlValue($imfNameIntern, $content);
-        }
-        elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DROPDOWN', 'RADIO_BUTTON'))) {
-            $content = $items->getHtmlValue($imfNameIntern, $content);
-        }
-        elseif ($items->getProperty($imfNameIntern, 'imf_type') == 'DATE_INTERVAL') {
-            $selectedInterval = $content;
-            $content = '';
-
-            $intervalValues = $items->getProperty($imfNameIntern, 'imf_value_list');
-            $dateIntervalFieldId = $items->getProperty($imfNameIntern, 'imf_date_interval_field', 'database');
-            if (isset($items->mItemData[$dateIntervalFieldId])) {
-                $dateInternalFieldName = $items->mItemData[$dateIntervalFieldId]->getValue('imf_name_intern');
-                $filteredSelectionItems = array();
-
-                foreach ($intervalValues as $value) {
-                    $filteredSelectionItems[] = trim(explode('|', $value)[1]);
-                }
-                //use part after # as internal_name for last test date
-                $compDate1 = date_create($items->getValue($dateInternalFieldName, 'database'));
-                $compDate2 = date_create();
-
-                //Calculate future test date
-                $dateAdditionSplit = array();
-                if (isset($filteredSelectionItems[$selectedInterval-1])) {
-                    preg_match("/^\s*(\d*)([wymd])\s*$/", $filteredSelectionItems[$selectedInterval-1], $dateAdditionSplit);
-                }
-
-                if(isset($dateAdditionSplit[1]) && isset($dateAdditionSplit[2]) && is_numeric($dateAdditionSplit[1])){
-                    switch ($dateAdditionSplit[2]) {
-                    case 'w':
-                        date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'W'));
-                        break;
-                    case 'm':
-                        date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'M'));
-                        break;
-                    case 'y':
-                        date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'Y'));
-                        break;
-                    case 'd':
-                    default:
-                        date_add($compDate1, new DateInterval('P' . $dateAdditionSplit[1] . 'D'));
-                        break;
-                    }
-
-                    //Compare last test date with future date and output days
-                    $dateDiff = date_diff($compDate2, $compDate1);
-                    $content = $dateDiff->format('%R%a');
-                }
-            }
         }
 
         $columnValues[] = ($strikethrough && $getMode != 'csv' && $getMode != 'ods' && $getMode != 'xlsx') ? '<s>' . $content . '</s>' : $content;
@@ -690,29 +633,33 @@ foreach ($items->items as $item) {
 
         // show link to view profile field change history
         if ($gSettingsManager->getBool('profile_log_edit_fields')) {
-            $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_history.php', array('item_id' => $item['imi_id'])) . '">
-                               <i class="fas fa-history" title="' . $gL10n->get('SYS_CHANGE_HISTORY') . '"></i>
-                           </a>';
+            $tempValue .= '
+                <a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_history.php', array('item_id' => $item['imi_id'])) . '">
+                   <i class="fas fa-history" title="' . $gL10n->get('SYS_CHANGE_HISTORY') . '"></i>
+               </a>';
         }
 
         // show link to edit, make former or undo former and delete item (if authorized)
         if ($authorizedForPreferences || isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database'))) {
             if ($authorizedForPreferences || (isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database')) && !$item['imi_former'])) {
-                $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
-                                <i class="fas fa-edit" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_EDIT') . '"></i>
-                            </a>';
+                $tempValue .= '
+                    <a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_edit_new.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
+                        <i class="fas fa-edit" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_EDIT') . '"></i>
+                    </a>';
             }
 
             if ($item['imi_former']) {
-                $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'], 'mode' => 4)) . '">
-                                <i class="fas fa-eye" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_UNDO_FORMER') . '"></i>
-                            </a>';
+                $tempValue .= '
+                    <a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'], 'mode' => 4)) . '">
+                        <i class="fas fa-eye" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_UNDO_FORMER') . '"></i>
+                    </a>';
             }
 
             if ($authorizedForPreferences || (isKeeperAuthorizedToEdit((int)$items->getValue('KEEPER', 'database')) && !$item['imi_former'])) {
-                $tempValue .= '<a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
-                                <i class="fas fa-trash-alt" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE') . '"></i>
-                            </a>';
+                $tempValue .= '
+                    <a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_delete.php', array('item_id' => $item['imi_id'], 'item_former' => $item['imi_former'])) . '">
+                        <i class="fas fa-trash-alt" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEM_DELETE') . '"></i>
+                    </a>';
             }
         }
         $columnValues[] = $tempValue;
@@ -725,7 +672,7 @@ foreach ($items->items as $item) {
         $filterArray = explode(',', $getFilterString);
         foreach ($filterArray as $filterString) {
             $filterString = trim($filterString);
-            if (substr($filterString, 0, 1) == '-') {
+            if (str_starts_with($filterString, '-')) {
                 $filterString = substr($filterString, 1);
                 if (stristr(implode('', $columnValues), $filterString)) {
                     $showRowException = true;
@@ -752,7 +699,7 @@ foreach ($items->items as $item) {
             default:
                 $table->addRowByArray($columnValues, '', array('nobr' => 'true'));
                 break;
-            }
+        }
     }
 
     ++$listRowNumber;
@@ -760,7 +707,7 @@ foreach ($items->items as $item) {
 
 if (in_array($getMode, array('csv', 'pdf', 'xlsx', 'ods'))) {
     $filename = FileSystemUtils::getSanitizedPathEntry($filename) . '.' . $getMode;
-    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false) {
+    if (str_contains($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
         $filename = urlencode($filename);
     }
     header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -778,8 +725,7 @@ switch ($getMode) {
         ignore_user_abort(true);
         try {
             FileSystemUtils::deleteFileIfExists($file);
-        }
-        catch (\RuntimeException $exception) {
+        } catch (RuntimeException $exception) {
             $gLogger->error('Could not delete file!', array('filePath' => $file));
         }
         break;
@@ -788,15 +734,15 @@ switch ($getMode) {
     case 'ods':
     case 'xlsx':
         $contentTypes = array(
-            'csv'  => 'text/csv; charset=' . $charset,
+            'csv' => 'text/csv; charset=' . $charset,
             'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'ods'  => 'application/vnd.oasis.opendocument.spreadsheet',
+            'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
         );
 
         $writerClasses = array(
-            'csv'  => Csv::class,
+            'csv' => Csv::class,
             'xlsx' => Xlsx::class,
-            'ods'  => Ods::class,
+            'ods' => Ods::class,
         );
 
         if (!isset($contentTypes[$getMode], $writerClasses[$getMode])) {
@@ -805,7 +751,7 @@ switch ($getMode) {
 
         $contentType = $contentTypes[$getMode];
         $writerClass = $writerClasses[$getMode];
- 
+
         header('Content-disposition: attachment; filename="' . $filename . '"');
         header("Content-Type: $contentType");
         header('Content-Transfer-Encoding: binary');
@@ -822,8 +768,8 @@ switch ($getMode) {
             ->setDescription($gL10n->get('PLG_INVENTORY_MANAGER_CREATED_WITH'));
 
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray(array_keys($header), NULL, 'A1');
-        $sheet->fromArray($rows, NULL, 'A2');
+        $sheet->fromArray(array_keys($header), null, 'A1');
+        $sheet->fromArray($rows, null, 'A2');
 
         if (!$getMode == 'csv') {
             foreach ($strikethroughs as $index => $strikethrough) {
@@ -840,46 +786,10 @@ switch ($getMode) {
         $writer->save('php://output');
         break;
 
+    case 'print':
     case 'html':
         $page->addHtml($table->show());
         $page->show();
         break;
-        
-    case 'print':
-        $page->addHtml($table->show());
-        $page->show();
-        break;
-}
 
-/**
- * Formats the spreadsheet
- *
- * @param PhpOffice\PhpSpreadsheet\Spreadsheet $spreadsheet
- * @param array $data
- * @param bool $containsHeadline
- */
-function formatSpreadsheet($spreadsheet, $data, $containsHeadline) : void
-{
-    $alphabet = range('A', 'Z');
-    $column = $alphabet[count($data[0])-1];
-
-    if ($containsHeadline) {
-        $spreadsheet
-            ->getActiveSheet()
-            ->getStyle('A1:'.$column.'1')
-            ->getFill()
-            ->setFillType(PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-            ->getStartColor()
-            ->setARGB('ffdddddd');
-        $spreadsheet
-            ->getActiveSheet()
-            ->getStyle('A1:'.$column.'1')
-            ->getFont()
-            ->setBold(true);
-    }
-
-    for($number = 0; $number < count($data[0]); $number++) {
-        $spreadsheet->getActiveSheet()->getColumnDimension($alphabet[$number])->setAutoSize(true);
-    }
-    $spreadsheet->getDefaultStyle()->getAlignment()->setWrapText(true);
 }

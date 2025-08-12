@@ -7,8 +7,8 @@
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
- * 
- * 
+ *
+ *
  * Parameters:
  * imf_id       : ID of the item field to be managed
  * mode         : 3 - change sequence of item field
@@ -121,13 +121,13 @@ $mandatory = '';
 $imfSystem = '';
 
 foreach ($items->mItemFields as $itemField) {
-    $imfId = (int) $itemField->getValue('imf_id');
+    $imfId = (int)$itemField->getValue('imf_id');
     $imfNameIntern = $itemField->getValue('imf_name_intern');
     $disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
 
-	if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
-		break;
-	}
+    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) {
+        break;
+    }
 
     // cut long text strings and provide tooltip
     $fieldDescription = $itemField->getValue('imf_description') === '' ? '&nbsp;' : $itemField->getValue('imf_description', 'database');

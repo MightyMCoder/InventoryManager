@@ -1,4 +1,5 @@
 <?php
+
 /**
  ***********************************************************************************************
  * Assign columns of import file to profile fields
@@ -7,8 +8,8 @@
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
- * 
- * 
+ *
+ *
  * Methods:
  * getColumnAssignmentHtml()    : Creates the html for each assignment of a profile field to a column of the import file
  ***********************************************************************************************
@@ -50,12 +51,12 @@ if (isset($_SESSION['import_csv_request'])) {
 
 // create html page object
 $page = new HtmlPage('admidio-items-import-csv', $headline);
-$page->addHtml('<p class="lead">'.$gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_ASSIGN_FIELDS').'</p>');
+$page->addHtml('<p class="lead">' . $gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_ASSIGN_FIELDS') . '</p>');
 
 // show form
 $form = new HtmlForm('import_assign_fields_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_items.php'), $page, array('type' => 'vertical'));
 $form->addCheckbox('first_row', $gL10n->get('SYS_FIRST_LINE_COLUMN_NAME'), $formValues['first_row']);
-$form->addHtml('<div class="alert alert-warning alert-small" id="admidio-import-unused"><i class="fas fa-exclamation-triangle"></i>'.$gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_UNUSED_HEAD').'<div id="admidio-import-unused-fields">-</div></div>');
+$form->addHtml('<div class="alert alert-warning alert-small" id="admidio-import-unused"><i class="fas fa-exclamation-triangle"></i>' . $gL10n->get('PLG_INVENTORY_MANAGER_IMPORT_UNUSED_HEAD') . '<div id="admidio-import-unused-fields">-</div></div>');
 
 $page->addJavascript('
     $(".admidio-import-field").change(function() {
@@ -86,17 +87,16 @@ $page->addJavascript('
         }
         $("#admidio-import-unused #admidio-import-unused-fields").html(outstr);
     });
-    $(".admidio-import-field").trigger("change");',
-    true
-);
+    $(".admidio-import-field").trigger("change");
+', true);
 
 
 $htmlFieldTable = '
     <table class="table table-condensed import-config import-config-csv">
         <thead>
             <tr>
-                <th>'.$gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDS').'</th>
-                <th>'.$gL10n->get('SYS_FILE_COLUMN').'</th>
+                <th>' . $gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELDS') . '</th>
+                <th>' . $gL10n->get('SYS_FILE_COLUMN') . '</th>
             </tr>
         </thead>';
 
@@ -116,13 +116,13 @@ $items = new CItems($gDb, $gCurrentOrgId);
 $row = array();
 foreach ($items->mItemFields as $columnKey => $columnValue) {
     $imfName = $columnValue->GetValue('imf_name');
-    
+
     $disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
     $imfNameIntern = $columnValue->GetValue('imf_name_intern');
 
-    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) { 
-		break;
-	}
+    if ($disableBorrowing == 1 && ($imfNameIntern === 'LAST_RECEIVER' || $imfNameIntern === 'RECEIVED_ON' || $imfNameIntern === 'RECEIVED_BACK_ON')) {
+        break;
+    }
 
     // If the field name starts with 'PIM_', it is a language key
     if (strpos($imfName, 'PIM_') !== false) {
@@ -130,11 +130,11 @@ foreach ($items->mItemFields as $columnKey => $columnValue) {
     } else {
         $row = array($imfNameIntern => $imfName);
     }
-    
+
     $arrayImportableFields[] = $row;
 }
 
-$htmlFieldTable .= getColumnAssignmentHtml($arrayImportableFields, $arrayCsvColumns) .'
+$htmlFieldTable .= getColumnAssignmentHtml($arrayImportableFields, $arrayCsvColumns) . '
         </tbody>
     </table>';
 $form->addHtml($htmlFieldTable);
@@ -147,21 +147,21 @@ $page->show();
 
 /**
  * Function creates the html for each assignment of a profile field to a column of the import file
- * 
- * @param array $arrayColumnList        The array contains the following elements cat_name, cat_tooltip, id, name, name_intern, tooltip
- * @param array $arrayCsvColumns        An array with the names of the columns from the import file
+ *
+ * @param array $arrayColumnList The array contains the following elements cat_name, cat_tooltip, id, name, name_intern, tooltip
+ * @param array $arrayCsvColumns An array with the names of the columns from the import file
  * @return string                       The HTML of a table with all profile fields and possible assigned columns of the import file
  */
-function getColumnAssignmentHtml(array $arrayColumnList, array $arrayCsvColumns) : string
+function getColumnAssignmentHtml(array $arrayColumnList, array $arrayCsvColumns): string
 {
     $html = '';
 
     foreach ($arrayColumnList as $field) {
         foreach ($field as $key => $value) {
-            $html .= '<tr>
-                    <td><label for="'. $key. '" title="'.$value.'">'.$value . 
-                    '</label></td>
-                <td>';
+            $html .= '
+                <tr>
+                    <td><label for="' . $key . '" title="' . $value . '">' . $value . '</label></td>
+                    <td>';
 
             $selectEntries = '';
             // list all columns of the file
@@ -176,17 +176,17 @@ function getColumnAssignmentHtml(array $arrayColumnList, array $arrayCsvColumns)
                     $selected .= ' selected="selected"';
                     $found = true;
                 }
-                $selectEntries .= '<option value="'.$colKey.'"'.$selected.'>'.$colValue.'</option>';
+                $selectEntries .= '<option value="' . $colKey . '"' . $selected . '>' . $colValue . '</option>';
             }
             // add html for select box
             // Insert default (empty) entry and select if no other item is selected
             $html .= '
-            <select class="form-control admidio-import-field" size="1" id="'. $key. '" name="'. $key. '">
-                <option value=""'.($found ? ' selected="selected"' : '').'></option>
-                ' . $selectEntries . '
-            </select>
-
-            </td></tr>';
+                    <select class="form-control admidio-import-field" size="1" id="' . $key . '" name="' . $key . '">
+                        <option value=""' . ($found ? ' selected="selected"' : '') . '></option>
+                        ' . $selectEntries . '
+                    </select>
+                    </td>
+                </tr>';
         }
     }
     return $html;

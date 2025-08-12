@@ -1,4 +1,5 @@
 <?php
+
 /**
  ***********************************************************************************************
  * Script to manage preferences in the InventoryManager plugin
@@ -7,15 +8,15 @@
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
- * 
- * 
+ *
+ *
  * Parameters:
  * mode			: 1 - write preferences to database
  *        		  2 - show dialog for deinstallation
  *        		  3 - deinstallation
  * form 		: The name of the form preferences that were submitted.
- * 
- * 
+ *
+ *
  * Methods:
  * handleFormSubmission()		: Handles the form submission and updates the preferences accordingly.
  * showDeinstallationDialog()	: Displays the dialog for deinstallation of the plugin.
@@ -35,7 +36,7 @@ $pPreferences->read();
 
 // only authorized user are allowed to start this module
 if (!isUserAuthorizedForPreferencesPIM()) {
-	$gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
+    $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
 }
 
 // Initialize and check the parameters
@@ -44,118 +45,129 @@ $getForm = admFuncVariableIsValid($_GET, 'form', 'string');
 
 // in ajax mode only return simple text on error
 if ($getMode === 1) {
-	$gMessage->showHtmlTextOnly(true);
+    $gMessage->showHtmlTextOnly();
 }
 
 switch ($getMode) {
-	case 1:
-		try {
-			handleFormSubmission($getForm, $pPreferences);
-		}
-		catch (AdmException $e) {
-			$e->showText();
-		}
+    case 1:
+        try {
+            handleFormSubmission($getForm, $pPreferences);
+        } catch (SmartyException|Exception $e) {
+            $gMessage->show($e->getMessage());
+        }
 
-		$pPreferences->write();
-		echo 'success';
-		break;
+        $pPreferences->write();
+        echo 'success';
+        break;
 
-	case 2:
-		showDeinstallationDialog();
-		break;
+    case 2:
+        try {
+            showDeinstallationDialog();
+        } catch (SmartyException $e) {
+            $gMessage->show($e->getMessage());
+        }
+        break;
 
-	case 3:
-		performDeinstallation($pPreferences);
-		break;
+    case 3:
+        try {
+            performDeinstallation($pPreferences);
+        } catch (SmartyException $e) {
+            $gMessage->show($e->getMessage());
+        }
+        break;
 }
 
 /**
  * Handles the form submission and updates the preferences accordingly.
  *
- * @param string $form        The name of the form that was submitted.
- * @param object $preferences The preferences object to be updated.
+ * @param string $form The name of the form that was submitted.
+ * @param CConfigTablePIM $preferences The preferences object to be updated.
  * @return void
+ * @throws Exception
+ * @throws SmartyException
  */
-function handleFormSubmission($form, $preferences) : void
+function handleFormSubmission(string $form, CConfigTablePIM $preferences): void
 {
-	switch ($form) {
-		case 'profile_addin_preferences':
-			$preferences->config['Optionen']['profile_addin'] = isset($_POST['profile_addin']) ? array_filter($_POST['profile_addin']) : array(0);
-			break;
+    switch ($form) {
+        case 'profile_addin_preferences':
+            $preferences->config['Optionen']['profile_addin'] = isset($_POST['profile_addin']) ? array_filter($_POST['profile_addin']) : array(0);
+            break;
 
-		case 'export_preferences':
-			$preferences->config['Optionen']['file_name'] = $_POST['file_name'];
-			$preferences->config['Optionen']['add_date'] = isset($_POST['add_date']) ? 1 : 0;
-			break;
+        case 'export_preferences':
+            $preferences->config['Optionen']['file_name'] = $_POST['file_name'];
+            $preferences->config['Optionen']['add_date'] = isset($_POST['add_date']) ? 1 : 0;
+            break;
 
-		case 'access_preferences':
-			$preferences->config['access']['preferences'] = isset($_POST['access_preferences']) ? array_map('intval', array_filter($_POST['access_preferences'])) : array(0);
-			break;
+        case 'access_preferences':
+            $preferences->config['access']['preferences'] = isset($_POST['access_preferences']) ? array_map('intval', array_filter($_POST['access_preferences'])) : array(0);
+            break;
 
-		case 'general_preferences':
-			$preferences->config['Optionen']['allow_keeper_edit'] = isset($_POST['allow_keeper_edit']) ? 1 : 0;
-			$preferences->config['Optionen']['allowed_keeper_edit_fields'] = isset($_POST['allowed_keeper_edit_fields']) ? array_filter($_POST['allowed_keeper_edit_fields']) : array(0);
-			$preferences->config['Optionen']['current_user_default_keeper'] = isset($_POST['current_user_default_keeper']) ? 1 : 0;
-			$preferences->config['Optionen']['allow_negative_numbers'] = isset($_POST['allow_negative_numbers']) ? 1 : 0;
-			$preferences->config['Optionen']['decimal_step'] = sprintf('%.7f', (float)$_POST['decimal_step']);
-			$preferences->config['Optionen']['field_date_time_format'] = ($_POST['field_date_time_format'] == "0") ? 'date': 'datetime';
-			$preferences->config['Optionen']['disable_borrowing'] = isset($_POST['disable_borrowing']) ? 1 : 0;
-			break;
+        case 'general_preferences':
+            $preferences->config['Optionen']['allow_keeper_edit'] = isset($_POST['allow_keeper_edit']) ? 1 : 0;
+            $preferences->config['Optionen']['allowed_keeper_edit_fields'] = isset($_POST['allowed_keeper_edit_fields']) ? array_filter($_POST['allowed_keeper_edit_fields']) : array(0);
+            $preferences->config['Optionen']['current_user_default_keeper'] = isset($_POST['current_user_default_keeper']) ? 1 : 0;
+            $preferences->config['Optionen']['allow_negative_numbers'] = isset($_POST['allow_negative_numbers']) ? 1 : 0;
+            $preferences->config['Optionen']['decimal_step'] = sprintf('%.7f', (float)$_POST['decimal_step']);
+            $preferences->config['Optionen']['field_date_time_format'] = ($_POST['field_date_time_format'] == '0') ? 'date' : 'datetime';
+            $preferences->config['Optionen']['disable_borrowing'] = isset($_POST['disable_borrowing']) ? 1 : 0;
+            break;
 
-		default:
-			global $gMessage, $gL10n;
-			$gMessage->show($gL10n->get('SYS_INVALID_PAGE_VIEW'));
-	}
+        default:
+            global $gMessage, $gL10n;
+            $gMessage->show($gL10n->get('SYS_INVALID_PAGE_VIEW'));
+    }
 }
 
 /**
  * Displays the dialog for deinstallation of the plugin.
  *
  * @return void
+ * @throws SmartyException
  */
-function showDeinstallationDialog() : void
+function showDeinstallationDialog(): void
 {
-	global $gL10n, $gNavigation;
+    global $gL10n, $gNavigation;
 
-	$headline = $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION');
+    $headline = $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION');
 
-	// create html page object
-	$page = new HtmlPage('plg-inventory-manager-deinstallation', $headline);
+    // create html page object
+    $page = new HtmlPage('plg-inventory-manager-deinstallation', $headline);
 
-	// add current url to navigation stack
-	$gNavigation->addUrl(CURRENT_URL, $headline);
+    // add current url to navigation stack
+    $gNavigation->addUrl(CURRENT_URL, $headline);
 
-	$page->addHtml('<p class="lead">' . $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION_FORM_DESC') . '</p>');
+    $page->addHtml('<p class="lead">' . $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION_FORM_DESC') . '</p>');
 
-	// show form
-	$radioButtonEntries = array('0' => $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY'), '1' => $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ALLORG'));
+    // show form
+    $radioButtonEntries = array('0' => $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY'), '1' => $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ALLORG'));
 
-	$form = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/preferences/preferences_function.php', array('mode' => 3)), $page);
-	$form->addRadioButton('deinst_org_select', $gL10n->get('PLG_INVENTORY_MANAGER_ORG_CHOICE'), $radioButtonEntries, array('defaultValue' => '0'));
-	$form->addSubmitButton('btn_deinstall', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), array('icon' => 'fa-trash-alt', 'class' => 'offset-sm-3'));
+    $form = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/preferences/preferences_function.php', array('mode' => 3)), $page);
+    $form->addRadioButton('deinst_org_select', $gL10n->get('PLG_INVENTORY_MANAGER_ORG_CHOICE'), $radioButtonEntries, array('defaultValue' => '0'));
+    $form->addSubmitButton('btn_deinstall', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), array('icon' => 'fa-trash-alt', 'class' => 'offset-sm-3'));
 
-	// add form to html page and show page
-	$page->addHtml($form->show());
-	$page->show();
+    // add form to html page and show page
+    $page->addHtml($form->show());
+    $page->show();
 }
 
 /**
  * Performs the deinstallation of the plugin and cleans up the data.
  *
- * @param object $preferences The preferences object to be cleaned up.
+ * @param CConfigTablePIM $preferences The preferences object to be cleaned up.
  * @return void
+ * @throws SmartyException
  */
-function performDeinstallation($preferences) : void
+function performDeinstallation(CConfigTablePIM $preferences): void
 {
-	global $gNavigation, $gMessage, $gHomepage, $gL10n;
+    global $gNavigation, $gMessage, $gHomepage, $gL10n;
 
-	$gNavigation->clear();
-	$gMessage->setForwardUrl($gHomepage);
+    $gNavigation->clear();
+    $gMessage->setForwardUrl($gHomepage);
 
-	$resMes = $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_STARTMESSAGE');
-	$resMes .= $preferences->deleteItemData($_POST['deinst_org_select']);
-	$resMes .= $preferences->deleteConfigData($_POST['deinst_org_select']);
-	$resMes .= $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ENDMESSAGE');
+    $resMes = $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_STARTMESSAGE');
+    $resMes .= $preferences->deleteItemData($_POST['deinst_org_select']);
+    $resMes .= $preferences->deleteConfigData($_POST['deinst_org_select']);
+    $resMes .= $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ENDMESSAGE');
 
-	$gMessage->show($resMes);
+    $gMessage->show($resMes);
 }

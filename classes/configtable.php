@@ -1,7 +1,7 @@
 <?php
 /**
  ***********************************************************************************************
- * Class to manage the configuration table "[admidio-praefix]_plugin_preferences" of Plugin InventoryManager
+ * Class to manage the configuration table "[admidio-prefix]_plugin_preferences" of Plugin InventoryManager
  *
  * @see         https://github.com/MightyMCoder/InventoryManager/ The InventoryManager GitHub project
  * @author      MightyMCoder
@@ -35,20 +35,23 @@
 
 class CConfigTablePIM
 {
+    const NEW_COLUMNS_MYSQL = array('imf_date_interval_field' => array('table' => TBL_INVENTORY_MANAGER_FIELDS, 'type' => 'integer unsigned', 'null' => true, 'default' => null));
+    const NEW_COLUMNS_POSTGRESQL = array('imf_date_interval_field' => array('table' => TBL_INVENTORY_MANAGER_FIELDS, 'type' => 'integer', 'null' => true, 'default' => null));
     const TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_FIELDS = '
-            imf_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-            imf_org_id int(10) unsigned NOT NULL,
+            imf_id integer unsigned NOT NULL AUTO_INCREMENT,
+            imf_org_id integer unsigned NOT NULL,
             imf_type varchar(30) NOT NULL,
             imf_name varchar(100) NOT NULL,
             imf_name_intern varchar(110) NOT NULL,
-            imf_sequence int(10) unsigned NOT NULL,
-            imf_system boolean NOT NULL DEFAULT \'0\',	
-            imf_mandatory boolean NOT NULL DEFAULT \'0\',	
+            imf_sequence integer unsigned NOT NULL,
+            imf_system boolean NOT NULL DEFAULT \'0\',
+            imf_mandatory boolean NOT NULL DEFAULT \'0\',
             imf_description text NOT NULL DEFAULT \'\',
             imf_value_list text,
-            imf_usr_id_create int(10) unsigned DEFAULT NULL,
+            imf_date_interval_field integer unsigned DEFAULT NULL,
+            imf_usr_id_create integer unsigned DEFAULT NULL,
             imf_timestamp_create timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-            imf_usr_id_change int(10) unsigned DEFAULT NULL,
+            imf_usr_id_change integer unsigned DEFAULT NULL,
             imf_timestamp_change timestamp NULL DEFAULT NULL,
             PRIMARY KEY (imf_id)
         ';
@@ -63,15 +66,16 @@ class CConfigTablePIM
             imf_mandatory BOOLEAN NOT NULL DEFAULT FALSE,
             imf_description TEXT NOT NULL DEFAULT \'\',
             imf_value_list TEXT,
+            imf_date_interval_field INTEGER DEFAULT NULL,
             imf_usr_id_create INTEGER DEFAULT NULL,
             imf_timestamp_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             imf_usr_id_change INTEGER DEFAULT NULL,
             imf_timestamp_change TIMESTAMP DEFAULT NULL
         ';
     const TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_DATA = '
-            imd_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-            imd_imf_id int(10) unsigned NOT NULL,
-            imd_imi_id int(10) unsigned NOT NULL,
+            imd_id integer unsigned NOT NULL AUTO_INCREMENT,
+            imd_imf_id integer unsigned NOT NULL,
+            imd_imi_id integer unsigned NOT NULL,
             imd_value varchar(4000) NOT NULL DEFAULT \'\',
             PRIMARY KEY (imd_id)
         ';
@@ -82,12 +86,12 @@ class CConfigTablePIM
             imd_value VARCHAR(4000) NOT NULL DEFAULT \'\'
         ';
     const TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_ITEMS = '
-            imi_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-            imi_org_id int(10) unsigned NOT NULL,
+            imi_id integer unsigned NOT NULL AUTO_INCREMENT,
+            imi_org_id integer unsigned NOT NULL,
             imi_former boolean DEFAULT 0,
-            imi_usr_id_create int(10) unsigned DEFAULT NULL,
+            imi_usr_id_create integer unsigned DEFAULT NULL,
             imi_timestamp_create timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-            imi_usr_id_change int(10) unsigned DEFAULT NULL,
+            imi_usr_id_change integer unsigned DEFAULT NULL,
             imi_timestamp_change timestamp NULL DEFAULT NULL,
             PRIMARY KEY (imi_id)
         ';
@@ -101,12 +105,12 @@ class CConfigTablePIM
             imi_timestamp_change TIMESTAMP DEFAULT NULL
         ';
     const TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_LOG = '
-            iml_id int(10) unsigned NOT NULL AUTO_INCREMENT,
-            iml_imi_id int(10) unsigned NOT NULL,
-            iml_imf_id int(10) unsigned NOT NULL,
+            iml_id integer unsigned NOT NULL AUTO_INCREMENT,
+            iml_imi_id integer unsigned NOT NULL,
+            iml_imf_id integer unsigned NOT NULL,
             iml_value_old varchar(4000) NOT NULL DEFAULT \'\',
             iml_value_new varchar(4000) NOT NULL DEFAULT \'\',
-            iml_usr_id_create int(10) unsigned DEFAULT NULL,
+            iml_usr_id_create integer unsigned DEFAULT NULL,
             iml_timestamp_create timestamp NULL DEFAULT CURRENT_TIMESTAMP,
             iml_comment varchar(255) NOT NULL DEFAULT \'\',
             PRIMARY KEY (iml_id)
@@ -125,7 +129,7 @@ class CConfigTablePIM
             plp_id integer unsigned NOT NULL AUTO_INCREMENT,
             plp_org_id integer unsigned NOT NULL,
             plp_name varchar(255) NOT NULL,
-            plp_value text, 
+            plp_value text,
             PRIMARY KEY (plp_id)
         ';
     const TABLE_DEFINITION_POSTGRESQL_TABLE_PREFERENCES_NAME = '
@@ -135,9 +139,9 @@ class CConfigTablePIM
             plp_value TEXT
         ';
 
-    public $config = array();               // array with configuration-data
+    public array $config = array();               // array with configuration-data
 
-    private $table_preferences_name;        // db table name *_plugin_preferences
+    private string $table_preferences_name;        // db table name *_plugin_preferences
 
     private const SHORTCUT = 'PIM';         // praefix for (P)lugin(I)nventory(M)anager preferences
 
@@ -156,10 +160,12 @@ class CConfigTablePIM
      * checks if the configuration table exists, if necessarry creats it and fills it with default configuration data
      *
      * @return void
+     * @throws Exception
      */
     public function init(): void
     {
         $this->createTablesIfNotExist();
+        $this->addMissingColumns();
         $this->initializeDefaultFieldsByOrgId();
         $this->initializePreferencesByOrgId();
     }
@@ -168,6 +174,7 @@ class CConfigTablePIM
      * Creates the necessary tables if they do not exist
      *
      * @return void
+     * @throws Exception
      */
     private function createTablesIfNotExist(): void
     {
@@ -192,13 +199,54 @@ class CConfigTablePIM
     }
 
     /**
+     * Adds missing columns to the inventory manager fields table
+     *
+     * @return void
+     * @throws Exception
+     */
+    private function addMissingColumns(): void
+    {
+        global $gDb, $gDbType;
+
+        // check the database type and set the new columns accordingly
+        if ($gDbType === 'pgsql') {
+            $newColumns = self::NEW_COLUMNS_POSTGRESQL;
+        } else {
+            $newColumns = self::NEW_COLUMNS_MYSQL;
+        }
+
+        // check if new columns exist in the table
+        foreach ($newColumns as $colName => $column) {
+            if ($gDbType === 'pgsql') {
+                $sql = 'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = ? AND column_name = ?';
+            } else {
+                $sql = 'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?';
+            }
+
+            $params = array($column['table'], $colName);
+            $stmt = $gDb->queryPrepared($sql, $params);
+            $count = (int)$stmt->fetchColumn();
+
+            if ($count === 0) {
+                // Column does not exist, create it
+                $columnType = $column['type'];
+                $columnNull = isset($column['null']) && $column['null'] ? 'NULL' : 'NOT NULL';
+                $columnDefault = isset($column['default']) ? 'DEFAULT \'' . $column['default'] . '\'' : '';
+                $sql = 'ALTER TABLE ' . $column['table'] . ' ADD COLUMN ' . $colName . ' ' . $columnType . ' ' . $columnNull . ' ' . $columnDefault . ';';
+                $gDb->query($sql);
+            }
+        }
+    }
+
+    /**
      * Creates a table if it does not exist
      *
      * @param string $tableName The name of the table
      * @param string $tableDefinition The SQL definition of the table
      * @return void
+     * @throws Exception
      */
-    private function createTableIfNotExist($tableName, $tableDefinition): void
+    private function createTableIfNotExist(string $tableName, string $tableDefinition): void
     {
         global $gDb, $gDbType;
 
@@ -222,20 +270,13 @@ class CConfigTablePIM
      * Initializes default fields in the inventory manager database
      *
      * @return void
+     * @throws Exception
      */
     private function initializeDefaultFieldsByOrgId(): void
     {
         global $gDb, $gCurrentOrgId;
 
-        $defaultData = array(
-            array('imf_id' => 1, 'imf_name' => 'PIM_ITEMNAME', 'imf_name_intern' => 'ITEMNAME', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_ITEMNAME_DESCRIPTION'), 'imf_sequence' => 0, 'imf_system' => 1, 'imf_mandatory' => 1),
-            array('imf_id' => 2, 'imf_name' => 'PIM_CATEGORY', 'imf_name_intern' => 'CATEGORY', 'imf_type' => 'DROPDOWN', 'imf_description' => convlanguagePIM('PIM_CATEGORY_DESCRIPTION'), 'imf_sequence' => 1, 'imf_system' => 1, 'imf_mandatory' => 1, 'imf_value_list' => convlanguagePIM('PLG_INVENTORY_MANAGER_DEFAULT_CATEGORY')),
-            array('imf_id' => 3, 'imf_name' => 'PIM_KEEPER', 'imf_name_intern' => 'KEEPER', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_KEEPER_DESCRIPTION'), 'imf_sequence' => 2, 'imf_system' => 1, 'imf_mandatory' => 0),
-            array('imf_id' => 4, 'imf_name' => 'PIM_IN_INVENTORY', 'imf_name_intern' => 'IN_INVENTORY', 'imf_type' => 'CHECKBOX', 'imf_description' => convlanguagePIM('PIM_IN_INVENTORY_DESCRIPTION'), 'imf_sequence' => 3, 'imf_system' => 1, 'imf_mandatory' => 0),
-            array('imf_id' => 5, 'imf_name' => 'PIM_LAST_RECEIVER', 'imf_name_intern' => 'LAST_RECEIVER', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_LAST_RECEIVER_DESCRIPTION'), 'imf_sequence' => 4, 'imf_system' => 1, 'imf_mandatory' => 0),
-            array('imf_id' => 6, 'imf_name' => 'PIM_RECEIVED_ON', 'imf_name_intern' => 'RECEIVED_ON', 'imf_type' => 'DATE', 'imf_description' => convlanguagePIM('PIM_RECEIVED_ON_DESCRIPTION'), 'imf_sequence' => 5, 'imf_system' => 1, 'imf_mandatory' => 0),
-            array('imf_id' => 7, 'imf_name' => 'PIM_RECEIVED_BACK_ON', 'imf_name_intern' => 'RECEIVED_BACK_ON', 'imf_type' => 'DATE', 'imf_description' => convlanguagePIM('PIM_RECEIVED_BACK_ON_DESCRIPTION'), 'imf_sequence' => 6, 'imf_system' => 1, 'imf_mandatory' => 0)
-        );
+        $defaultData = array(array('imf_id' => 1, 'imf_name' => 'PIM_ITEMNAME', 'imf_name_intern' => 'ITEMNAME', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_ITEMNAME_DESCRIPTION'), 'imf_sequence' => 0, 'imf_system' => 1, 'imf_mandatory' => 1), array('imf_id' => 2, 'imf_name' => 'PIM_CATEGORY', 'imf_name_intern' => 'CATEGORY', 'imf_type' => 'DROPDOWN', 'imf_description' => convlanguagePIM('PIM_CATEGORY_DESCRIPTION'), 'imf_sequence' => 1, 'imf_system' => 1, 'imf_mandatory' => 1, 'imf_value_list' => convlanguagePIM('PLG_INVENTORY_MANAGER_DEFAULT_CATEGORY')), array('imf_id' => 3, 'imf_name' => 'PIM_KEEPER', 'imf_name_intern' => 'KEEPER', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_KEEPER_DESCRIPTION'), 'imf_sequence' => 2, 'imf_system' => 1, 'imf_mandatory' => 0), array('imf_id' => 4, 'imf_name' => 'PIM_IN_INVENTORY', 'imf_name_intern' => 'IN_INVENTORY', 'imf_type' => 'CHECKBOX', 'imf_description' => convlanguagePIM('PIM_IN_INVENTORY_DESCRIPTION'), 'imf_sequence' => 3, 'imf_system' => 1, 'imf_mandatory' => 0), array('imf_id' => 5, 'imf_name' => 'PIM_LAST_RECEIVER', 'imf_name_intern' => 'LAST_RECEIVER', 'imf_type' => 'TEXT', 'imf_description' => convlanguagePIM('PIM_LAST_RECEIVER_DESCRIPTION'), 'imf_sequence' => 4, 'imf_system' => 1, 'imf_mandatory' => 0), array('imf_id' => 6, 'imf_name' => 'PIM_RECEIVED_ON', 'imf_name_intern' => 'RECEIVED_ON', 'imf_type' => 'DATE', 'imf_description' => convlanguagePIM('PIM_RECEIVED_ON_DESCRIPTION'), 'imf_sequence' => 5, 'imf_system' => 1, 'imf_mandatory' => 0), array('imf_id' => 7, 'imf_name' => 'PIM_RECEIVED_BACK_ON', 'imf_name_intern' => 'RECEIVED_BACK_ON', 'imf_type' => 'DATE', 'imf_description' => convlanguagePIM('PIM_RECEIVED_BACK_ON_DESCRIPTION'), 'imf_sequence' => 6, 'imf_system' => 1, 'imf_mandatory' => 0));
 
         $sql = 'SELECT imf_id, imf_name, imf_name_intern, imf_type, imf_description, imf_sequence, imf_system, imf_mandatory, imf_value_list FROM ' . TBL_INVENTORY_MANAGER_FIELDS . ' WHERE imf_org_id = \'' . $gCurrentOrgId . '\';';
         $statement = $gDb->query($sql);
@@ -336,16 +377,7 @@ class CConfigTablePIM
         // Insert the new array into the database and keep track of new IDs
         $newFieldIds = array();
         foreach ($allFields as $field) {
-            $this->createField(
-                $field['imf_name'],
-                $field['imf_name_intern'],
-                $field['imf_type'],
-                $field['imf_description'],
-                $field['imf_sequence'],
-                $field['imf_system'],
-                $field['imf_mandatory'],
-                isset($field['imf_value_list']) ? $field['imf_value_list'] : ''
-            );
+            $this->createField($field['imf_name'], $field['imf_name_intern'], $field['imf_type'], $field['imf_description'], $field['imf_sequence'], $field['imf_system'], $field['imf_mandatory'], $field['imf_value_list'] ?? '');
 
             // Get the new ID of the inserted field
             $newFieldId = $gDb->lastInsertId();
@@ -407,8 +439,9 @@ class CConfigTablePIM
      * @param bool $mandatory Whether the field is mandatory
      * @param string $valueList The value list for dropdown fields
      * @return void
+     * @throws AdmException
      */
-    private function createField($name, $internalName, $type, $description, $sequence, $system, $mandatory, $valueList = ''): void
+    private function createField(string $name, string $internalName, string $type, string $description, int $sequence, bool $system, bool $mandatory, string $valueList = ''): void
     {
         global $gDb, $gCurrentOrgId;
 
@@ -429,6 +462,7 @@ class CConfigTablePIM
      * Initializes preferences for the inventory manager
      *
      * @return void
+     * @throws Exception
      */
     private function initializePreferencesByOrgId(): void
     {
@@ -474,6 +508,7 @@ class CConfigTablePIM
      * Writes the configuration data of plugin InventoryManager to the database
      *
      * @return void
+     * @throws Exception
      */
     public function write(): void
     {
@@ -509,6 +544,7 @@ class CConfigTablePIM
      * Reads the configuration data of plugin InventoryManager from the database
      *
      * @return bool
+     * @throws Exception
      */
     public function read(): bool
     {
@@ -521,8 +557,9 @@ class CConfigTablePIM
      * @param string $pluginShortcut The shortcut of the plugin
      * @param array &$configArray The array to store the configuration data
      * @return bool
+     * @throws Exception
      */
-    private function readConfigData($pluginShortcut, &$configArray): bool
+    private function readConfigData(string $pluginShortcut, array &$configArray): bool
     {
         global $gDb, $gCurrentOrgId;
 
@@ -563,6 +600,7 @@ class CConfigTablePIM
      * Compare plugin version and stand with current version and stand from database
      *
      * @return bool
+     * @throws Exception
      */
     public function checkForUpdate(): bool
     {
@@ -591,6 +629,8 @@ class CConfigTablePIM
      * Compare plugin version with the current version from the database
      *
      * @return bool
+     * @throws Exception
+     * @throws Exception
      */
     private function compareVersion(): bool
     {
@@ -610,6 +650,7 @@ class CConfigTablePIM
      * Compare plugin stand with the current stand from the database
      *
      * @return bool
+     * @throws Exception
      */
     private function compareStand(): bool
     {
@@ -629,6 +670,7 @@ class CConfigTablePIM
      * Checks if there are default fields for the current organization.
      *
      * @return bool                    Returns true if there are no default fields for the current organization, false otherwise.
+     * @throws Exception
      */
     private function checkDefaultFieldsForCurrentOrg(): bool
     {
@@ -650,8 +692,9 @@ class CConfigTablePIM
      * @param int $deinstOrgSelect 0 = only delete data from current org,
      *                                    1 = delete data from every org
      * @return string                    Result message
+     * @throws Exception
      */
-    public function deleteConfigData($deinstOrgSelect): string
+    public function deleteConfigData(int $deinstOrgSelect): string
     {
         global $gDb, $gCurrentOrgId, $gL10n;
 
@@ -690,8 +733,9 @@ class CConfigTablePIM
      *
      * @param int $deinstOrgSelect 0 = only delete data from current org, 1 = delete data from every org
      * @return string $result Result message
+     * @throws Exception
      */
-    public function deleteItemData($deinstOrgSelect): string
+    public function deleteItemData(int $deinstOrgSelect): string
     {
         global $gDb, $gCurrentOrgId, $gL10n;
         $result = '';
@@ -715,12 +759,7 @@ class CConfigTablePIM
         }
 
         // Drop tables if they are empty or if data should be deleted from every org
-        $table_array = array(
-            TBL_INVENTORY_MANAGER_FIELDS,
-            TBL_INVENTORY_MANAGER_DATA,
-            TBL_INVENTORY_MANAGER_ITEMS,
-            TBL_INVENTORY_MANAGER_LOG
-        );
+        $table_array = array(TBL_INVENTORY_MANAGER_FIELDS, TBL_INVENTORY_MANAGER_DATA, TBL_INVENTORY_MANAGER_ITEMS, TBL_INVENTORY_MANAGER_LOG);
 
         foreach ($table_array as $table_name) {
             $sql = 'SELECT * FROM ' . $table_name;

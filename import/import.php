@@ -60,13 +60,13 @@ if (!isset($formValues['import_enclosure'])) {
 $page = new HtmlPage('admidio-items-import', $headline);
 
 // show form
-$form = new HtmlForm('import_items_form',  ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_read_file.php', $page, array('enableFileUpload' => true));
+$form = new HtmlForm('import_items_form', ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_read_file.php', $page, array('enableFileUpload' => true));
 $formats = array(
     'AUTO' => $gL10n->get('SYS_AUTO_DETECT'),
     'XLSX' => $gL10n->get('SYS_EXCEL_2007_365'),
-    'XLS'  => $gL10n->get('SYS_EXCEL_97_2003'),
-    'ODS'  => $gL10n->get('SYS_ODF_SPREADSHEET'),
-    'CSV'  => $gL10n->get('SYS_COMMA_SEPARATED_FILE'),
+    'XLS' => $gL10n->get('SYS_EXCEL_97_2003'),
+    'ODS' => $gL10n->get('SYS_ODF_SPREADSHEET'),
+    'CSV' => $gL10n->get('SYS_COMMA_SEPARATED_FILE'),
     'HTML' => $gL10n->get('SYS_HTML_TABLE')
 );
 $form->addSelectBox(
@@ -90,12 +90,12 @@ $form->addFileUpload(
     'userfile',
     $gL10n->get('SYS_CHOOSE_FILE'),
     array('property' => HtmlForm::FIELD_REQUIRED, 'allowedMimeTypes' => array('text/comma-separated-values',
-            'text/csv',
-            'text/html',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'application/vnd.ms-excel',
-            'application/vnd.oasis.opendocument.spreadsheet'
-        )
+        'text/csv',
+        'text/html',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel',
+        'application/vnd.oasis.opendocument.spreadsheet'
+    )
     )
 );
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  ***********************************************************************************************
  * Script to manage item fields in the InventoryManager plugin
@@ -7,8 +8,8 @@
  * @author      MightyMCoder
  * @copyright   2024 - today MightyMCoder
  * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0 only
- * 
- * 
+ *
+ *
  * Parameters:
  * imf_id               : ID of the item field to be managed
  * mode                 : 1 - create or edit item field
@@ -16,14 +17,14 @@
  *                        3 - change sequence of item field
  * sequence             : direction to move the item field, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN
  * redirect_to_import   : If true, the user will be redirected to the import page after saving the field
- * 
- * 
+ *
+ *
  * Methods:
- * handleCreateOrUpdate($itemField, $getRedirectToImport)               : Handles the creation or update of an item field
- * handleDelete($itemField)                                             : Handles the deletion of an item field
- * handleChangeSequence($itemField, $getSequence)                       : Handles changing the sequence of an item field
- * validateRequiredFields($itemField)                                   : Validates the required fields for an item field
- * checkFieldExists($itemField)                                         : Checks if an item field already exists
+ * handleCreateOrUpdate($itemField, $getRedirectToImport)       : Handles the creation or update of an item field
+ * handleDelete($itemField)                                     : Handles the deletion of an item field
+ * handleChangeSequence($itemField, $getSequence)               : Handles changing the sequence of an item field
+ * validateRequiredFields($itemField)                           : Validates the required fields for an item field
+ * checkFieldExists($itemField)                                 : Checks if an item field already exists
  ***********************************************************************************************
  */
 
@@ -35,8 +36,8 @@ require_once(__DIR__ . '/../classes/configtable.php');
 require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
-$getimfId    = admFuncVariableIsValid($_GET, 'imf_id',   'int');
-$getMode     = admFuncVariableIsValid($_GET, 'mode',     'int',    array('requireValue' => true));
+$getimfId = admFuncVariableIsValid($_GET, 'imf_id', 'int');
+$getMode = admFuncVariableIsValid($_GET, 'mode', 'int', array('requireValue' => true));
 $getSequence = admFuncVariableIsValid($_GET, 'sequence', 'string', array('validValues' => array(TableUserField::MOVE_UP, TableUserField::MOVE_DOWN)));
 $getRedirectToImport = admFuncVariableIsValid($_GET, 'redirect_to_import', 'bool', array('defaultValue' => false));
 
@@ -55,7 +56,7 @@ if ($getimfId > 0) {
     $itemField->readDataById($getimfId);
 
     // check if item field belongs to actual organization
-    if ($itemField->getValue('imf_org_id') > 0 && (int) $itemField->getValue('imf_org_id') !== (int) $gCurrentOrgId) {
+    if ($itemField->getValue('imf_org_id') > 0 && (int)$itemField->getValue('imf_org_id') !== (int)$gCurrentOrgId) {
         $gMessage->show($gL10n->get('SYS_NO_RIGHTS'));
         // => EXIT
     }
@@ -77,12 +78,14 @@ switch ($getMode) {
 
 /**
  * Handles the creation or update of an item field
- * 
- * @param TableAccess $itemField        The item field object to be created or updated
- * @param bool $redirectToImport        If true, the user will be redirected to the import page after saving the field
+ *
+ * @param TableAccess $itemField The item field object to be created or updated
+ * @param bool $redirectToImport If true, the user will be redirected to the import page after saving the field
  * @return void
+ * @throws AdmException
+ * @throws SmartyException
  */
-function handleCreateOrUpdate($itemField, $redirectToImport = false) : void
+function handleCreateOrUpdate(TableAccess $itemField, bool $redirectToImport = false): void
 {
     global $gMessage, $gL10n, $gCurrentOrgId;
 
@@ -110,12 +113,11 @@ function handleCreateOrUpdate($itemField, $redirectToImport = false) : void
                 $itemField->setValue($item, $value);
             }
         }
-    }
-    catch (AdmException $e) {
+    } catch (AdmException $e) {
         $e->showHtml();
     }
 
-    $itemField->setValue('imf_org_id', (int) $gCurrentOrgId);
+    $itemField->setValue('imf_org_id', (int)$gCurrentOrgId);
 
     if ($itemField->isNewRecord()) {
         $itemField->setValue('imf_name_intern', getNewNameInternPIM($itemField->getValue('imf_name', 'database'), 1));
@@ -134,8 +136,7 @@ function handleCreateOrUpdate($itemField, $redirectToImport = false) : void
 
     if ($redirectToImport) {
         $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/import/import_column_config.php', 1000);
-    }
-    else {
+    } else {
         $gMessage->setForwardUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/fields/fields.php', 1000);
     }
     $gMessage->show($gL10n->get('SYS_SAVE_DATA'));
@@ -144,34 +145,36 @@ function handleCreateOrUpdate($itemField, $redirectToImport = false) : void
 
 /**
  * Handles the deletion of an item field
- * 
- * @param TableAccess $itemField        The item field object to be deleted
+ *
+ * @param TableAccess $itemField The item field object to be deleted
  * @return void
+ * @throws SmartyException
  */
-function handleDelete($itemField) : void
+function handleDelete(TableAccess $itemField): void
 {
     global $gMessage, $gL10n, $gNavigation;
     if ($itemField->delete()) {
         // Deletion successful
-    	// go back to field view
-    	$gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
-    	$gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_DELETED'));
+        // go back to field view
+        $gMessage->setForwardUrl($gNavigation->getPreviousUrl(), 1000);
+        $gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_ITEMFIELD_DELETED'));
     }
     exit();
 }
 
 /**
  * Handles changing the sequence of an item field
- * 
- * @param TableAccess $itemField        The item field object whose sequence is to be changed
- * @param string $getSequence           The direction to move the item field, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN
+ *
+ * @param TableAccess $itemField The item field object whose sequence is to be changed
+ * @param string $getSequence The direction to move the item field, values are TableUserField::MOVE_UP, TableUserField::MOVE_DOWN
  * @return void
+ * @throws AdmException
  */
-function handleChangeSequence($itemField, $getSequence) : void
+function handleChangeSequence(TableAccess $itemField, string $getSequence): void
 {
     global $gDb, $gCurrentOrgId;
 
-    $imfSequence = (int) $itemField->getValue('imf_sequence');
+    $imfSequence = (int)$itemField->getValue('imf_sequence');
 
     $sql = 'UPDATE ' . TBL_INVENTORY_MANAGER_FIELDS . '
             SET imf_sequence = ? -- $imf_sequence
@@ -182,10 +185,12 @@ function handleChangeSequence($itemField, $getSequence) : void
     // Field will get one number lower and therefore move a position up in the list
     if ($getSequence === TableUserField::MOVE_UP) {
         $newSequence = $imfSequence - 1;
-    }
-    // Field will get one number higher and therefore move a position down in the list
+    } // Field will get one number higher and therefore move a position down in the list
     elseif ($getSequence === TableUserField::MOVE_DOWN) {
         $newSequence = $imfSequence + 1;
+    } else {
+        // Invalid sequence direction
+        throw new AdmException('Invalid sequence direction: ' . $getSequence);
     }
 
     // Update the existing entry with the sequence of the field that should get the new sequence
@@ -199,11 +204,12 @@ function handleChangeSequence($itemField, $getSequence) : void
 
 /**
  * Validates the required fields for an item field
- * 
- * @param TableAccess $itemField        The item field object to be validated
+ *
+ * @param TableAccess $itemField The item field object to be validated
  * @return void
+ * @throws SmartyException
  */
-function validateRequiredFields($itemField) : void
+function validateRequiredFields(TableAccess $itemField): void
 {
     global $gMessage, $gL10n;
 
@@ -218,7 +224,7 @@ function validateRequiredFields($itemField) : void
             // => EXIT
         }
 
-        if (($_POST['imf_type'] === 'DROPDOWN' || $_POST['imf_type'] === 'RADIO_BUTTON') && $_POST['imf_value_list'] === '') {
+        if (($_POST['imf_type'] === 'DROPDOWN' || $_POST['imf_type'] === 'RADIO_BUTTON' || $_POST['imf_type'] === 'DATE_INTERVAL') && $_POST['imf_value_list'] === '') {
             $gMessage->show($gL10n->get('SYS_FIELD_EMPTY', array($gL10n->get('ORG_VALUE_LIST'))));
             // => EXIT
         }
@@ -227,11 +233,12 @@ function validateRequiredFields($itemField) : void
 
 /**
  * Checks if an item field already exists
- * 
- * @param string $itemField        The item field string to be checked
+ *
+ * @param string $itemField The item field string to be checked
  * @return void
+ * @throws SmartyException
  */
-function checkFieldExists($itemField) : void
+function checkFieldExists(string $itemField): void
 {
     global $gMessage, $gL10n, $gDb, $gCurrentOrgId, $getimfId;
 
@@ -242,7 +249,7 @@ function checkFieldExists($itemField) : void
             AND imf_id <> ? -- $getimfId;';
     $statement = $gDb->queryPrepared($sql, array($itemField, $gCurrentOrgId, $getimfId));
 
-    if ((int) $statement->fetchColumn() > 0) {
+    if ((int)$statement->fetchColumn() > 0) {
         $gMessage->show($gL10n->get('ORG_FIELD_EXIST'));
         // => EXIT
     }
