@@ -37,8 +37,25 @@
  * sendNotification($importData = null)                         : Sends a notification to all users that have the right to see the item
  ***********************************************************************************************
  */
+
+// compatibility for Admidio 5.0 ->
+if(file_exists(__DIR__ . '/../../../system/bootstrap/constants.php')) {
+    require_once(__DIR__ . '/../../../system/bootstrap/constants.php');
+} else {
+    require_once(__DIR__ . '/../../../adm_program/system/bootstrap/constants.php');
+}
 require_once(__DIR__ . '/configtable.php');
 
+// classes for Admidio 5.0
+if (!version_compare(ADMIDIO_VERSION, '5.0', '<')) {
+    class_alias(Admidio\Infrastructure\Database::class, Database::class);
+    class_alias(Admidio\Infrastructure\Image::class, Image::class);
+    class_alias(Admidio\Infrastructure\Language::class, Language::class);
+    class_alias(Admidio\Infrastructure\Utils\StringUtils::class, StringUtils::class);
+    class_alias(Admidio\Infrastructure\Entity\Entity::class, TableAccess::class);
+    class_alias(Admidio\Infrastructure\Email::class, Email::class);
+}
+// <- compatibility for Admidio 5.0
 class CItems
 {
     public array $mItemFields = array();        ///< Array with all item fields objects
@@ -797,7 +814,14 @@ class CItems
 
         $returnCode = $this->mItemData[$imfId]->setValue('imd_value', $newValue);
 
-        if ($returnCode && $gSettingsManager->getBool('profile_log_edit_fields')) {
+        if ($gSettingsManager->has('profile_log_edit_fields')) {
+            // check if logging of profile field changes is enabled
+            $loggingEnabled = $gSettingsManager->getBool('profile_log_edit_fields');
+        } else {
+            $loggingEnabled = $gSettingsManager->getBool('changelog_module_enabled');
+        }
+
+        if ($returnCode && $loggingEnabled) {
             $logEntry = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_LOG, 'iml');
             $logEntry->setValue('iml_imi_id', $this->mItemId);
             $logEntry->setValue('iml_imf_id', $imfId);

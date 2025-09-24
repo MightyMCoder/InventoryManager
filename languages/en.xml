@@ -100,6 +100,11 @@
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_DATE">Situation</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_INFORMATION">Plug-in informations</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_NAME">Plug-in name</string>
+    <string name="PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE">InventoryManager is not compatible with this version of Admidio</string>
+    <string name="PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT">Thank you for using the InventoryManager plugin!\n\nAlthough it was released only recently the plugin has already proven very helpful for many users. Since there has long been a demand for an integrated inventory management system in Admidio the plugin has now been migrated into a new inventory module within Admidio itself.\n\nPlease note that the new module may not yet include all the features of the plugin but it will continue to be improved and expanded over time.</string>
+    <string name="PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT2">You can export your existing data from the InventoryManager plugin below and then import it into Admidios new inventory module.</string>
+    <string name="PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT3">After you have successfully migrated your data please uninstall the InventoryManager plugin below to avoid any conflicts with the new inventory module.</string>
+    <string name="PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT4">If you have any questions or problems feel free to contact us in the #VAR1# or open an #VAR2# on GitHub.</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_VERSION">Version</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN">Profile view settings</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">Issued items can be viewed in a member's profile view. By default, only the item name is displayed. In addition to the item name, other item fields can be selected and displayed here.</string>
@@ -110,6 +115,7 @@
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">Current user as default selection</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">If the current user is to be preset as the keeper when adding new items, the checkbox must be checked.</string>
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">You are using the current #VAR1# version of InventoryManager!</string>
+    <string name="PLG_INVENTORY_MANAGER_V5_NO_DATA">This Plugin is not compatible to Version 5 of Admidio. There is no data available from a previous version of InventoryManager to export.\n\nPlease remove the plugin files from your Admidio installation and use the new Inventory moule implemented in Admidio Version 5. (#VAR1#)</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Category</string>
     <string name="PIM_CATEGORY_DESCRIPTION">Category of the item</string>

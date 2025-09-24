@@ -100,6 +100,11 @@
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_DATE">Situazione</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_INFORMATION">Informazioni sul plugin</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_NAME">Nome del plugin</string>
+    <string name="PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE">InventoryManager non è compatibile con questa versione di Admidio</string>
+    <string name="PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT">Grazie per aver utilizzato il plugin InventoryManager!&#10;&#10;Sebbene sia stato rilasciato solo di recente, il plugin si è già dimostrato molto utile per molti utenti. Dato che da tempo esisteva la richiesta di un sistema integrato di gestione dell'inventario in Admidio, il plugin è stato ora migrato in un nuovo modulo di inventario all'interno dello stesso Admidio.&#10;&#10;Si prega di notare che il nuovo modulo potrebbe non includere ancora tutte le funzionalità del plugin, ma verrà continuamente migliorato e ampliato nel tempo.</string>
+    <string name="PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT2">Puoi esportare i dati esistenti dal plugin InventoryManager qui sotto e poi importarli nel nuovo modulo di inventario di Admidio.</string>
+    <string name="PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT3">Dopo aver migrato con successo i tuoi dati, disinstalla il plugin InventoryManager qui sotto per evitare conflitti con il nuovo modulo di inventario.</string>
+    <string name="PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT4">Se hai domande o problemi, non esitare a contattarci nel #VAR1# o ad aprire un #VAR2# su GitHub.</string>
     <string name="PLG_INVENTORY_MANAGER_PLUGIN_VERSION">Versione</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN">Impostazioni vista profilo</string>
     <string name="PLG_INVENTORY_MANAGER_PROFILE_ADDIN_DESC">Gli articoli emessi possono essere visualizzati nella vista profilo di un membro. Per impostazione predefinita viene visualizzato solo il nome dell'articolo. Oltre al nome, qui puoi selezionare e visualizzare altri campi dell'articolo.</string>
@@ -110,6 +115,7 @@
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">Utente corrente come selezione predefinita</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">Se l'utente corrente deve essere preimpostato come custode quando si aggiungono nuovi articoli, seleziona questa opzione.</string>
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">Stai utilizzando la versione corrente #VAR1# di InventoryManager!</string>
+    <string name="PLG_INVENTORY_MANAGER_V5_NO_DATA">Questo plugin non è compatibile con la versione 5 di Admidio. Non ci sono dati disponibili da una versione precedente di InventoryManager da esportare.\n\nSi prega di rimuovere i file del plugin dalla propria installazione di Admidio e di utilizzare il nuovo modulo di inventario implementato nella versione 5 di Admidio. (#VAR1#)</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Categoria</string>
     <string name="PIM_CATEGORY_DESCRIPTION">Categoria dell'articolo</string>

@@ -33,7 +33,25 @@
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
+// compatibility for Admidio 5.0 ->
+if (file_exists(__DIR__ . '/../../system/common.php')) {
+    require_once(__DIR__ . '/../../system/common.php');
+}else {
+    require_once(__DIR__ . '/../../adm_program/system/common.php');
+}
+if(file_exists(__DIR__ . '/../../system/bootstrap/constants.php')) {
+    require_once(__DIR__ . '/../../system/bootstrap/constants.php');
+} else {
+    require_once(__DIR__ . '/../../adm_program/system/bootstrap/constants.php');
+}
+
+// classes for Admidio 5.0
+if (!version_compare(ADMIDIO_VERSION, '5.0', '<')) {
+    class_alias(Admidio\Components\Entity\Component::class, Component::class);
+    class_alias(Admidio\Roles\Entity\RolesRights::class, RolesRights::class);
+    class_alias(Admidio\Menu\ValueObject\MenuNode::class, MenuNode::class);
+}
+// <- compatibility for Admidio 5.0
 
 // Define necessary constants if not already defined
 defineConstantsPIM();

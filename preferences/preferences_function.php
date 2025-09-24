@@ -24,12 +24,34 @@
  ***********************************************************************************************
  */
 
-require_once(__DIR__ . '/../../../adm_program/system/common.php');
+// for Admidio 5.0
+use Admidio\Infrastructure\Utils\SecurityUtils;
+
+// compatibility for Admidio 5.0 ->
+if (file_exists(__DIR__ . '/../../../system/common.php')) {
+    require_once(__DIR__ . '/../../../system/common.php');
+}else {
+    require_once(__DIR__ . '/../../../adm_program/system/common.php');
+}
+if(file_exists(__DIR__ . '/../../system/bootstrap/constants.php')) {
+    require_once(__DIR__ . '/../../system/bootstrap/constants.php');
+} else {
+    require_once(__DIR__ . '/../../adm_program/system/bootstrap/constants.php');
+}
 require_once(__DIR__ . '/../common_function.php');
 require_once(__DIR__ . '/../classes/configtable.php');
-
 // Access only with valid login
-require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
+if (file_exists(__DIR__ . '/../../../system/login_valid.php')) {
+    require_once(__DIR__ . '/../../../system/login_valid.php');
+} else {
+    require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
+}
+
+// classes for Admidio 5.0
+if (!version_compare(ADMIDIO_VERSION, '5.0', '<')) {
+    class_alias(Admidio\Infrastructure\Utils\SecurityUtils::class, SecurityUtils::class);
+}
+// <- compatibility for Admidio 5.0
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
@@ -130,11 +152,11 @@ function showDeinstallationDialog(): void
 
     $headline = $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION');
 
-    // create html page object
-    $page = new HtmlPage('plg-inventory-manager-deinstallation', $headline);
-
     // add current url to navigation stack
     $gNavigation->addUrl(CURRENT_URL, $headline);
+
+    // create html page object
+    $page = new HtmlPage('plg-inventory-manager-deinstallation', $headline);
 
     $page->addHtml('<p class="lead">' . $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION_FORM_DESC') . '</p>');
 
@@ -142,7 +164,7 @@ function showDeinstallationDialog(): void
     $radioButtonEntries = array('0' => $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ACTORGONLY'), '1' => $gL10n->get('PLG_INVENTORY_MANAGER_DEINST_ALLORG'));
 
     $form = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/preferences/preferences_function.php', array('mode' => 3)), $page);
-    $form->addRadioButton('deinst_org_select', $gL10n->get('PLG_INVENTORY_MANAGER_ORG_CHOICE'), $radioButtonEntries, array('defaultValue' => '0'));
+    $form->addRadioButton('deinst_org_select', $gL10n->get('PLG_INVENTORY_MANAGER_ORG_CHOICE'), $radioButtonEntries, array('defaultValue' => '0', 'toggleable' => false));
     $form->addSubmitButton('btn_deinstall', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), array('icon' => 'fa-trash-alt', 'class' => 'offset-sm-3'));
 
     // add form to html page and show page

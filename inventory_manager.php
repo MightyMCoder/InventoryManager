@@ -50,14 +50,34 @@ use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
+// compatibility for Admidio 5.0 ->
+if (file_exists(__DIR__ . '/../../system/common.php')) {
+    require_once(__DIR__ . '/../../system/common.php');
+}else {
+    require_once(__DIR__ . '/../../adm_program/system/common.php');
+}
+if(file_exists(__DIR__ . '/../../system/bootstrap/constants.php')) {
+    require_once(__DIR__ . '/../../system/bootstrap/constants.php');
+} else {
+    require_once(__DIR__ . '/../../adm_program/system/bootstrap/constants.php');
+}
 require_once(__DIR__ . '/common_function.php');
 require_once(__DIR__ . '/classes/items.php');
 require_once(__DIR__ . '/classes/configtable.php');
-
 // Access only with valid login
-require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+if (file_exists(__DIR__ . '/../../system/login_valid.php')) {
+    require_once(__DIR__ . '/../../system/login_valid.php');
+} else {
+    require_once(__DIR__ . '/../../adm_program/system/login_valid.php');
+}
 
+// classes for Admidio 5.0
+if (!version_compare(ADMIDIO_VERSION, '5.0', '<')) {
+    class_alias(Admidio\Infrastructure\Utils\SecurityUtils::class, SecurityUtils::class);
+    class_alias(Admidio\Users\Entity\User::class, User::class);
+    class_alias(Admidio\Infrastructure\Utils\FileSystemUtils::class, FileSystemUtils::class);
+}
+// <- compatibility for Admidio 5.0
 //$scriptName is the name as it must be entered in the menu, without any preceding folders such as /playground/adm_plugins/InventoryManager...
 $scriptName = substr($_SERVER['SCRIPT_NAME'], strpos($_SERVER['SCRIPT_NAME'], FOLDER_PLUGINS));
 
@@ -75,7 +95,93 @@ $sessionDefaults = array(
 
 // check if plugin need to be updated
 $pPreferences = new CConfigTablePIM();
-$pPreferences->checkForUpdate() ? $pPreferences->init() : $pPreferences->read();
+// check if installed admidio version is compatible with this plugin version
+if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
+    $pPreferences->checkForUpdate() ? $pPreferences->init() : $pPreferences->read();
+} else {
+    // We are in Version 5.0.0 or higher so the plugin is not compatible anymore
+    // But we need the preferences to get the export filename
+    if (!$pPreferences->read()) {
+        $gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_V5_NO_DATA', array('<a href="' . ADMIDIO_URL . FOLDER_MODULES . '/inventory.php">' . $gL10n->get('SYS_INVENTORY') . '</a>')));
+    }
+
+    $exportMode = (admFuncVariableIsValid($_GET, 'mode', 'string', array('defaultValue' => 'html', 'validValues' => array('csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx', 'ods'))) === 'html') ? false : true;
+
+    if (!$exportMode) {
+        $gNavigation->addStartUrl(CURRENT_URL, $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER'), 'bi-box-seam');
+        $page = new HtmlPage('plg-inventory-manager-deprecated');
+        $page->setTitle($gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER'));
+        $page->setHeadline($gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER'));
+
+        $content = '
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">' . $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE') . '</h4>
+                <p>' . $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT') . '</p>
+                <hr>
+                <p' . $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT2') . '</p>
+                ';
+
+        // add export dropdown menu
+        $content .= '
+            <div class="d-flex justify-content-center">
+                <div class="mb-3 d-flex justify-content-center gap-2">
+                    <a class="btn btn-primary" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                'filter_string' => '',
+                'filter_category' => '',
+                'filter_keeper' => 0,
+                'show_all' => true,
+                'mode' => 'xlsx'
+            )) . '">
+                        <i class="fas fa-file-excel"></i>' . $gL10n->get('SYS_MICROSOFT_EXCEL') . ' (*.xlsx)
+                    </a>
+                    <a class="btn btn-primary" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                'filter_string' => '',
+                'filter_category' => '',
+                'filter_keeper' => 0,
+                'show_all' => true,
+                'mode' => 'ods'
+            )) .'">
+                        <i class="fas fa-file-alt"></i>' . $gL10n->get('SYS_ODF_SPREADSHEET') . '
+                    </a>
+                    <a class="btn btn-primary" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                'filter_string' => '',
+                'filter_category' => '',
+                'filter_keeper' => 0,
+                'show_all' => true,
+                'mode' => 'csv-ms'
+            )) . '">
+                        <i class="fas fa-file-csv"></i>' . $gL10n->get('SYS_COMMA_SEPARATED_FILE') . '
+                    </a>
+                    <a class="btn btn-primary" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
+                'filter_string' => '',
+                'filter_category' => '',
+                'filter_keeper' => 0,
+                'show_all' => true,
+                'mode' => 'csv-oo'
+            )) . '">
+                        <i class="fas fa-file-csv"></i>' . $gL10n->get('SYS_COMMA_SEPARATED_FILE') . ' (' . $gL10n->get('SYS_UTF8') . ')
+                    </a>
+                </div>
+            </div>';
+        $content .= '
+            <hr>
+            <p>' . $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT3') . '</p>
+            <div class="d-flex justify-content-center">';
+        // add deinstallation button
+        $formDeinstallation = new HtmlForm('deinstallation_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/preferences/preferences_function.php', array('mode' => 2)), $page);
+        $formDeinstallation->addSubmitButton('btn_perform_deinstallation', $gL10n->get('PLG_INVENTORY_MANAGER_DEINSTALLATION'), array('icon' => 'bi-trash'));
+        $content .= $formDeinstallation->show();
+        $content .= '</div>';
+
+        $content .= '<hr>
+            <p>' . $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE_TEXT4', array('<a href="https://www.admidio.org/forum/index.php">Admidio Forum</a>', '<a href="https://github.com/Admidio/admidio/issues">Issue</a>')) . '</p>';
+        $content .= '</div>';
+        $page->addHtml($content);
+        $page->show();
+        exit();
+    }
+}
+
 $disableBorrowing = $pPreferences->config['Optionen']['disable_borrowing'];
 
 // check if user is authorized for preferences panel
@@ -631,8 +737,14 @@ foreach ($items->items as $item) {
     if ($getMode == 'html') {
         $tempValue = '';
 
+        if ($gSettingsManager->has('profile_log_edit_fields')) {
+            // check if logging of profile field changes is enabled
+            $loggingEnabled = $gSettingsManager->getBool('profile_log_edit_fields');
+        } else {
+            $loggingEnabled = $gSettingsManager->getBool('changelog_module_enabled');
+        }
         // show link to view profile field change history
-        if ($gSettingsManager->getBool('profile_log_edit_fields')) {
+        if ($loggingEnabled) {
             $tempValue .= '
                 <a class="admidio-icon-link" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/items/items_history.php', array('item_id' => $item['imi_id'])) . '">
                    <i class="fas fa-history" title="' . $gL10n->get('SYS_CHANGE_HISTORY') . '"></i>
