@@ -4,7 +4,7 @@
  ***********************************************************************************************
  * InventoryManager
  *
- * Version 1.2.0-beta1
+ * Version 1.2.0-beta.1
  *
  * InventoryManager is an Admidio plugin for managing the inventory of an organisation.
  *
