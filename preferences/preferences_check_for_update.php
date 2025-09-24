@@ -104,7 +104,7 @@ if ($getMode === 2) {
     if ($versionUpdate !== 99 && $betaVersion !== 'n/a') {
         echo '
             <a class="btn" href="' . $betaURL . '" title="' . $gL10n->get('PLG_INVENTORY_MANAGER_DOWNLOAD_PAGE') . '" target="_blank">' .
-            '<i class="fas fa-link"></i>' . $betaVersion . ' Beta
+            '<i class="fas fa-link"></i>' . $betaVersion . '
             </a>';
     } else {
         echo $betaVersion;
