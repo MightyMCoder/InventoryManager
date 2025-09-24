@@ -38,22 +38,24 @@
  ***********************************************************************************************
  */
 
-// for Admidio 5.0
-use Admidio\Infrastructure\Database;
-use Admidio\Infrastructure\Image;
-use Admidio\Infrastructure\Language;
-use Admidio\Infrastructure\Utils\StringUtils;
-use Admidio\Infrastructure\Entity\Entity;
-use Admidio\Infrastructure\Email;
-
-try {
+// compatibility for Admidio 5.0 ->
+if(file_exists(__DIR__ . '/../../../system/bootstrap/constants.php')) {
     require_once(__DIR__ . '/../../../system/bootstrap/constants.php');
-} catch (Exception $e) {
+} else {
     require_once(__DIR__ . '/../../../adm_program/system/bootstrap/constants.php');
 }
-
 require_once(__DIR__ . '/configtable.php');
 
+// classes for Admidio 5.0
+if (!version_compare(ADMIDIO_VERSION, '5.0', '<')) {
+    class_alias(Admidio\Infrastructure\Database::class, Database::class);
+    class_alias(Admidio\Infrastructure\Image::class, Image::class);
+    class_alias(Admidio\Infrastructure\Language::class, Language::class);
+    class_alias(Admidio\Infrastructure\Utils\StringUtils::class, StringUtils::class);
+    class_alias(Admidio\Infrastructure\Entity\Entity::class, TableAccess::class);
+    class_alias(Admidio\Infrastructure\Email::class, Email::class);
+}
+// <- compatibility for Admidio 5.0
 class CItems
 {
     public array $mItemFields = array();        ///< Array with all item fields objects
@@ -588,11 +590,7 @@ class CItems
 
             while ($row = $itemDataStatement->fetch()) {
                 if (!array_key_exists($row['imd_imf_id'], $this->mItemData)) {
-                    if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
-                        $this->mItemData[$row['imd_imf_id']] = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_DATA, 'imd');
-                    } else {
-                        $this->mItemData[$row['imd_imf_id']] = new Entity($this->mDb, TBL_INVENTORY_MANAGER_DATA, 'imd');
-                    }
+                    $this->mItemData[$row['imd_imf_id']] = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_DATA, 'imd');
                 }
                 $this->mItemData[$row['imd_imf_id']]->setArray($row);
             }
@@ -628,11 +626,7 @@ class CItems
         // for updateFingerPrint a change in db must be executed
         // why !$this->itemCreated -> updateFingerPrint will be done in getNewItemId
         if (!$this->itemCreated && $this->columnsValueChanged) {
-            if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
-                $updateItem = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi', $this->mItemId);
-            } else {
-                $updateItem = new Entity($this->mDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi', $this->mItemId);
-            }
+            $updateItem = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi', $this->mItemId);
             $updateItem->setValue('imi_usr_id_change', null, false);
             $updateItem->save();
         }
@@ -665,11 +659,7 @@ class CItems
 
         while ($row = $statement->fetch()) {
             if (!array_key_exists($row['imf_name_intern'], $this->mItemFields)) {
-                if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
-                    $this->mItemFields[$row['imf_name_intern']] = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf');
-                } else {
-                    $this->mItemFields[$row['imf_name_intern']] = new Entity($this->mDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf');
-                }
+                $this->mItemFields[$row['imf_name_intern']] = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_FIELDS, 'imf');
             }
             $this->mItemFields[$row['imf_name_intern']]->setArray($row);
             $this->itemFieldsSort[$row['imf_name_intern']] = $row['imf_sequence'];
@@ -817,11 +807,7 @@ class CItems
         }
 
         if (!array_key_exists($imfId, $this->mItemData)) {
-            if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
-                $this->mItemData[$imfId] = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_DATA, 'imd');
-            } else {
-                $this->mItemData[$imfId] = new Entity($this->mDb, TBL_INVENTORY_MANAGER_DATA, 'imd');
-            }
+            $this->mItemData[$imfId] = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_DATA, 'imd');
             $this->mItemData[$imfId]->setValue('imd_imf_id', $imfId);
             $this->mItemData[$imfId]->setValue('imd_imi_id', $this->mItemId);
         }
@@ -836,11 +822,7 @@ class CItems
         }
 
         if ($returnCode && $loggingEnabled) {
-            if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
-                $logEntry = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_LOG, 'iml');
-            } else {
-                $logEntry = new Entity($this->mDb, TBL_INVENTORY_MANAGER_LOG, 'iml');
-            }
+            $logEntry = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_LOG, 'iml');
             $logEntry->setValue('iml_imi_id', $this->mItemId);
             $logEntry->setValue('iml_imf_id', $imfId);
             $logEntry->setValue('iml_value_old', $oldFieldValue);
@@ -870,21 +852,13 @@ class CItems
         $statement = $this->mDb->queryPrepared($sql);
 
         while ($row = $statement->fetch()) {
-            if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
-                $delItem = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi', $row['imi_id']);
-            } else {
-                $delItem = new Entity($this->mDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi', $row['imi_id']);
-            }
+            $delItem = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi', $row['imi_id']);
             $delItem->delete();
         }
 
         // generate a new ItemId
         if ($this->itemCreated) {
-            if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
-                $newItem = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi');
-            } else {
-                $newItem = new Entity($this->mDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi');
-            }
+            $newItem = new TableAccess($this->mDb, TBL_INVENTORY_MANAGER_ITEMS, 'imi');
             $newItem->setValue('imi_org_id', $organizationId);
             $newItem->setValue('imi_former', 0);
             $newItem->save();

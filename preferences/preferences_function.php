@@ -27,22 +27,31 @@
 // for Admidio 5.0
 use Admidio\Infrastructure\Utils\SecurityUtils;
 
-try {
+// compatibility for Admidio 5.0 ->
+if (file_exists(__DIR__ . '/../../../system/common.php')) {
     require_once(__DIR__ . '/../../../system/common.php');
-    require_once(__DIR__ . '/../common_function.php');
-    require_once(__DIR__ . '/../classes/configtable.php');
-
-// Access only with valid login
-    require_once(__DIR__ . '/../../../system/login_valid.php');
-
-} catch (Exception $e) {
+}else {
     require_once(__DIR__ . '/../../../adm_program/system/common.php');
-    require_once(__DIR__ . '/../common_function.php');
-    require_once(__DIR__ . '/../classes/configtable.php');
-
+}
+if(file_exists(__DIR__ . '/../../system/bootstrap/constants.php')) {
+    require_once(__DIR__ . '/../../system/bootstrap/constants.php');
+} else {
+    require_once(__DIR__ . '/../../adm_program/system/bootstrap/constants.php');
+}
+require_once(__DIR__ . '/../common_function.php');
+require_once(__DIR__ . '/../classes/configtable.php');
 // Access only with valid login
+if (file_exists(__DIR__ . '/../../../system/login_valid.php')) {
+    require_once(__DIR__ . '/../../../system/login_valid.php');
+} else {
     require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 }
+
+// classes for Admidio 5.0
+if (!version_compare(ADMIDIO_VERSION, '5.0', '<')) {
+    class_alias(Admidio\Infrastructure\Utils\SecurityUtils::class, SecurityUtils::class);
+}
+// <- compatibility for Admidio 5.0
 
 $pPreferences = new CConfigTablePIM();
 $pPreferences->read();
