@@ -178,6 +178,7 @@ if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
         $content .= '</div>';
         $page->addHtml($content);
         $page->show();
+        exit();
     }
 }
 
