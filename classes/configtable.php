@@ -548,7 +548,11 @@ class CConfigTablePIM
      */
     public function read(): bool
     {
-        return $this->readConfigData(self::SHORTCUT, $this->config);
+        try {
+            return $this->readConfigData(self::SHORTCUT, $this->config);
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     /**

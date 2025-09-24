@@ -33,7 +33,16 @@
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-require_once(__DIR__ . '/../../adm_program/system/common.php');
+// for Admidio 5.0
+use Admidio\Components\Entity\Component;
+use Admidio\Roles\Entity\RolesRights;
+use Admidio\Menu\ValueObject\MenuNode;
+
+try {
+    require_once(__DIR__ . '/../../system/common.php');
+} catch (Exception $e) {
+    require_once(__DIR__ . '/../../adm_program/system/common.php');
+}
 
 // Define necessary constants if not already defined
 defineConstantsPIM();
