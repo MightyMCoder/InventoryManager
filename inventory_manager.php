@@ -102,7 +102,22 @@ if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
     // We are in Version 5.0.0 or higher so the plugin is not compatible anymore
     // But we need the preferences to get the export filename
     if (!$pPreferences->read()) {
-        $gMessage->show($gL10n->get('PLG_INVENTORY_MANAGER_V5_NO_DATA', array('<a href="' . ADMIDIO_URL . FOLDER_MODULES . '/inventory.php">' . $gL10n->get('SYS_INVENTORY') . '</a>')));
+        $gNavigation->addStartUrl(CURRENT_URL, $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER'), 'bi-box-seam');
+        $page = new HtmlPage('plg-inventory-manager-deprecated');
+        $page->setTitle($gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER'));
+        $page->setHeadline($gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER'));
+
+        $link = '<a href="' . ADMIDIO_URL . FOLDER_MODULES . '/preferences.php?panel=inventory">' . $gL10n->get('SYS_INVENTORY') . '</a>';
+        if ($gSettingsManager->getInt('inventory_module_enabled') !== 0) {
+            $link = '<a href="' . ADMIDIO_URL . FOLDER_MODULES . '/inventory.php">' . $gL10n->get('SYS_INVENTORY') . '</a>';
+        }
+        $content = '<div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">' . $gL10n->get('PLG_INVENTORY_MANAGER_PLUGIN_NOT_COMPATIBLE') . '</h4>
+                <p>' . $gL10n->get('PLG_INVENTORY_MANAGER_V5_NO_DATA', array($link)) . '</p>
+                </div>';
+        $page->addHtml($content);
+        $page->show();
+        exit();
     }
 
     $exportMode = (admFuncVariableIsValid($_GET, 'mode', 'string', array('defaultValue' => 'html', 'validValues' => array('csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx', 'ods'))) === 'html') ? false : true;

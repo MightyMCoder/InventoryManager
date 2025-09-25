@@ -115,7 +115,7 @@
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER">Current user as default selection</string>
     <string name="PLG_INVENTORY_MANAGER_USE_CURRENT_USER_DESC">If the current user is to be preset as the keeper when adding new items, the checkbox must be checked.</string>
     <string name="PLG_INVENTORY_MANAGER_USING_CURRENT_VERSION">You are using the current #VAR1# version of InventoryManager!</string>
-    <string name="PLG_INVENTORY_MANAGER_V5_NO_DATA">This Plugin is not compatible to Version 5 of Admidio. There is no data available from a previous version of InventoryManager to export.\n\nPlease remove the plugin files from your Admidio installation and use the new Inventory moule implemented in Admidio Version 5. (#VAR1#)</string>
+    <string name="PLG_INVENTORY_MANAGER_V5_NO_DATA">This Plugin is not compatible to Version 5 of Admidio. There is no data available from a previous version of InventoryManager to export.\n\nPlease remove the plugin files from your Admidio installation and use the new Inventory module implemented in Admidio Version 5. (#VAR1#)</string>
     <!-- Phrases only in Database -->
     <string name="PIM_CATEGORY">Category</string>
     <string name="PIM_CATEGORY_DESCRIPTION">Category of the item</string>
