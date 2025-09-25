@@ -250,7 +250,15 @@ class CConfigTablePIM
     {
         global $gDb, $gDbType;
 
-        $sql = 'SELECT table_name FROM information_schema.tables WHERE table_name = \'' . $tableName . '\';';
+        switch ($gDbType) {
+            case 'pgsql':
+                $sql = 'SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = \'' . $tableName . '\';';
+                break;
+            case 'mysql': // fallthrough
+            default:
+                $sql = 'SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = \'' . $tableName . '\';';
+                break;
+        }
         $statement = $gDb->query($sql);
 
         if (!$statement->rowCount()) {
@@ -608,16 +616,24 @@ class CConfigTablePIM
      */
     public function checkForUpdate(): bool
     {
-        global $gDb;
+        global $gDb, $gDbType;
 
         $needsUpdate = false;
 
-        // Check if table *_plugin_preferences exists
-        $sql = 'SELECT table_name FROM information_schema.tables WHERE table_name = \'' . $this->table_preferences_name . '\';';
-        $tablePreferencesExistStatement = $gDb->queryPrepared($sql);
-
-        $sql = 'SELECT table_name FROM information_schema.tables WHERE table_name = \'' . TBL_INVENTORY_MANAGER_FIELDS . '\';';
-        $tableFieldsExistStatement = $gDb->queryPrepared($sql);
+        switch ($gDbType) {
+            case 'pgsql':
+                // Check if table *_plugin_preferences exists
+                $sqlPreferences = 'SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = \'' . $this->table_preferences_name . '\';';
+                $sqlFields = 'SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = \'' . TBL_INVENTORY_MANAGER_FIELDS . '\';';
+                break;
+            case 'mysql': // fallthrough
+            default:
+                $sqlPreferences = 'SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = \'' . $this->table_preferences_name . '\';';
+                $sqlFields = 'SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = \'' . TBL_INVENTORY_MANAGER_FIELDS . '\';';
+                break;
+        }
+        $tablePreferencesExistStatement = $gDb->queryPrepared($sqlPreferences);
+        $tableFieldsExistStatement = $gDb->queryPrepared($sqlFields);
 
         if ($tablePreferencesExistStatement->rowCount() && $tableFieldsExistStatement->rowCount()) {
             $needsUpdate = $this->checkDefaultFieldsForCurrentOrg() || $this->compareVersion() || $this->compareStand();
