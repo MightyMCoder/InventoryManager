@@ -24,19 +24,16 @@
  ***********************************************************************************************
  */
 
-// for Admidio 5.0
-use Admidio\Infrastructure\Utils\SecurityUtils;
-
 // compatibility for Admidio 5.0 ->
 if (file_exists(__DIR__ . '/../../../system/common.php')) {
     require_once(__DIR__ . '/../../../system/common.php');
 }else {
     require_once(__DIR__ . '/../../../adm_program/system/common.php');
 }
-if(file_exists(__DIR__ . '/../../system/bootstrap/constants.php')) {
-    require_once(__DIR__ . '/../../system/bootstrap/constants.php');
+if(file_exists(__DIR__ . '/../../../system/bootstrap/constants.php')) {
+    require_once(__DIR__ . '/../../../system/bootstrap/constants.php');
 } else {
-    require_once(__DIR__ . '/../../adm_program/system/bootstrap/constants.php');
+    require_once(__DIR__ . '/../../../adm_program/system/bootstrap/constants.php');
 }
 require_once(__DIR__ . '/../common_function.php');
 require_once(__DIR__ . '/../classes/configtable.php');
