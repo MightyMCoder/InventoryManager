@@ -154,8 +154,8 @@ class CConfigTablePIM
             plp_name VARCHAR(255) NOT NULL,
             plp_value TEXT
         ';
-private const SHORTCUT = 'PIM';               // array with configuration-data
-public array $config = array();         // prefix for (P)lugin(I)nventory(M)anager preferences
+    private const SHORTCUT = 'PIM';               // array with configuration-data
+    public array $config = array();         // prefix for (P)lugin(I)nventory(M)anager preferences
 
     /**
      * CConfigTablePIM constructor

@@ -53,10 +53,10 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 // compatibility for Admidio 5.0 ->
 if (file_exists(__DIR__ . '/../../system/common.php')) {
     require_once(__DIR__ . '/../../system/common.php');
-}else {
+} else {
     require_once(__DIR__ . '/../../adm_program/system/common.php');
 }
-if(file_exists(__DIR__ . '/../../system/bootstrap/constants.php')) {
+if (file_exists(__DIR__ . '/../../system/bootstrap/constants.php')) {
     require_once(__DIR__ . '/../../system/bootstrap/constants.php');
 } else {
     require_once(__DIR__ . '/../../adm_program/system/bootstrap/constants.php');
@@ -120,7 +120,7 @@ if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
         exit();
     }
 
-    $exportMode = (admFuncVariableIsValid($_GET, 'mode', 'string', array('defaultValue' => 'html', 'validValues' => array('csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx', 'ods'))) === 'html') ? false : true;
+    $exportMode = !((admFuncVariableIsValid($_GET, 'mode', 'string', array('defaultValue' => 'html', 'validValues' => array('csv-ms', 'csv-oo', 'html', 'print', 'pdf', 'pdfl', 'xlsx', 'ods'))) === 'html'));
 
     if (!$exportMode) {
         $gNavigation->addStartUrl(CURRENT_URL, $gL10n->get('PLG_INVENTORY_MANAGER_INVENTORY_MANAGER'), 'bi-box-seam');
@@ -155,7 +155,7 @@ if (version_compare(ADMIDIO_VERSION, '5.0.0', '<')) {
                 'filter_keeper' => 0,
                 'show_all' => true,
                 'mode' => 'ods'
-            )) .'">
+            )) . '">
                         <i class="fas fa-file-alt"></i>' . $gL10n->get('SYS_ODF_SPREADSHEET') . '
                     </a>
                     <a class="btn btn-primary" href="' . SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array(
@@ -483,7 +483,7 @@ switch ($getMode) {
         }
 
         // create filter menu with elements for role
-        $filterNavbar = new HtmlNavbar('navbar_filter', '', null, 'filter');
+        $filterNavbar = new HtmlNavbar('navbar_filter', '', $page, 'filter');
         $form = new HtmlForm('navbar_inventory_list_form', SecurityUtils::encodeUrl(ADMIDIO_URL . FOLDER_PLUGINS . PLUGIN_FOLDER_IM . '/inventory_manager.php', array('headline' => $headline)), $page, array('type' => 'navbar', 'setFocus' => false));
 
         $form->addInput('filter_string', $inputFilterStringLabel, $getFilterString);
@@ -792,7 +792,7 @@ foreach ($items->items as $item) {
         $columnValues[] = $tempValue;
     }
 
-    $showRow = ($getFilterString == '') ? true : false;
+    $showRow = ($getFilterString === '');
 
     if ($getFilterString !== '') {
         $showRowException = false;

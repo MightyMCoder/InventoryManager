@@ -26,31 +26,10 @@ require_once(__DIR__ . '/../common_function.php');
 require_once(__DIR__ . '/../../../adm_program/system/login_valid.php');
 
 // Initialize and check the parameters
-$postImportFormat = admFuncVariableIsValid(
-    $_POST,
-    'format',
-    'string',
-    array('requireValue' => true,
-        'validValues' => array('AUTO', 'XLSX', 'XLS', 'ODS', 'CSV', 'HTML'))
-);
-$postImportCoding = admFuncVariableIsValid(
-    $_POST,
-    'import_coding',
-    'string',
-    array('validValues' => array('', 'GUESS', 'UTF-8', 'UTF-16BE', 'UTF-16LE', 'UTF-32BE', 'UTF-32LE', 'CP1252', 'ISO-8859-1'))
-);
-$postSeparator = admFuncVariableIsValid(
-    $_POST,
-    'import_separator',
-    'string',
-    array('validValues' => array('', ',', ';', '\t', '|'))
-);
-$postEnclosure = admFuncVariableIsValid(
-    $_POST,
-    'import_enclosure',
-    'string',
-    array('validValues' => array('', 'AUTO', '"', '\|'))
-);
+$postImportFormat = admFuncVariableIsValid($_POST, 'format', 'string', array('requireValue' => true, 'validValues' => array('AUTO', 'XLSX', 'XLS', 'ODS', 'CSV', 'HTML')));
+$postImportCoding = admFuncVariableIsValid($_POST, 'import_coding', 'string', array('validValues' => array('', 'GUESS', 'UTF-8', 'UTF-16BE', 'UTF-16LE', 'UTF-32BE', 'UTF-32LE', 'CP1252', 'ISO-8859-1')));
+$postSeparator = admFuncVariableIsValid($_POST, 'import_separator', 'string', array('validValues' => array('', ',', ';', '\t', '|')));
+$postEnclosure = admFuncVariableIsValid($_POST, 'import_enclosure', 'string', array('validValues' => array('', 'AUTO', '"', '\|')));
 
 $postWorksheet = admFuncVariableIsValid($_POST, 'import_sheet', 'string');
 

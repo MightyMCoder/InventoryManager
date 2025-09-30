@@ -36,10 +36,10 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 // compatibility for Admidio 5.0 ->
 if (file_exists(__DIR__ . '/../../system/common.php')) {
     require_once(__DIR__ . '/../../system/common.php');
-}else {
+} else {
     require_once(__DIR__ . '/../../adm_program/system/common.php');
 }
-if(file_exists(__DIR__ . '/../../system/bootstrap/constants.php')) {
+if (file_exists(__DIR__ . '/../../system/bootstrap/constants.php')) {
     require_once(__DIR__ . '/../../system/bootstrap/constants.php');
 } else {
     require_once(__DIR__ . '/../../adm_program/system/bootstrap/constants.php');
