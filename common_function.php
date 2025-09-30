@@ -78,6 +78,53 @@ function defineConstantsPIM(): void
     if (!defined('TBL_INVENTORY_MANAGER_LOG')) {
         define('TBL_INVENTORY_MANAGER_LOG', TABLE_PREFIX . '_inventory_manager_log');
     }
+    if (!defined('TBL_PLUGIN_PREFERENCES')) {
+        define('TBL_PLUGIN_PREFERENCES', TABLE_PREFIX . '_plugin_preferences');
+    }
+}
+
+/**
+ * Method checks if a table exists in the current database.
+ * @param string $tableName
+ * @return bool
+ * @throws Exception
+ */
+function tableExistsPIM(string $tableName): bool
+{
+    global $gDb;
+
+    $tableExists = false;
+
+    $sql = 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = ? AND table_name = ?';
+    $statement = $gDb->queryPrepared($sql, array(DB_NAME, $tableName));
+    if ($statement->fetchColumn() > 0) {
+        $tableExists = true;
+    }
+
+    return $tableExists;
+
+}
+
+/**
+ * Method checks if a column exists in a table in the current database.
+ * @param string $tableName
+ * @param string $columnName
+ * @return bool
+ * @throws Exception
+ */
+function columnExistsPIM(string $tableName, string $columnName): bool
+{
+    global $gDb;
+
+    $columnExists = false;
+
+    $sql = 'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = ? AND table_name = ? AND column_name = ?';
+    $statement = $gDb->queryPrepared($sql, array(DB_NAME, $tableName, $columnName));
+    if ($statement->fetchColumn() > 0) {
+        $columnExists = true;
+    }
+
+    return $columnExists;
 }
 
 /**
@@ -283,10 +330,10 @@ function genNewSequencePIM(): int
 /**
  * Replace umlauts in the text
  *
- * @param string $tmptext text to replace umlauts in
+ * @param string $tmpText text to replace umlauts in
  * @return string                    text with replaced umlauts
  */
-function umlautePIM(string $tmptext): string
+function umlautePIM(string $tmpText): string
 {
     $replacements = array(
         '&uuml;' => 'ue',
@@ -301,7 +348,7 @@ function umlautePIM(string $tmptext): string
         '/' => ''
     );
 
-    return str_replace(array_keys($replacements), array_values($replacements), htmlentities($tmptext));
+    return str_replace(array_keys($replacements), array_values($replacements), htmlentities($tmpText));
 }
 
 /**
