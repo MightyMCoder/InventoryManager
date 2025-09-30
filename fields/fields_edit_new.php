@@ -73,6 +73,9 @@ $page->addJavascript('
             if ($("#imf_type").val() === "DATE_INTERVAL") {
                 $("#imf_date_interval_field_group").show("slow");
                 $("#imf_date_interval_field").attr("required", "required");
+            } else {
+                $("#imf_date_interval_field").removeAttr("required");
+                $("#imf_date_interval_field_group").hide();
             }
         } else {
             $("#imf_value_list").removeAttr("required");
