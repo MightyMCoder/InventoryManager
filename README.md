@@ -2,6 +2,9 @@
 
 InventoryManager is an Admidio plugin for managing an organization's inventory.
 
+> **_NOTE:_**
+> **This plugin only works with Admidio version 4.3.x! Since Admidio 5.0 an integrated inventory module has been included in Admidio!**
+
 ## Features
 
 - Add, edit, and delete inventory items
