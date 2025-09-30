@@ -106,6 +106,50 @@ function tableExistsPIM(string $tableName): bool
 }
 
 /**
+ * Method checks if an index exists in a table in the current database.
+ * @param string $tableName
+ * @param string $indexName
+ * @return bool
+ * @throws Exception
+ */
+function indexExistsPIM(string $tableName, string $indexName): bool
+{
+    global $gDb;
+
+    $indexExists = false;
+
+    $sql = 'SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = ? AND table_name = ? AND index_name = ?';
+    $statement = $gDb->queryPrepared($sql, array(DB_NAME, $tableName, $indexName));
+    if ($statement->fetchColumn() > 0) {
+        $indexExists = true;
+    }
+
+    return $indexExists;
+}
+
+/**
+ * Method checks if a constraint exists in a table in the current database.
+ * @param string $tableName
+ * @param string $constraintName
+ * @return bool
+ * @throws Exception
+ */
+function constraintExistsPIM(string $tableName, string $constraintName): bool
+{
+    global $gDb;
+
+    $constraintExists = false;
+
+    $sql = 'SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_schema = ? AND table_name = ? AND constraint_name = ?';
+    $statement = $gDb->queryPrepared($sql, array(DB_NAME, $tableName, $constraintName));
+    if ($statement->fetchColumn() > 0) {
+        $constraintExists = true;
+    }
+
+    return $constraintExists;
+}
+
+/**
  * Method checks if a column exists in a table in the current database.
  * @param string $tableName
  * @param string $columnName

@@ -88,6 +88,14 @@ class CConfigTablePIM
             imf_usr_id_change INTEGER DEFAULT NULL,
             imf_timestamp_change TIMESTAMP DEFAULT NULL
         ';
+    private const TABLE_INVENTORY_MANAGER_FIELDS_UNIQUE_INDEXES = '
+            CREATE UNIQUE INDEX ' . TABLE_PREFIX . '_idx_imf_name_intern ON ' . TABLE_PREFIX . '_inventory_manager_fields (imf_org_id, imf_name_intern);
+        ';
+    private const TABLE_INVENTORY_MANAGER_FIELDS_CONSTRAINTS = '
+            ADD CONSTRAINT ' . TABLE_PREFIX . '_fk_imf_org          FOREIGN KEY (imf_org_id)            REFERENCES ' . TABLE_PREFIX . '_organizations (org_id)  ON DELETE RESTRICT ON UPDATE RESTRICT,
+            ADD CONSTRAINT ' . TABLE_PREFIX . '_fk_imf_usr_create   FOREIGN KEY (imf_usr_id_create)     REFERENCES ' . TABLE_PREFIX . '_users (usr_id)          ON DELETE SET NULL ON UPDATE RESTRICT,
+            ADD CONSTRAINT ' . TABLE_PREFIX . '_fk_imf_usr_change   FOREIGN KEY (imf_usr_id_change)     REFERENCES ' . TABLE_PREFIX . '_users (usr_id)          ON DELETE SET NULL ON UPDATE RESTRICT;
+        ';
     private const TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_DATA = '
             imd_id integer unsigned NOT NULL AUTO_INCREMENT,
             imd_imf_id integer unsigned NOT NULL,
@@ -100,6 +108,13 @@ class CConfigTablePIM
             imd_imf_id INTEGER NOT NULL,
             imd_imi_id INTEGER NOT NULL,
             imd_value VARCHAR(4000) NOT NULL DEFAULT \'\'
+        ';
+    private const TABLE_INVENTORY_MANAGER_DATA_UNIQUE_INDEXES = '
+            CREATE UNIQUE INDEX ' . TABLE_PREFIX . '_idx_imd_imf_imi_id ON ' . TABLE_PREFIX . '_inventory_manager_data (imd_imf_id, imd_imi_id);
+        ';
+    private const TABLE_INVENTORY_MANAGER_DATA_CONSTRAINTS = '
+            ADD CONSTRAINT ' . TABLE_PREFIX . '_fk_imd_imf  FOREIGN KEY (imd_imf_id)    REFERENCES ' . TABLE_PREFIX . '_inventory_manager_fields (imf_id)   ON DELETE RESTRICT ON UPDATE RESTRICT,
+            ADD CONSTRAINT ' . TABLE_PREFIX . '_fk_imd_imi  FOREIGN KEY (imd_imi_id)    REFERENCES ' . TABLE_PREFIX . '_inventory_manager_items (imi_id)    ON DELETE RESTRICT ON UPDATE RESTRICT;
         ';
     private const TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_ITEMS = '
             imi_id integer unsigned NOT NULL AUTO_INCREMENT,
@@ -119,6 +134,10 @@ class CConfigTablePIM
             imi_timestamp_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             imi_usr_id_change INTEGER DEFAULT NULL,
             imi_timestamp_change TIMESTAMP DEFAULT NULL
+        ';
+    private const TABLE_INVENTORY_MANAGER_ITEMS_CONSTRAINTS = '
+            ADD CONSTRAINT ' . TABLE_PREFIX . '_fk_imi_usr_create FOREIGN KEY (imi_usr_id_create)   REFERENCES ' . TABLE_PREFIX . '_users (usr_id)  ON DELETE SET NULL ON UPDATE RESTRICT,
+            ADD CONSTRAINT ' . TABLE_PREFIX . '_fk_imi_usr_change FOREIGN KEY (imi_usr_id_change)   REFERENCES ' . TABLE_PREFIX . '_users (usr_id)  ON DELETE SET NULL ON UPDATE RESTRICT;
         ';
     private const TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_LOG = '
             iml_id integer unsigned NOT NULL AUTO_INCREMENT,
@@ -140,6 +159,11 @@ class CConfigTablePIM
             iml_usr_id_create INTEGER DEFAULT NULL,
             iml_timestamp_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             iml_comment VARCHAR(255) NOT NULL DEFAULT \'\'
+        ';
+    private const TABLE_INVENTORY_MANAGER_LOG_CONSTRAINTS = '
+            ADD CONSTRAINT ' . TABLE_PREFIX . '_fk_iml_imi          FOREIGN KEY (iml_imi_id)         REFERENCES ' . TABLE_PREFIX . '_inventory_manager_items (imi_id)   ON DELETE RESTRICT ON UPDATE RESTRICT,
+            ADD CONSTRAINT ' . TABLE_PREFIX . '_fk_iml_imf          FOREIGN KEY (iml_imf_id)         REFERENCES ' . TABLE_PREFIX . '_inventory_manager_fields (imf_id)  ON DELETE RESTRICT ON UPDATE RESTRICT,
+            ADD CONSTRAINT ' . TABLE_PREFIX . '_fk_iml_usr_create   FOREIGN KEY (iml_usr_id_create)  REFERENCES ' . TABLE_PREFIX . '_users (usr_id)                     ON DELETE SET NULL ON UPDATE RESTRICT;
         ';
     private const TABLE_DEFINITION_MYSQL_TABLE_PREFERENCES_NAME = '
             plp_id integer unsigned NOT NULL AUTO_INCREMENT,
@@ -193,17 +217,29 @@ class CConfigTablePIM
         switch ($gDbType) {
             case 'pgsql':
                 $this->createTableIfNotExist(TBL_INVENTORY_MANAGER_FIELDS, self::TABLE_DEFINITION_POSTGRESQL_INVENTORY_MANAGER_FIELDS);
+                $this->createUniqueIndexIfNotExist(TBL_INVENTORY_MANAGER_FIELDS, self::TABLE_INVENTORY_MANAGER_FIELDS_UNIQUE_INDEXES);
+                $this->createConstraintsIfNotExist(TBL_INVENTORY_MANAGER_FIELDS, self::TABLE_INVENTORY_MANAGER_FIELDS_CONSTRAINTS);
                 $this->createTableIfNotExist(TBL_INVENTORY_MANAGER_DATA, self::TABLE_DEFINITION_POSTGRESQL_INVENTORY_MANAGER_DATA);
+                $this->createUniqueIndexIfNotExist(TBL_INVENTORY_MANAGER_DATA, self::TABLE_INVENTORY_MANAGER_DATA_UNIQUE_INDEXES);
+                $this->createConstraintsIfNotExist(TBL_INVENTORY_MANAGER_DATA, self::TABLE_INVENTORY_MANAGER_DATA_CONSTRAINTS);
                 $this->createTableIfNotExist(TBL_INVENTORY_MANAGER_ITEMS, self::TABLE_DEFINITION_POSTGRESQL_INVENTORY_MANAGER_ITEMS);
+                $this->createConstraintsIfNotExist(TBL_INVENTORY_MANAGER_ITEMS, self::TABLE_INVENTORY_MANAGER_ITEMS_CONSTRAINTS);
                 $this->createTableIfNotExist(TBL_INVENTORY_MANAGER_LOG, self::TABLE_DEFINITION_POSTGRESQL_INVENTORY_MANAGER_LOG);
+                $this->createConstraintsIfNotExist(TBL_INVENTORY_MANAGER_LOG, self::TABLE_INVENTORY_MANAGER_LOG_CONSTRAINTS);
                 $this->createTableIfNotExist(TBL_PLUGIN_PREFERENCES, self::TABLE_DEFINITION_POSTGRESQL_TABLE_PREFERENCES_NAME);
                 break;
             case 'mysql':
             default:
                 $this->createTableIfNotExist(TBL_INVENTORY_MANAGER_FIELDS, self::TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_FIELDS);
+                $this->createUniqueIndexIfNotExist(TBL_INVENTORY_MANAGER_FIELDS, self::TABLE_INVENTORY_MANAGER_FIELDS_UNIQUE_INDEXES);
+                $this->createConstraintsIfNotExist(TBL_INVENTORY_MANAGER_FIELDS, self::TABLE_INVENTORY_MANAGER_FIELDS_CONSTRAINTS);
                 $this->createTableIfNotExist(TBL_INVENTORY_MANAGER_DATA, self::TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_DATA);
+                $this->createUniqueIndexIfNotExist(TBL_INVENTORY_MANAGER_DATA, self::TABLE_INVENTORY_MANAGER_DATA_UNIQUE_INDEXES);
+                $this->createConstraintsIfNotExist(TBL_INVENTORY_MANAGER_DATA, self::TABLE_INVENTORY_MANAGER_DATA_CONSTRAINTS);
                 $this->createTableIfNotExist(TBL_INVENTORY_MANAGER_ITEMS, self::TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_ITEMS);
+                $this->createConstraintsIfNotExist(TBL_INVENTORY_MANAGER_ITEMS, self::TABLE_INVENTORY_MANAGER_ITEMS_CONSTRAINTS);
                 $this->createTableIfNotExist(TBL_INVENTORY_MANAGER_LOG, self::TABLE_DEFINITION_MYSQL_INVENTORY_MANAGER_LOG);
+                $this->createConstraintsIfNotExist(TBL_INVENTORY_MANAGER_LOG, self::TABLE_INVENTORY_MANAGER_LOG_CONSTRAINTS);
                 $this->createTableIfNotExist(TBL_PLUGIN_PREFERENCES, self::TABLE_DEFINITION_MYSQL_TABLE_PREFERENCES_NAME);
         }
     }
@@ -227,12 +263,53 @@ class CConfigTablePIM
                     break;
                 case 'mysql':
                 default:
-                    $sql = 'CREATE TABLE ' . $tableName . ' (' . $tableDefinition . ') ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+                    $sql = 'CREATE TABLE ' . $tableName . ' (' . $tableDefinition . ') ENGINE = InnoDB DEFAULT character SET = utf8 COLLATE = utf8_unicode_ci;';
             }
             $gDb->query($sql);
         }
     }
 
+    /**
+     * Creates a unique index if it does not exist
+     *
+     * @param string $tableName The name of the table
+     * @param string $indexDefinition The SQL definition of the index
+     * @return void
+     * @throws Exception
+     */
+    private function createUniqueIndexIfNotExist(string $tableName, string $indexDefinition): void
+    {
+        global $gDb;
+
+        // extract the index name from the index definition
+        $indexName = '';
+        if (preg_match('/CREATE UNIQUE INDEX (\S+) ON/', $indexDefinition, $matches)) {
+            $indexName = $matches[1];
+        }
+        if (!indexExistsPIM($tableName, $indexName)) {
+            $gDb->query($indexDefinition);
+        }
+    }
+
+    private function createConstraintsIfNotExist(string $tableName, string $constraintsDefinition): void
+    {
+        global $gDb;
+
+        // Split the constraints definition into individual constraints
+        $constraints = array_filter(array_map('trim', explode(',', $constraintsDefinition)));
+
+        foreach ($constraints as $constraint) {
+            // Extract the constraint name from the definition
+            if (preg_match('/ADD CONSTRAINT (\S+) FOREIGN KEY/', $constraint, $matches)) {
+                $constraintName = $matches[1];
+                if (!constraintExistsPIM($tableName, $constraintName)) {
+                    // Add the constraint to the table
+                    $sql = 'ALTER TABLE ' . $tableName . ' ' . $constraint;
+                    $gDb->query($sql);
+                }
+            }
+        }
+    }
     /**
      * Adds missing columns to the inventory manager fields table
      *
