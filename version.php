@@ -12,9 +12,9 @@
  */
 class CPluginInfoPIM
 {
-    protected const PLUGIN_VERSION = '1.2.0-beta.1';
-    protected const PLUGIN_VERSION_BETA = '1.2.0-beta.1';
-    protected const PLUGIN_STAND = '24.09.2025';
+    protected const PLUGIN_VERSION = '1.2.0';
+    protected const PLUGIN_VERSION_BETA = '';
+    protected const PLUGIN_STAND = '30.09.2025';
 
     /**
      * Current version of plugin InventoryManager
