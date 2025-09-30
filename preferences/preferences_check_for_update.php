@@ -57,6 +57,13 @@ $stableVersion = $stableInfo['version'];
 $stableURL = $stableInfo['url'];
 
 $betaVersion = $betaInfo['version'];
+$mainBetaVersion = '';
+$betaNumber = null;
+// Extract main version and beta number if available
+if (preg_match('/^([\d\.]+)(?:-beta\.(\d+))?$/', $betaVersion, $matches)) {
+    $mainBetaVersion = $matches[1]; // '1.2.0'
+    $betaNumber = $matches[2] ?? null; // '1' oder null
+}
 $betaURL = $betaInfo['url'];
 
 // No stable version available (actually impossible)
@@ -65,7 +72,7 @@ if ($stableVersion === '') {
 }
 
 // No beta version available
-if ($betaVersion === '') {
+if ($betaVersion === '' || $mainBetaVersion <= $stableVersion) {
     $betaVersion = 'n/a';
 }
 
