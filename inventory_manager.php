@@ -741,8 +741,18 @@ foreach ($items->items as $item) {
             $content = ($getMode == 'csv' || $getMode == 'pdf' || $getMode == 'xlsx' || $getMode == 'ods') ?
                 ($content == 1 ? $gL10n->get('SYS_YES') : $gL10n->get('SYS_NO')) :
                 $items->getHtmlValue($imfNameIntern, $content);
-        } elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DATE', 'URL', 'DROPDOWN', 'RADIO_BUTTON', 'DATE_INTERVAL'))) {
+        } elseif (in_array($items->getProperty($imfNameIntern, 'imf_type'), array('DATE', 'URL', 'DROPDOWN', 'RADIO_BUTTON'))) {
             $content = $items->getHtmlValue($imfNameIntern, $content);
+        } elseif ($items->getProperty($imfNameIntern, 'imf_type') === 'DATE_INTERVAL') {
+            if (in_array($getMode, array('csv', 'xlsx', 'ods'))) {
+                $content = $items->getValue($imfNameIntern, 'database');
+                if ($content != '') {
+                    $valueList = explode("\r\n", $items->mItemFields[$imfNameIntern]->getValue('imf_value_list'));
+                    $content = $items->getHtmlValue($imfNameIntern, $content) . ' [' . $valueList[$content] . ']';
+                }
+            } else {
+                $content = $items->getHtmlValue($imfNameIntern, $content);
+            }
         }
 
         $columnValues[] = ($strikethrough && $getMode != 'csv' && $getMode != 'ods' && $getMode != 'xlsx') ? '<s>' . $content . '</s>' : $content;

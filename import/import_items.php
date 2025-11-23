@@ -243,6 +243,24 @@ foreach ($assignedFieldColumn as $row => $values) {
                         }
                     }
                 }
+            } elseif ($fields->getValue('imf_type') === 'DATE_INTERVAL') {
+                $listValue = $values[$imfNameIntern];
+                // check if the value is given in [] brackets
+                if (preg_match('/\[(.*?)]/', $listValue, $matches)) {
+                    // extract the value after | appears
+                    $listValue = trim(explode('|', $matches[1])[0]);
+                }
+
+
+                // check if the value exists in the value list
+                $valueList = $items->getProperty($imfNameIntern, 'imf_value_list');
+                if (in_array($listValue, $valueList)) {
+                    // if yes, get the key of the value
+                    $val = array_search($listValue, $valueList);
+                } else {
+                    // if not, set to imported value (backward compatibility)
+                    $val = $values[$imfNameIntern];
+                }
             } else {
                 $val = $values[$imfNameIntern];
             }
